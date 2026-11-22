@@ -27,7 +27,9 @@ final class CreditWorkflowFixtures
     public static function seed(string $table, array $rows): void
     {
         foreach ($rows as $row) {
-            $row = ['created_at' => now(), 'updated_at' => now()] + $row;
+            if ($table !== 'credit_workflow_task_history') {
+                $row = ['created_at' => now(), 'updated_at' => now()] + $row;
+            }
             // Event history is intentionally append-only at the application layer.
             if ($table === 'credit_workflow_task_history') {
                 DB::table($table)->insertOrIgnore($row);
