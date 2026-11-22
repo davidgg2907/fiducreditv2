@@ -17,27 +17,29 @@ final class SessionMenu
                 || in_array($item->permission, $permissions, true))
             ->groupBy(fn (object $item) => $item->parent_id ?? 0);
 
-        $menu = [];
-        foreach ($items->get(0, []) as $item) {
-            $entry = $this->entry($item);
-            if ($item->route !== null) {
-                $menu[] = $entry;
+        return $this->children($items, 0);
+    }
+
+    private function children($groups, int $parent, array $visited = []): array
+    {
+        $result = [];
+        foreach ($groups->get($parent, []) as $item) {
+            if (isset($visited[$item->id])) {
                 continue;
             }
-
-            $children = [];
-            foreach ($items->get($item->id, []) as $child) {
-                if ($child->route !== null) {
-                    $children[] = $this->entry($child);
-                }
+            $next = $visited;
+            $next[$item->id] = true;
+            $children = $this->children($groups, $item->id, $next);
+            if ($item->route === null && $children === []) {
+                continue;
             }
-
+            $entry = $this->entry($item);
             if ($children !== []) {
-                $menu[] = [...$entry, 'children' => $children];
+                $entry['children'] = $children;
             }
+            $result[] = $entry;
         }
-
-        return $menu;
+        return $result;
     }
 
     private function entry(object $item): array
