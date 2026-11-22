@@ -1,8 +1,8 @@
 <?php
 
-namespace App\Http\Requests\Domain;
+namespace App\Http\Requests;
 
-use App\Models\Domain\CreditBusinessCalendar;
+use App\Models\CreditBusinessCalendar;
 
 final class StoreCreditBusinessCalendarRequest extends DomainWriteRequest
 {

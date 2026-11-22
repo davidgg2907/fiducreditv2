@@ -1,8 +1,8 @@
 <?php
 
-namespace App\Http\Requests\Domain;
+namespace App\Http\Requests;
 
-use App\Models\Domain\PldRule;
+use App\Models\PldRule;
 
 final class StorePldRuleRequest extends DomainWriteRequest
 {

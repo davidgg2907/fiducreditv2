@@ -1,8 +1,8 @@
 <?php
 
-namespace App\Http\Requests\Domain;
+namespace App\Http\Requests;
 
-use App\Models\Domain\CreditCustomField;
+use App\Models\CreditCustomField;
 
 final class UpdateCreditCustomFieldRequest extends DomainWriteRequest
 {

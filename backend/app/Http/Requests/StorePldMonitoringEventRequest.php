@@ -1,8 +1,8 @@
 <?php
 
-namespace App\Http\Requests\Domain;
+namespace App\Http\Requests;
 
-use App\Models\Domain\PldMonitoringEvent;
+use App\Models\PldMonitoringEvent;
 
 final class StorePldMonitoringEventRequest extends DomainWriteRequest
 {

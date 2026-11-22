@@ -1,8 +1,8 @@
 <?php
 
-namespace App\Http\Requests\Domain;
+namespace App\Http\Requests;
 
-use App\Models\Domain\CreditDocumentType;
+use App\Models\CreditDocumentType;
 
 final class StoreCreditDocumentTypeRequest extends DomainWriteRequest
 {

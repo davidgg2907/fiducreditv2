@@ -1,8 +1,8 @@
 <?php
 
-namespace App\Http\Requests\Domain;
+namespace App\Http\Requests;
 
-use App\Models\Domain\PldCase;
+use App\Models\PldCase;
 
 final class StorePldCaseRequest extends DomainWriteRequest
 {

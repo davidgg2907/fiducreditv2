@@ -1,8 +1,8 @@
 <?php
 
-namespace App\Http\Requests\Domain;
+namespace App\Http\Requests;
 
-use App\Models\Domain\CreditWorkflowTransition;
+use App\Models\CreditWorkflowTransition;
 
 final class StoreCreditWorkflowTransitionRequest extends DomainWriteRequest
 {

@@ -1,8 +1,8 @@
 <?php
 
-namespace App\Http\Requests\Domain;
+namespace App\Http\Requests;
 
-use App\Models\Domain\CreditWorkflowTaskHistory;
+use App\Models\CreditWorkflowTaskHistory;
 
 final class StoreCreditWorkflowTaskHistoryRequest extends DomainWriteRequest
 {

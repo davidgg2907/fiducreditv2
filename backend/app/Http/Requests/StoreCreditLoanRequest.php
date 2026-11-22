@@ -1,8 +1,8 @@
 <?php
 
-namespace App\Http\Requests\Domain;
+namespace App\Http\Requests;
 
-use App\Models\Domain\CreditLoan;
+use App\Models\CreditLoan;
 
 final class StoreCreditLoanRequest extends DomainWriteRequest
 {

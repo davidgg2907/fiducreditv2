@@ -1,8 +1,8 @@
 <?php
 
-namespace App\Http\Requests\Domain;
+namespace App\Http\Requests;
 
-use App\Models\Domain\PldPolicyVersion;
+use App\Models\PldPolicyVersion;
 
 final class StorePldPolicyVersionRequest extends DomainWriteRequest
 {

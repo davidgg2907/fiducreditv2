@@ -1,8 +1,8 @@
 <?php
 
-namespace App\Http\Requests\Domain;
+namespace App\Http\Requests;
 
-use App\Models\Domain\PldAlertAction;
+use App\Models\PldAlertAction;
 
 final class StorePldAlertActionRequest extends DomainWriteRequest
 {

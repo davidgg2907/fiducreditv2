@@ -1,8 +1,8 @@
 <?php
 
-namespace App\Http\Requests\Domain;
+namespace App\Http\Requests;
 
-use App\Models\Domain\CreditApplicationFinancialItem;
+use App\Models\CreditApplicationFinancialItem;
 
 final class UpdateCreditApplicationFinancialItemRequest extends DomainWriteRequest
 {

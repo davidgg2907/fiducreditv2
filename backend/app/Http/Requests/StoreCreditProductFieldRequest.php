@@ -1,8 +1,8 @@
 <?php
 
-namespace App\Http\Requests\Domain;
+namespace App\Http\Requests;
 
-use App\Models\Domain\CreditProductField;
+use App\Models\CreditProductField;
 
 final class StoreCreditProductFieldRequest extends DomainWriteRequest
 {

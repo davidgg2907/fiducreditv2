@@ -1,8 +1,8 @@
 <?php
 
-namespace App\Http\Requests\Domain;
+namespace App\Http\Requests;
 
-use App\Models\Domain\CreditPayoffQuoteItem;
+use App\Models\CreditPayoffQuoteItem;
 
 final class StoreCreditPayoffQuoteItemRequest extends DomainWriteRequest
 {

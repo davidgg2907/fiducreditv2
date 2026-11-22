@@ -1,8 +1,8 @@
 <?php
 
-namespace App\Http\Requests\Domain;
+namespace App\Http\Requests;
 
-use App\Models\Domain\CreditBranch;
+use App\Models\CreditBranch;
 
 final class StoreCreditBranchRequest extends DomainWriteRequest
 {

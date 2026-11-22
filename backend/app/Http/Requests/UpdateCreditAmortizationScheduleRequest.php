@@ -1,8 +1,8 @@
 <?php
 
-namespace App\Http\Requests\Domain;
+namespace App\Http\Requests;
 
-use App\Models\Domain\CreditAmortizationSchedule;
+use App\Models\CreditAmortizationSchedule;
 
 final class UpdateCreditAmortizationScheduleRequest extends DomainWriteRequest
 {

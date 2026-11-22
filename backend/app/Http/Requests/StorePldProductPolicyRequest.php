@@ -1,8 +1,8 @@
 <?php
 
-namespace App\Http\Requests\Domain;
+namespace App\Http\Requests;
 
-use App\Models\Domain\PldProductPolicy;
+use App\Models\PldProductPolicy;
 
 final class StorePldProductPolicyRequest extends DomainWriteRequest
 {

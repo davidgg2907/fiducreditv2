@@ -1,8 +1,8 @@
 <?php
 
-namespace App\Http\Requests\Domain;
+namespace App\Http\Requests;
 
-use App\Models\Domain\CreditPaymentApplicationPriority;
+use App\Models\CreditPaymentApplicationPriority;
 
 final class StoreCreditPaymentApplicationPriorityRequest extends DomainWriteRequest
 {
