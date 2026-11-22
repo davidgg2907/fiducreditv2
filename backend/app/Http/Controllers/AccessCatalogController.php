@@ -142,6 +142,7 @@ final class AccessCatalogController extends Controller
             'route' => ['sometimes', 'nullable', 'string', 'max:255', 'regex:/\A\/(?!\/)[a-zA-Z0-9_\/\-]*\z/'],
             'icon' => ['sometimes', 'nullable', 'string', 'max:80'],
             'position' => ['sometimes', 'integer', 'min:0', 'max:100000'],
+            'app_code' => ['sometimes', 'nullable', Rule::in(['originacion', 'administracion', 'pld-operacion', 'pld-configuracion', 'configuracion-sistema'])],
         ]);
     }
 }
