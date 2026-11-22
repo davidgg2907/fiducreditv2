@@ -199,7 +199,7 @@ final class CreditOriginacionFixtures {
             'credit_application_fields' => [
                 'application_id' => self::id('credit_applications'),
                 'custom_field_id' => self::id('credit_custom_fields'),
-                'field_value' => 'Analista administrativa',
+                'field_value' => '"Analista administrativa"',
             ],
             'credit_application_documents' => [
                 'application_id' => self::id('credit_applications'),
