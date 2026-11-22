@@ -25,6 +25,8 @@ class CreditApplicationDocumentService
 
     public function create(array $attributes): CreditApplicationDocument
     {
+        abort(405, 'La persistencia documental requiere un caso de uso seguro.');
+
         return DB::transaction(
             fn (): CreditApplicationDocument => $this->repository->create($attributes)
         );
@@ -32,6 +34,8 @@ class CreditApplicationDocumentService
 
     public function update(string $id, array $attributes): CreditApplicationDocument
     {
+        abort(405, 'La persistencia documental requiere un caso de uso seguro.');
+
         return DB::transaction(
             fn (): CreditApplicationDocument => $this->repository->update($id, $attributes)
         );

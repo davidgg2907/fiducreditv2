@@ -27,9 +27,7 @@ final class StoreCreditApplicationFinancialItemRequest extends FormRequest
             'counterparty' => ['sometimes', 'nullable', 'string', 'max:255'],
             'amount' => ['required', 'numeric'],
             'frequency' => ['required', 'string', 'max:255'],
-            'verified' => ['sometimes', 'boolean'],
             'observations' => ['sometimes', 'nullable', 'string'],
-            'captured_by' => ['required', 'integer', 'exists:users,id'],
         ];
     }
 }

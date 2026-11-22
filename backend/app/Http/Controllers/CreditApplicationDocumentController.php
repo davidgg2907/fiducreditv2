@@ -55,6 +55,8 @@ final class CreditApplicationDocumentController extends Controller
         $this->authorizeAction($request, 'write');
         
 
+        abort(405, 'Utiliza la carga segura de documentos del expediente.');
+
         $record = $this->service->create($request->validated());
 
         return response()->json([
@@ -67,6 +69,8 @@ final class CreditApplicationDocumentController extends Controller
     {
         $this->authorizeAction($request, 'write');
         
+
+        abort(405, 'Los documentos se versionan; no se editan.');
 
         $record = $this->service->update($id, $request->validated());
 

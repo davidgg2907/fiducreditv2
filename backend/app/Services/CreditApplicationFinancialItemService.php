@@ -27,18 +27,43 @@ class CreditApplicationFinancialItemService
         return $this->repository->findOrFail($id, $include);
     }
 
-    public function create(array $data): CreditApplicationFinancialItem
+    public function create(array $data, int $actorId): CreditApplicationFinancialItem
     {
-        return DB::transaction(fn (): CreditApplicationFinancialItem =>
-            $this->repository->create($data)
-        );
+        return DB::transaction(function () use ($data, $actorId): CreditApplicationFinancialItem {
+            $application = CreditApplication::query()
+                ->lockForUpdate()
+                ->findOrFail($data['application_id']);
+
+            if ($application->status !== 'captured') {
+                throw ValidationException::withMessages([
+                    'application_id' => 'La solicitud no está en captura.',
+                ]);
+            }
+
+            return $this->repository->create([
+                ...$data,
+                'captured_by' => $actorId,
+                'verified' => false,
+            ]);
+        });
     }
 
     public function update(string $id, array $data): CreditApplicationFinancialItem
     {
-        return DB::transaction(fn (): CreditApplicationFinancialItem =>
-            $this->repository->update($id, $data)
-        );
+        return DB::transaction(function () use ($id, $data): CreditApplicationFinancialItem {
+            $item = $this->repository->findOrFail($id);
+            $application = CreditApplication::query()
+                ->lockForUpdate()
+                ->findOrFail($item->application_id);
+
+            if ($application->status !== 'captured') {
+                throw ValidationException::withMessages([
+                    'application_id' => 'La solicitud no está en captura.',
+                ]);
+            }
+
+            return $this->repository->update($id, $data);
+        });
     }
 
     public function createBatch(string $applicationId, array $items, int $actorId): Collection

@@ -9,7 +9,7 @@ use App\Http\Resources\CreditApplicationFinancialItemResource;
 use App\Services\CreditApplicationFinancialItemService;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
-use App\Http\Resources\CreditApplicationFinancialItemResource;
+
 
 final class CreditApplicationFinancialItemController extends Controller
 {
@@ -57,7 +57,10 @@ final class CreditApplicationFinancialItemController extends Controller
         $this->authorizeAction($request, 'write');
         
 
-        $record = $this->service->create($request->validated());
+        $record = $this->service->create(
+            $request->validated(),
+            (int) $request->user()->id
+        );
 
         return response()->json([
             'isSuccess' => true,
