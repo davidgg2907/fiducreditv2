@@ -117,3 +117,18 @@ Ejecuta `composer test` en `backend` con la extensión SQLite habilitada. Las pr
 - [Modelo de Originación](docs/ORIGINACION_BD.md)
 - [Flujos y mesa de control](docs/ORIGINACION_WORKFLOW.md)
 - [Administración de Créditos y PLD](docs/ADMINISTRACION_CREDITOS_PLD.md)
+
+
+## Cinco aplicaciones Angular FiduCredit V2
+
+Las aplicaciones especializadas se desarrollan y sirven por separado y utilizan el mismo backend Laravel:
+
+| Aplicación | Carpeta | Puerto local |
+|---|---|---:|
+| Originación | [frontend-originacion](frontend-originacion/) | 4200 |
+| Administración de Créditos | [frontend-administracion](frontend-administracion/) | 4201 |
+| Operación PLD | [frontend-pld-operacion](frontend-pld-operacion/) | 4202 |
+| Configuración PLD | [frontend-pld-configuracion](frontend-pld-configuracion/) | 4203 |
+| Configuración del Sistema | [frontend-configuracion-sistema](frontend-configuracion-sistema/) | 4204 |
+
+Cada una se inicia con `npm install && npm start` desde su propia carpeta. La carpeta original `frontend/` se conserva como arquetipo histórico, sin cambios. Véase [Arquitectura de frontends](docs/ARQUITECTURA_FRONTENDS_FIDUCREDIT_V2.md).
