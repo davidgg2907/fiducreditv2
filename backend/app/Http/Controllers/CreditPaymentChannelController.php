@@ -1,11 +1,11 @@
 <?php
 
-namespace App\Http\Controllers\Domain;
+namespace App\Http\Controllers;
 
-use App\Http\Requests\Domain\StoreCreditPaymentChannelRequest;
-use App\Http\Requests\Domain\UpdateCreditPaymentChannelRequest;
-use App\Http\Resources\Domain\CreditPaymentChannelResource;
-use App\Models\Domain\CreditPaymentChannel;
+use App\Http\Requests\StoreCreditPaymentChannelRequest;
+use App\Http\Requests\UpdateCreditPaymentChannelRequest;
+use App\Http\Resources\CreditPaymentChannelResource;
+use App\Models\CreditPaymentChannel;
 
 final class CreditPaymentChannelController extends DomainResourceController
 {

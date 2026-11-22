@@ -1,11 +1,11 @@
 <?php
 
-namespace App\Http\Controllers\Domain;
+namespace App\Http\Controllers;
 
-use App\Http\Requests\Domain\StorePldPolicyVersionRequest;
-use App\Http\Requests\Domain\UpdatePldPolicyVersionRequest;
-use App\Http\Resources\Domain\PldPolicyVersionResource;
-use App\Models\Domain\PldPolicyVersion;
+use App\Http\Requests\StorePldPolicyVersionRequest;
+use App\Http\Requests\UpdatePldPolicyVersionRequest;
+use App\Http\Resources\PldPolicyVersionResource;
+use App\Models\PldPolicyVersion;
 
 final class PldPolicyVersionController extends DomainResourceController
 {

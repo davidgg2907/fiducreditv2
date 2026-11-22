@@ -1,11 +1,11 @@
 <?php
 
-namespace App\Http\Controllers\Domain;
+namespace App\Http\Controllers;
 
-use App\Http\Requests\Domain\StoreCreditBusinessHolidayRequest;
-use App\Http\Requests\Domain\UpdateCreditBusinessHolidayRequest;
-use App\Http\Resources\Domain\CreditBusinessHolidayResource;
-use App\Models\Domain\CreditBusinessHoliday;
+use App\Http\Requests\StoreCreditBusinessHolidayRequest;
+use App\Http\Requests\UpdateCreditBusinessHolidayRequest;
+use App\Http\Resources\CreditBusinessHolidayResource;
+use App\Models\CreditBusinessHoliday;
 
 final class CreditBusinessHolidayController extends DomainResourceController
 {

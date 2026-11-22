@@ -1,11 +1,11 @@
 <?php
 
-namespace App\Http\Controllers\Domain;
+namespace App\Http\Controllers;
 
-use App\Http\Requests\Domain\StoreCreditSettlementRequest;
-use App\Http\Requests\Domain\UpdateCreditSettlementRequest;
-use App\Http\Resources\Domain\CreditSettlementResource;
-use App\Models\Domain\CreditSettlement;
+use App\Http\Requests\StoreCreditSettlementRequest;
+use App\Http\Requests\UpdateCreditSettlementRequest;
+use App\Http\Resources\CreditSettlementResource;
+use App\Models\CreditSettlement;
 
 final class CreditSettlementController extends DomainResourceController
 {

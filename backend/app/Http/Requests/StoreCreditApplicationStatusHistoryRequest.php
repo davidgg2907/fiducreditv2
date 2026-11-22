@@ -1,8 +1,8 @@
 <?php
 
-namespace App\Http\Requests\Domain;
+namespace App\Http\Requests;
 
-use App\Models\Domain\CreditApplicationStatusHistory;
+use App\Models\CreditApplicationStatusHistory;
 
 final class StoreCreditApplicationStatusHistoryRequest extends DomainWriteRequest
 {

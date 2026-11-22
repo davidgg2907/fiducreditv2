@@ -1,11 +1,11 @@
 <?php
 
-namespace App\Http\Controllers\Domain;
+namespace App\Http\Controllers;
 
-use App\Http\Requests\Domain\StoreCreditBureauInquiryRequest;
-use App\Http\Requests\Domain\UpdateCreditBureauInquiryRequest;
-use App\Http\Resources\Domain\CreditBureauInquiryResource;
-use App\Models\Domain\CreditBureauInquiry;
+use App\Http\Requests\StoreCreditBureauInquiryRequest;
+use App\Http\Requests\UpdateCreditBureauInquiryRequest;
+use App\Http\Resources\CreditBureauInquiryResource;
+use App\Models\CreditBureauInquiry;
 
 final class CreditBureauInquiryController extends DomainResourceController
 {

@@ -1,11 +1,11 @@
 <?php
 
-namespace App\Http\Controllers\Domain;
+namespace App\Http\Controllers;
 
-use App\Http\Requests\Domain\StoreCreditApplicationStatusHistoryRequest;
-use App\Http\Requests\Domain\UpdateCreditApplicationStatusHistoryRequest;
-use App\Http\Resources\Domain\CreditApplicationStatusHistoryResource;
-use App\Models\Domain\CreditApplicationStatusHistory;
+use App\Http\Requests\StoreCreditApplicationStatusHistoryRequest;
+use App\Http\Requests\UpdateCreditApplicationStatusHistoryRequest;
+use App\Http\Resources\CreditApplicationStatusHistoryResource;
+use App\Models\CreditApplicationStatusHistory;
 
 final class CreditApplicationStatusHistoryController extends DomainResourceController
 {

@@ -1,11 +1,11 @@
 <?php
 
-namespace App\Http\Controllers\Domain;
+namespace App\Http\Controllers;
 
-use App\Http\Requests\Domain\StorePldProductPolicyRequest;
-use App\Http\Requests\Domain\UpdatePldProductPolicyRequest;
-use App\Http\Resources\Domain\PldProductPolicyResource;
-use App\Models\Domain\PldProductPolicy;
+use App\Http\Requests\StorePldProductPolicyRequest;
+use App\Http\Requests\UpdatePldProductPolicyRequest;
+use App\Http\Resources\PldProductPolicyResource;
+use App\Models\PldProductPolicy;
 
 final class PldProductPolicyController extends DomainResourceController
 {

@@ -1,11 +1,11 @@
 <?php
 
-namespace App\Http\Controllers\Domain;
+namespace App\Http\Controllers;
 
-use App\Http\Requests\Domain\StoreCreditProductVersionRequest;
-use App\Http\Requests\Domain\UpdateCreditProductVersionRequest;
-use App\Http\Resources\Domain\CreditProductVersionResource;
-use App\Models\Domain\CreditProductVersion;
+use App\Http\Requests\StoreCreditProductVersionRequest;
+use App\Http\Requests\UpdateCreditProductVersionRequest;
+use App\Http\Resources\CreditProductVersionResource;
+use App\Models\CreditProductVersion;
 
 final class CreditProductVersionController extends DomainResourceController
 {

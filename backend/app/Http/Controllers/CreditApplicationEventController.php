@@ -1,11 +1,11 @@
 <?php
 
-namespace App\Http\Controllers\Domain;
+namespace App\Http\Controllers;
 
-use App\Http\Requests\Domain\StoreCreditApplicationEventRequest;
-use App\Http\Requests\Domain\UpdateCreditApplicationEventRequest;
-use App\Http\Resources\Domain\CreditApplicationEventResource;
-use App\Models\Domain\CreditApplicationEvent;
+use App\Http\Requests\StoreCreditApplicationEventRequest;
+use App\Http\Requests\UpdateCreditApplicationEventRequest;
+use App\Http\Resources\CreditApplicationEventResource;
+use App\Models\CreditApplicationEvent;
 
 final class CreditApplicationEventController extends DomainResourceController
 {

@@ -1,11 +1,11 @@
 <?php
 
-namespace App\Http\Controllers\Domain;
+namespace App\Http\Controllers;
 
-use App\Http\Requests\Domain\StorePldMonitoringEventRequest;
-use App\Http\Requests\Domain\UpdatePldMonitoringEventRequest;
-use App\Http\Resources\Domain\PldMonitoringEventResource;
-use App\Models\Domain\PldMonitoringEvent;
+use App\Http\Requests\StorePldMonitoringEventRequest;
+use App\Http\Requests\UpdatePldMonitoringEventRequest;
+use App\Http\Resources\PldMonitoringEventResource;
+use App\Models\PldMonitoringEvent;
 
 final class PldMonitoringEventController extends DomainResourceController
 {

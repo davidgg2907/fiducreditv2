@@ -1,11 +1,11 @@
 <?php
 
-namespace App\Http\Controllers\Domain;
+namespace App\Http\Controllers;
 
-use App\Http\Requests\Domain\StoreCreditApplicationFinancialItemRequest;
-use App\Http\Requests\Domain\UpdateCreditApplicationFinancialItemRequest;
-use App\Http\Resources\Domain\CreditApplicationFinancialItemResource;
-use App\Models\Domain\CreditApplicationFinancialItem;
+use App\Http\Requests\StoreCreditApplicationFinancialItemRequest;
+use App\Http\Requests\UpdateCreditApplicationFinancialItemRequest;
+use App\Http\Resources\CreditApplicationFinancialItemResource;
+use App\Models\CreditApplicationFinancialItem;
 
 final class CreditApplicationFinancialItemController extends DomainResourceController
 {

@@ -1,11 +1,11 @@
 <?php
 
-namespace App\Http\Controllers\Domain;
+namespace App\Http\Controllers;
 
-use App\Http\Requests\Domain\StoreCreditApplicationGuarantorRequest;
-use App\Http\Requests\Domain\UpdateCreditApplicationGuarantorRequest;
-use App\Http\Resources\Domain\CreditApplicationGuarantorResource;
-use App\Models\Domain\CreditApplicationGuarantor;
+use App\Http\Requests\StoreCreditApplicationGuarantorRequest;
+use App\Http\Requests\UpdateCreditApplicationGuarantorRequest;
+use App\Http\Resources\CreditApplicationGuarantorResource;
+use App\Models\CreditApplicationGuarantor;
 
 final class CreditApplicationGuarantorController extends DomainResourceController
 {

@@ -1,8 +1,8 @@
 <?php
 
-namespace App\Http\Requests\Domain;
+namespace App\Http\Requests;
 
-use App\Models\Domain\CreditAmortizationInstallment;
+use App\Models\CreditAmortizationInstallment;
 
 final class StoreCreditAmortizationInstallmentRequest extends DomainWriteRequest
 {

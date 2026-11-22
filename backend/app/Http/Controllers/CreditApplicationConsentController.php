@@ -1,11 +1,11 @@
 <?php
 
-namespace App\Http\Controllers\Domain;
+namespace App\Http\Controllers;
 
-use App\Http\Requests\Domain\StoreCreditApplicationConsentRequest;
-use App\Http\Requests\Domain\UpdateCreditApplicationConsentRequest;
-use App\Http\Resources\Domain\CreditApplicationConsentResource;
-use App\Models\Domain\CreditApplicationConsent;
+use App\Http\Requests\StoreCreditApplicationConsentRequest;
+use App\Http\Requests\UpdateCreditApplicationConsentRequest;
+use App\Http\Resources\CreditApplicationConsentResource;
+use App\Models\CreditApplicationConsent;
 
 final class CreditApplicationConsentController extends DomainResourceController
 {

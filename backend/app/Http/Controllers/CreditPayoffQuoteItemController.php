@@ -1,11 +1,11 @@
 <?php
 
-namespace App\Http\Controllers\Domain;
+namespace App\Http\Controllers;
 
-use App\Http\Requests\Domain\StoreCreditPayoffQuoteItemRequest;
-use App\Http\Requests\Domain\UpdateCreditPayoffQuoteItemRequest;
-use App\Http\Resources\Domain\CreditPayoffQuoteItemResource;
-use App\Models\Domain\CreditPayoffQuoteItem;
+use App\Http\Requests\StoreCreditPayoffQuoteItemRequest;
+use App\Http\Requests\UpdateCreditPayoffQuoteItemRequest;
+use App\Http\Resources\CreditPayoffQuoteItemResource;
+use App\Models\CreditPayoffQuoteItem;
 
 final class CreditPayoffQuoteItemController extends DomainResourceController
 {

@@ -1,11 +1,11 @@
 <?php
 
-namespace App\Http\Controllers\Domain;
+namespace App\Http\Controllers;
 
-use App\Http\Requests\Domain\StorePldScreeningRequest;
-use App\Http\Requests\Domain\UpdatePldScreeningRequest;
-use App\Http\Resources\Domain\PldScreeningResource;
-use App\Models\Domain\PldScreening;
+use App\Http\Requests\StorePldScreeningRequest;
+use App\Http\Requests\UpdatePldScreeningRequest;
+use App\Http\Resources\PldScreeningResource;
+use App\Models\PldScreening;
 
 final class PldScreeningController extends DomainResourceController
 {

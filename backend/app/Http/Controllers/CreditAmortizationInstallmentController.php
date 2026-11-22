@@ -1,11 +1,11 @@
 <?php
 
-namespace App\Http\Controllers\Domain;
+namespace App\Http\Controllers;
 
-use App\Http\Requests\Domain\StoreCreditAmortizationInstallmentRequest;
-use App\Http\Requests\Domain\UpdateCreditAmortizationInstallmentRequest;
-use App\Http\Resources\Domain\CreditAmortizationInstallmentResource;
-use App\Models\Domain\CreditAmortizationInstallment;
+use App\Http\Requests\StoreCreditAmortizationInstallmentRequest;
+use App\Http\Requests\UpdateCreditAmortizationInstallmentRequest;
+use App\Http\Resources\CreditAmortizationInstallmentResource;
+use App\Models\CreditAmortizationInstallment;
 
 final class CreditAmortizationInstallmentController extends DomainResourceController
 {

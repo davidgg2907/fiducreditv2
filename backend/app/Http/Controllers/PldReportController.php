@@ -1,11 +1,11 @@
 <?php
 
-namespace App\Http\Controllers\Domain;
+namespace App\Http\Controllers;
 
-use App\Http\Requests\Domain\StorePldReportRequest;
-use App\Http\Requests\Domain\UpdatePldReportRequest;
-use App\Http\Resources\Domain\PldReportResource;
-use App\Models\Domain\PldReport;
+use App\Http\Requests\StorePldReportRequest;
+use App\Http\Requests\UpdatePldReportRequest;
+use App\Http\Resources\PldReportResource;
+use App\Models\PldReport;
 
 final class PldReportController extends DomainResourceController
 {

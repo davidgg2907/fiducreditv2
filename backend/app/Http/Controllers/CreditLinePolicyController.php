@@ -1,11 +1,11 @@
 <?php
 
-namespace App\Http\Controllers\Domain;
+namespace App\Http\Controllers;
 
-use App\Http\Requests\Domain\StoreCreditLinePolicyRequest;
-use App\Http\Requests\Domain\UpdateCreditLinePolicyRequest;
-use App\Http\Resources\Domain\CreditLinePolicyResource;
-use App\Models\Domain\CreditLinePolicy;
+use App\Http\Requests\StoreCreditLinePolicyRequest;
+use App\Http\Requests\UpdateCreditLinePolicyRequest;
+use App\Http\Resources\CreditLinePolicyResource;
+use App\Models\CreditLinePolicy;
 
 final class CreditLinePolicyController extends DomainResourceController
 {

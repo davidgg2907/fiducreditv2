@@ -1,11 +1,11 @@
 <?php
 
-namespace App\Http\Controllers\Domain;
+namespace App\Http\Controllers;
 
-use App\Http\Requests\Domain\StoreCreditInterestAccrualRequest;
-use App\Http\Requests\Domain\UpdateCreditInterestAccrualRequest;
-use App\Http\Resources\Domain\CreditInterestAccrualResource;
-use App\Models\Domain\CreditInterestAccrual;
+use App\Http\Requests\StoreCreditInterestAccrualRequest;
+use App\Http\Requests\UpdateCreditInterestAccrualRequest;
+use App\Http\Resources\CreditInterestAccrualResource;
+use App\Models\CreditInterestAccrual;
 
 final class CreditInterestAccrualController extends DomainResourceController
 {

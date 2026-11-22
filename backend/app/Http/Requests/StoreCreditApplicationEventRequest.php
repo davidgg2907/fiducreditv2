@@ -1,8 +1,8 @@
 <?php
 
-namespace App\Http\Requests\Domain;
+namespace App\Http\Requests;
 
-use App\Models\Domain\CreditApplicationEvent;
+use App\Models\CreditApplicationEvent;
 
 final class StoreCreditApplicationEventRequest extends DomainWriteRequest
 {

@@ -1,11 +1,11 @@
 <?php
 
-namespace App\Http\Controllers\Domain;
+namespace App\Http\Controllers;
 
-use App\Http\Requests\Domain\StoreCreditDelinquencySnapshotRequest;
-use App\Http\Requests\Domain\UpdateCreditDelinquencySnapshotRequest;
-use App\Http\Resources\Domain\CreditDelinquencySnapshotResource;
-use App\Models\Domain\CreditDelinquencySnapshot;
+use App\Http\Requests\StoreCreditDelinquencySnapshotRequest;
+use App\Http\Requests\UpdateCreditDelinquencySnapshotRequest;
+use App\Http\Resources\CreditDelinquencySnapshotResource;
+use App\Models\CreditDelinquencySnapshot;
 
 final class CreditDelinquencySnapshotController extends DomainResourceController
 {

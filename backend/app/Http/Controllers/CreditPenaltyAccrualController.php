@@ -1,11 +1,11 @@
 <?php
 
-namespace App\Http\Controllers\Domain;
+namespace App\Http\Controllers;
 
-use App\Http\Requests\Domain\StoreCreditPenaltyAccrualRequest;
-use App\Http\Requests\Domain\UpdateCreditPenaltyAccrualRequest;
-use App\Http\Resources\Domain\CreditPenaltyAccrualResource;
-use App\Models\Domain\CreditPenaltyAccrual;
+use App\Http\Requests\StoreCreditPenaltyAccrualRequest;
+use App\Http\Requests\UpdateCreditPenaltyAccrualRequest;
+use App\Http\Resources\CreditPenaltyAccrualResource;
+use App\Models\CreditPenaltyAccrual;
 
 final class CreditPenaltyAccrualController extends DomainResourceController
 {

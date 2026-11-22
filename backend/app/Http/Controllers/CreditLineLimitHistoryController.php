@@ -1,11 +1,11 @@
 <?php
 
-namespace App\Http\Controllers\Domain;
+namespace App\Http\Controllers;
 
-use App\Http\Requests\Domain\StoreCreditLineLimitHistoryRequest;
-use App\Http\Requests\Domain\UpdateCreditLineLimitHistoryRequest;
-use App\Http\Resources\Domain\CreditLineLimitHistoryResource;
-use App\Models\Domain\CreditLineLimitHistory;
+use App\Http\Requests\StoreCreditLineLimitHistoryRequest;
+use App\Http\Requests\UpdateCreditLineLimitHistoryRequest;
+use App\Http\Resources\CreditLineLimitHistoryResource;
+use App\Models\CreditLineLimitHistory;
 
 final class CreditLineLimitHistoryController extends DomainResourceController
 {

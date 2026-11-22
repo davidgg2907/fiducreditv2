@@ -1,11 +1,11 @@
 <?php
 
-namespace App\Http\Controllers\Domain;
+namespace App\Http\Controllers;
 
-use App\Http\Requests\Domain\StoreCreditBusinessCalendarRequest;
-use App\Http\Requests\Domain\UpdateCreditBusinessCalendarRequest;
-use App\Http\Resources\Domain\CreditBusinessCalendarResource;
-use App\Models\Domain\CreditBusinessCalendar;
+use App\Http\Requests\StoreCreditBusinessCalendarRequest;
+use App\Http\Requests\UpdateCreditBusinessCalendarRequest;
+use App\Http\Resources\CreditBusinessCalendarResource;
+use App\Models\CreditBusinessCalendar;
 
 final class CreditBusinessCalendarController extends DomainResourceController
 {

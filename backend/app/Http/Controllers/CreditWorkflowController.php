@@ -1,11 +1,11 @@
 <?php
 
-namespace App\Http\Controllers\Domain;
+namespace App\Http\Controllers;
 
-use App\Http\Requests\Domain\StoreCreditWorkflowRequest;
-use App\Http\Requests\Domain\UpdateCreditWorkflowRequest;
-use App\Http\Resources\Domain\CreditWorkflowResource;
-use App\Models\Domain\CreditWorkflow;
+use App\Http\Requests\StoreCreditWorkflowRequest;
+use App\Http\Requests\UpdateCreditWorkflowRequest;
+use App\Http\Resources\CreditWorkflowResource;
+use App\Models\CreditWorkflow;
 
 final class CreditWorkflowController extends DomainResourceController
 {

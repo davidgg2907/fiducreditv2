@@ -1,11 +1,11 @@
 <?php
 
-namespace App\Http\Controllers\Domain;
+namespace App\Http\Controllers;
 
-use App\Http\Requests\Domain\StorePldCaseRequest;
-use App\Http\Requests\Domain\UpdatePldCaseRequest;
-use App\Http\Resources\Domain\PldCaseResource;
-use App\Models\Domain\PldCase;
+use App\Http\Requests\StorePldCaseRequest;
+use App\Http\Requests\UpdatePldCaseRequest;
+use App\Http\Resources\PldCaseResource;
+use App\Models\PldCase;
 
 final class PldCaseController extends DomainResourceController
 {

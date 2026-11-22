@@ -1,11 +1,11 @@
 <?php
 
-namespace App\Http\Controllers\Domain;
+namespace App\Http\Controllers;
 
-use App\Http\Requests\Domain\StorePldBeneficialOwnerRequest;
-use App\Http\Requests\Domain\UpdatePldBeneficialOwnerRequest;
-use App\Http\Resources\Domain\PldBeneficialOwnerResource;
-use App\Models\Domain\PldBeneficialOwner;
+use App\Http\Requests\StorePldBeneficialOwnerRequest;
+use App\Http\Requests\UpdatePldBeneficialOwnerRequest;
+use App\Http\Resources\PldBeneficialOwnerResource;
+use App\Models\PldBeneficialOwner;
 
 final class PldBeneficialOwnerController extends DomainResourceController
 {

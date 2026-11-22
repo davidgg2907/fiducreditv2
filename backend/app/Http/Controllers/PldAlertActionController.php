@@ -1,11 +1,11 @@
 <?php
 
-namespace App\Http\Controllers\Domain;
+namespace App\Http\Controllers;
 
-use App\Http\Requests\Domain\StorePldAlertActionRequest;
-use App\Http\Requests\Domain\UpdatePldAlertActionRequest;
-use App\Http\Resources\Domain\PldAlertActionResource;
-use App\Models\Domain\PldAlertAction;
+use App\Http\Requests\StorePldAlertActionRequest;
+use App\Http\Requests\UpdatePldAlertActionRequest;
+use App\Http\Resources\PldAlertActionResource;
+use App\Models\PldAlertAction;
 
 final class PldAlertActionController extends DomainResourceController
 {

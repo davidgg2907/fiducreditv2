@@ -1,11 +1,11 @@
 <?php
 
-namespace App\Http\Controllers\Domain;
+namespace App\Http\Controllers;
 
-use App\Http\Requests\Domain\StoreCreditApplicationDecisionRequest;
-use App\Http\Requests\Domain\UpdateCreditApplicationDecisionRequest;
-use App\Http\Resources\Domain\CreditApplicationDecisionResource;
-use App\Models\Domain\CreditApplicationDecision;
+use App\Http\Requests\StoreCreditApplicationDecisionRequest;
+use App\Http\Requests\UpdateCreditApplicationDecisionRequest;
+use App\Http\Resources\CreditApplicationDecisionResource;
+use App\Models\CreditApplicationDecision;
 
 final class CreditApplicationDecisionController extends DomainResourceController
 {

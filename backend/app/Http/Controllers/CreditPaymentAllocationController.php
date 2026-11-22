@@ -1,11 +1,11 @@
 <?php
 
-namespace App\Http\Controllers\Domain;
+namespace App\Http\Controllers;
 
-use App\Http\Requests\Domain\StoreCreditPaymentAllocationRequest;
-use App\Http\Requests\Domain\UpdateCreditPaymentAllocationRequest;
-use App\Http\Resources\Domain\CreditPaymentAllocationResource;
-use App\Models\Domain\CreditPaymentAllocation;
+use App\Http\Requests\StoreCreditPaymentAllocationRequest;
+use App\Http\Requests\UpdateCreditPaymentAllocationRequest;
+use App\Http\Resources\CreditPaymentAllocationResource;
+use App\Models\CreditPaymentAllocation;
 
 final class CreditPaymentAllocationController extends DomainResourceController
 {

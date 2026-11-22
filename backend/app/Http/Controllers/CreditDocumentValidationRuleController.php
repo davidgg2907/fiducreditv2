@@ -1,11 +1,11 @@
 <?php
 
-namespace App\Http\Controllers\Domain;
+namespace App\Http\Controllers;
 
-use App\Http\Requests\Domain\StoreCreditDocumentValidationRuleRequest;
-use App\Http\Requests\Domain\UpdateCreditDocumentValidationRuleRequest;
-use App\Http\Resources\Domain\CreditDocumentValidationRuleResource;
-use App\Models\Domain\CreditDocumentValidationRule;
+use App\Http\Requests\StoreCreditDocumentValidationRuleRequest;
+use App\Http\Requests\UpdateCreditDocumentValidationRuleRequest;
+use App\Http\Resources\CreditDocumentValidationRuleResource;
+use App\Models\CreditDocumentValidationRule;
 
 final class CreditDocumentValidationRuleController extends DomainResourceController
 {

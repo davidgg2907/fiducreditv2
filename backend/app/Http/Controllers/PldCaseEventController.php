@@ -1,11 +1,11 @@
 <?php
 
-namespace App\Http\Controllers\Domain;
+namespace App\Http\Controllers;
 
-use App\Http\Requests\Domain\StorePldCaseEventRequest;
-use App\Http\Requests\Domain\UpdatePldCaseEventRequest;
-use App\Http\Resources\Domain\PldCaseEventResource;
-use App\Models\Domain\PldCaseEvent;
+use App\Http\Requests\StorePldCaseEventRequest;
+use App\Http\Requests\UpdatePldCaseEventRequest;
+use App\Http\Resources\PldCaseEventResource;
+use App\Models\PldCaseEvent;
 
 final class PldCaseEventController extends DomainResourceController
 {

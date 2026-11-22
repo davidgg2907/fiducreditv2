@@ -1,11 +1,11 @@
 <?php
 
-namespace App\Http\Controllers\Domain;
+namespace App\Http\Controllers;
 
-use App\Http\Requests\Domain\StoreCreditPaymentApplicationPriorityRequest;
-use App\Http\Requests\Domain\UpdateCreditPaymentApplicationPriorityRequest;
-use App\Http\Resources\Domain\CreditPaymentApplicationPriorityResource;
-use App\Models\Domain\CreditPaymentApplicationPriority;
+use App\Http\Requests\StoreCreditPaymentApplicationPriorityRequest;
+use App\Http\Requests\UpdateCreditPaymentApplicationPriorityRequest;
+use App\Http\Resources\CreditPaymentApplicationPriorityResource;
+use App\Models\CreditPaymentApplicationPriority;
 
 final class CreditPaymentApplicationPriorityController extends DomainResourceController
 {

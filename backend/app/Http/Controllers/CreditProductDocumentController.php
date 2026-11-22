@@ -1,11 +1,11 @@
 <?php
 
-namespace App\Http\Controllers\Domain;
+namespace App\Http\Controllers;
 
-use App\Http\Requests\Domain\StoreCreditProductDocumentRequest;
-use App\Http\Requests\Domain\UpdateCreditProductDocumentRequest;
-use App\Http\Resources\Domain\CreditProductDocumentResource;
-use App\Models\Domain\CreditProductDocument;
+use App\Http\Requests\StoreCreditProductDocumentRequest;
+use App\Http\Requests\UpdateCreditProductDocumentRequest;
+use App\Http\Resources\CreditProductDocumentResource;
+use App\Models\CreditProductDocument;
 
 final class CreditProductDocumentController extends DomainResourceController
 {

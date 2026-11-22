@@ -1,11 +1,11 @@
 <?php
 
-namespace App\Http\Controllers\Domain;
+namespace App\Http\Controllers;
 
-use App\Http\Requests\Domain\StoreCreditAmortizationScheduleRequest;
-use App\Http\Requests\Domain\UpdateCreditAmortizationScheduleRequest;
-use App\Http\Resources\Domain\CreditAmortizationScheduleResource;
-use App\Models\Domain\CreditAmortizationSchedule;
+use App\Http\Requests\StoreCreditAmortizationScheduleRequest;
+use App\Http\Requests\UpdateCreditAmortizationScheduleRequest;
+use App\Http\Resources\CreditAmortizationScheduleResource;
+use App\Models\CreditAmortizationSchedule;
 
 final class CreditAmortizationScheduleController extends DomainResourceController
 {

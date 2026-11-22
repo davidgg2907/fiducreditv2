@@ -1,11 +1,11 @@
 <?php
 
-namespace App\Http\Controllers\Domain;
+namespace App\Http\Controllers;
 
-use App\Http\Requests\Domain\StorePldClientProfileRequest;
-use App\Http\Requests\Domain\UpdatePldClientProfileRequest;
-use App\Http\Resources\Domain\PldClientProfileResource;
-use App\Models\Domain\PldClientProfile;
+use App\Http\Requests\StorePldClientProfileRequest;
+use App\Http\Requests\UpdatePldClientProfileRequest;
+use App\Http\Resources\PldClientProfileResource;
+use App\Models\PldClientProfile;
 
 final class PldClientProfileController extends DomainResourceController
 {
