@@ -1,0 +1,38 @@
+*.log
+.DS_Store
+Thumbs.db
+
+# Laravel environment and local tooling
+.env
+.env.backup
+.env.production
+.phpactor.json
+.phpunit.result.cache
+/.codex
+/.cursor/
+/.idea
+/.nova
+/.phpunit.cache
+/.vscode
+/.zed
+/auth.json
+
+# Dependencies
+/node_modules
+/vendor
+
+# Frontend assets generated inside Laravel
+/public/build
+/public/fonts-manifest.dev.json
+/public/hot
+/public/storage
+
+# Laravel runtime cache and generated files
+/bootstrap/cache/*.php
+/storage/*.key
+/storage/logs/*.log
+/storage/pail
+
+_ide_helper.php
+Homestead.json
+Homestead.yaml
