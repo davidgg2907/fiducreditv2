@@ -19,9 +19,16 @@ class CreditLoanEvent extends Model
         'updated_at',
     ];
 
+    protected function casts(): array
+    {
+        return [
+            'payload' => 'array',
+        ];
+    }
+
     public function loan(): BelongsTo
     {
-        return $this->belongsTo(\App\Models\Domain\\CreditLoan::class, 'loan_id');
+        return $this->belongsTo(CreditLoan::class, 'loan_id');
     }
 
     public function actor(): BelongsTo

@@ -21,12 +21,12 @@ class CreditWorkflowTransition extends Model
 
     public function workflowVersion(): BelongsTo
     {
-        return $this->belongsTo(\App\Models\Domain\\CreditWorkflowVersion::class, 'workflow_version_id');
+        return $this->belongsTo(CreditWorkflowVersion::class, 'workflow_version_id');
     }
 
     public function fromStep(): BelongsTo
     {
-        return $this->belongsTo(\App\Models\Domain\\CreditWorkflowStep::class, 'from_step_id');
+        return $this->belongsTo(CreditWorkflowStep::class, 'from_step_id');
     }
 
     public function creditWorkflowStepRules(): HasMany

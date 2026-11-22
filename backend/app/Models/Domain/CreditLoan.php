@@ -21,22 +21,22 @@ class CreditLoan extends Model
 
     public function line(): BelongsTo
     {
-        return $this->belongsTo(\App\Models\Domain\\CreditLine::class, 'line_id');
+        return $this->belongsTo(CreditLine::class, 'line_id');
     }
 
     public function drawdown(): BelongsTo
     {
-        return $this->belongsTo(\App\Models\Domain\\CreditDrawdown::class, 'drawdown_id');
+        return $this->belongsTo(CreditDrawdown::class, 'drawdown_id');
     }
 
     public function application(): BelongsTo
     {
-        return $this->belongsTo(\App\Models\Domain\\CreditApplication::class, 'application_id');
+        return $this->belongsTo(CreditApplication::class, 'application_id');
     }
 
     public function contract(): BelongsTo
     {
-        return $this->belongsTo(\App\Models\Domain\\CreditContract::class, 'contract_id');
+        return $this->belongsTo(CreditContract::class, 'contract_id');
     }
 
     public function creditLineMovements(): HasMany

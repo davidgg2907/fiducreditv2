@@ -21,11 +21,11 @@ class CreditProductDocument extends Model
 
     public function productVersion(): BelongsTo
     {
-        return $this->belongsTo(\App\Models\Domain\\CreditProductVersion::class, 'product_version_id');
+        return $this->belongsTo(CreditProductVersion::class, 'product_version_id');
     }
 
     public function documentType(): BelongsTo
     {
-        return $this->belongsTo(\App\Models\Domain\\CreditDocumentType::class, 'document_type_id');
+        return $this->belongsTo(CreditDocumentType::class, 'document_type_id');
     }
 }

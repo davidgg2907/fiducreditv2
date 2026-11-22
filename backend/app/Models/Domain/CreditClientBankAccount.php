@@ -21,7 +21,7 @@ class CreditClientBankAccount extends Model
 
     public function client(): BelongsTo
     {
-        return $this->belongsTo(\App\Models\Domain\\CreditClient::class, 'client_id');
+        return $this->belongsTo(CreditClient::class, 'client_id');
     }
 
     public function creditApplications(): HasMany

@@ -21,6 +21,6 @@ class CreditPaymentApplicationPriority extends Model
 
     public function policy(): BelongsTo
     {
-        return $this->belongsTo(\App\Models\Domain\\CreditPaymentApplicationPolicy::class, 'policy_id');
+        return $this->belongsTo(CreditPaymentApplicationPolicy::class, 'policy_id');
     }
 }

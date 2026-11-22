@@ -21,17 +21,17 @@ class PldCase extends Model
 
     public function company(): BelongsTo
     {
-        return $this->belongsTo(\App\Models\Domain\\CreditCompany::class, 'company_id');
+        return $this->belongsTo(CreditCompany::class, 'company_id');
     }
 
     public function client(): BelongsTo
     {
-        return $this->belongsTo(\App\Models\Domain\\CreditClient::class, 'client_id');
+        return $this->belongsTo(CreditClient::class, 'client_id');
     }
 
     public function sourceAlert(): BelongsTo
     {
-        return $this->belongsTo(\App\Models\Domain\\PldAlert::class, 'source_alert_id');
+        return $this->belongsTo(PldAlert::class, 'source_alert_id');
     }
 
     public function complianceOfficer(): BelongsTo

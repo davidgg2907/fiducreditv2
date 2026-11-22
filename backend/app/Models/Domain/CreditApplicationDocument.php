@@ -21,17 +21,17 @@ class CreditApplicationDocument extends Model
 
     public function application(): BelongsTo
     {
-        return $this->belongsTo(\App\Models\Domain\\CreditApplication::class, 'application_id');
+        return $this->belongsTo(CreditApplication::class, 'application_id');
     }
 
     public function documentType(): BelongsTo
     {
-        return $this->belongsTo(\App\Models\Domain\\CreditDocumentType::class, 'document_type_id');
+        return $this->belongsTo(CreditDocumentType::class, 'document_type_id');
     }
 
     public function previousDocument(): BelongsTo
     {
-        return $this->belongsTo(\App\Models\Domain\\CreditApplicationDocument::class, 'previous_document_id');
+        return $this->belongsTo(CreditApplicationDocument::class, 'previous_document_id');
     }
 
     public function uploadedBy(): BelongsTo

@@ -19,9 +19,16 @@ class CreditCustomField extends Model
         'updated_at',
     ];
 
+    protected function casts(): array
+    {
+        return [
+            'options' => 'array',
+        ];
+    }
+
     public function company(): BelongsTo
     {
-        return $this->belongsTo(\App\Models\Domain\\CreditCompany::class, 'company_id');
+        return $this->belongsTo(CreditCompany::class, 'company_id');
     }
 
     public function creditProductFields(): HasMany

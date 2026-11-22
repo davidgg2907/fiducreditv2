@@ -21,6 +21,6 @@ class CreditLoanBalance extends Model
 
     public function loan(): BelongsTo
     {
-        return $this->belongsTo(\App\Models\Domain\\CreditLoan::class, 'loan_id');
+        return $this->belongsTo(CreditLoan::class, 'loan_id');
     }
 }

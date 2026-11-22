@@ -21,7 +21,7 @@ class CreditWorkflowStepRole extends Model
 
     public function step(): BelongsTo
     {
-        return $this->belongsTo(\App\Models\Domain\\CreditWorkflowStep::class, 'step_id');
+        return $this->belongsTo(CreditWorkflowStep::class, 'step_id');
     }
 
     public function role(): BelongsTo

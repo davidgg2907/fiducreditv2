@@ -21,7 +21,7 @@ class PldCaseEvent extends Model
 
     public function case(): BelongsTo
     {
-        return $this->belongsTo(\App\Models\Domain\\PldCase::class, 'case_id');
+        return $this->belongsTo(PldCase::class, 'case_id');
     }
 
     public function actor(): BelongsTo

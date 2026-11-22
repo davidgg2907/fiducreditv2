@@ -21,12 +21,12 @@ class CreditAmortizationInstallment extends Model
 
     public function schedule(): BelongsTo
     {
-        return $this->belongsTo(\App\Models\Domain\\CreditAmortizationSchedule::class, 'schedule_id');
+        return $this->belongsTo(CreditAmortizationSchedule::class, 'schedule_id');
     }
 
     public function loan(): BelongsTo
     {
-        return $this->belongsTo(\App\Models\Domain\\CreditLoan::class, 'loan_id');
+        return $this->belongsTo(CreditLoan::class, 'loan_id');
     }
 
     public function creditPenaltyAccruals(): HasMany

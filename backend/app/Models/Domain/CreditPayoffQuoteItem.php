@@ -21,6 +21,6 @@ class CreditPayoffQuoteItem extends Model
 
     public function quote(): BelongsTo
     {
-        return $this->belongsTo(\App\Models\Domain\\CreditPayoffQuote::class, 'quote_id');
+        return $this->belongsTo(CreditPayoffQuote::class, 'quote_id');
     }
 }

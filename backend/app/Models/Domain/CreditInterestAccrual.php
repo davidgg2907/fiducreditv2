@@ -21,11 +21,11 @@ class CreditInterestAccrual extends Model
 
     public function loan(): BelongsTo
     {
-        return $this->belongsTo(\App\Models\Domain\\CreditLoan::class, 'loan_id');
+        return $this->belongsTo(CreditLoan::class, 'loan_id');
     }
 
     public function terms(): BelongsTo
     {
-        return $this->belongsTo(\App\Models\Domain\\CreditLoanTerm::class, 'terms_id');
+        return $this->belongsTo(CreditLoanTerm::class, 'terms_id');
     }
 }

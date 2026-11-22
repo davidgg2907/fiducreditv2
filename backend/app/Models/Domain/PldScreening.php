@@ -21,12 +21,12 @@ class PldScreening extends Model
 
     public function client(): BelongsTo
     {
-        return $this->belongsTo(\App\Models\Domain\\CreditClient::class, 'client_id');
+        return $this->belongsTo(CreditClient::class, 'client_id');
     }
 
     public function loan(): BelongsTo
     {
-        return $this->belongsTo(\App\Models\Domain\\CreditLoan::class, 'loan_id');
+        return $this->belongsTo(CreditLoan::class, 'loan_id');
     }
 
     public function reviewedBy(): BelongsTo

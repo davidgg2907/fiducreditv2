@@ -19,9 +19,16 @@ class CreditDocumentValidationRule extends Model
         'updated_at',
     ];
 
+    protected function casts(): array
+    {
+        return [
+            'parameters' => 'array',
+        ];
+    }
+
     public function documentType(): BelongsTo
     {
-        return $this->belongsTo(\App\Models\Domain\\CreditDocumentType::class, 'document_type_id');
+        return $this->belongsTo(CreditDocumentType::class, 'document_type_id');
     }
 
     public function creditDocumentChecks(): HasMany

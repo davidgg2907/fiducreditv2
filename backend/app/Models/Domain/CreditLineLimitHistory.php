@@ -21,12 +21,12 @@ class CreditLineLimitHistory extends Model
 
     public function line(): BelongsTo
     {
-        return $this->belongsTo(\App\Models\Domain\\CreditLine::class, 'line_id');
+        return $this->belongsTo(CreditLine::class, 'line_id');
     }
 
     public function sourceApplication(): BelongsTo
     {
-        return $this->belongsTo(\App\Models\Domain\\CreditApplication::class, 'source_application_id');
+        return $this->belongsTo(CreditApplication::class, 'source_application_id');
     }
 
     public function authorizedBy(): BelongsTo

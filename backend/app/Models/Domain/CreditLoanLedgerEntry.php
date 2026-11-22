@@ -21,22 +21,22 @@ class CreditLoanLedgerEntry extends Model
 
     public function loan(): BelongsTo
     {
-        return $this->belongsTo(\App\Models\Domain\\CreditLoan::class, 'loan_id');
+        return $this->belongsTo(CreditLoan::class, 'loan_id');
     }
 
     public function payment(): BelongsTo
     {
-        return $this->belongsTo(\App\Models\Domain\\CreditPayment::class, 'payment_id');
+        return $this->belongsTo(CreditPayment::class, 'payment_id');
     }
 
     public function drawdown(): BelongsTo
     {
-        return $this->belongsTo(\App\Models\Domain\\CreditDrawdown::class, 'drawdown_id');
+        return $this->belongsTo(CreditDrawdown::class, 'drawdown_id');
     }
 
     public function reversalOf(): BelongsTo
     {
-        return $this->belongsTo(\App\Models\Domain\\CreditLoanLedgerEntry::class, 'reversal_of_id');
+        return $this->belongsTo(CreditLoanLedgerEntry::class, 'reversal_of_id');
     }
 
     public function creditLoanLedgerEntries(): HasMany

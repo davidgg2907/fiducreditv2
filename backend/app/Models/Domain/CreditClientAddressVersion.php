@@ -21,7 +21,7 @@ class CreditClientAddressVersion extends Model
 
     public function address(): BelongsTo
     {
-        return $this->belongsTo(\App\Models\Domain\\CreditClientAddress::class, 'address_id');
+        return $this->belongsTo(CreditClientAddress::class, 'address_id');
     }
 
     public function creditApplications(): HasMany

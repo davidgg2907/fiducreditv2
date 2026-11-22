@@ -21,22 +21,22 @@ class CreditPayment extends Model
 
     public function loan(): BelongsTo
     {
-        return $this->belongsTo(\App\Models\Domain\\CreditLoan::class, 'loan_id');
+        return $this->belongsTo(CreditLoan::class, 'loan_id');
     }
 
     public function line(): BelongsTo
     {
-        return $this->belongsTo(\App\Models\Domain\\CreditLine::class, 'line_id');
+        return $this->belongsTo(CreditLine::class, 'line_id');
     }
 
     public function channel(): BelongsTo
     {
-        return $this->belongsTo(\App\Models\Domain\\CreditPaymentChannel::class, 'channel_id');
+        return $this->belongsTo(CreditPaymentChannel::class, 'channel_id');
     }
 
     public function sourceBankAccount(): BelongsTo
     {
-        return $this->belongsTo(\App\Models\Domain\\CreditClientBankAccount::class, 'source_bank_account_id');
+        return $this->belongsTo(CreditClientBankAccount::class, 'source_bank_account_id');
     }
 
     public function recordedBy(): BelongsTo

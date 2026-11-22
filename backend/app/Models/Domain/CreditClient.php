@@ -21,7 +21,7 @@ class CreditClient extends Model
 
     public function company(): BelongsTo
     {
-        return $this->belongsTo(\App\Models\Domain\\CreditCompany::class, 'company_id');
+        return $this->belongsTo(CreditCompany::class, 'company_id');
     }
 
     public function creditClientAddresses(): HasMany

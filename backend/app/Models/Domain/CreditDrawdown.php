@@ -21,17 +21,17 @@ class CreditDrawdown extends Model
 
     public function line(): BelongsTo
     {
-        return $this->belongsTo(\App\Models\Domain\\CreditLine::class, 'line_id');
+        return $this->belongsTo(CreditLine::class, 'line_id');
     }
 
     public function application(): BelongsTo
     {
-        return $this->belongsTo(\App\Models\Domain\\CreditApplication::class, 'application_id');
+        return $this->belongsTo(CreditApplication::class, 'application_id');
     }
 
     public function bankAccount(): BelongsTo
     {
-        return $this->belongsTo(\App\Models\Domain\\CreditClientBankAccount::class, 'bank_account_id');
+        return $this->belongsTo(CreditClientBankAccount::class, 'bank_account_id');
     }
 
     public function requestedBy(): BelongsTo

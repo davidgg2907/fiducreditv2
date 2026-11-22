@@ -19,19 +19,26 @@ class PldAlert extends Model
         'updated_at',
     ];
 
+    protected function casts(): array
+    {
+        return [
+            'evidence' => 'array',
+        ];
+    }
+
     public function monitoringEvent(): BelongsTo
     {
-        return $this->belongsTo(\App\Models\Domain\\PldMonitoringEvent::class, 'monitoring_event_id');
+        return $this->belongsTo(PldMonitoringEvent::class, 'monitoring_event_id');
     }
 
     public function rule(): BelongsTo
     {
-        return $this->belongsTo(\App\Models\Domain\\PldRule::class, 'rule_id');
+        return $this->belongsTo(PldRule::class, 'rule_id');
     }
 
     public function client(): BelongsTo
     {
-        return $this->belongsTo(\App\Models\Domain\\CreditClient::class, 'client_id');
+        return $this->belongsTo(CreditClient::class, 'client_id');
     }
 
     public function assignedTo(): BelongsTo

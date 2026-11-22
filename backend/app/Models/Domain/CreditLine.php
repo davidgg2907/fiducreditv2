@@ -21,27 +21,27 @@ class CreditLine extends Model
 
     public function company(): BelongsTo
     {
-        return $this->belongsTo(\App\Models\Domain\\CreditCompany::class, 'company_id');
+        return $this->belongsTo(CreditCompany::class, 'company_id');
     }
 
     public function client(): BelongsTo
     {
-        return $this->belongsTo(\App\Models\Domain\\CreditClient::class, 'client_id');
+        return $this->belongsTo(CreditClient::class, 'client_id');
     }
 
     public function originApplication(): BelongsTo
     {
-        return $this->belongsTo(\App\Models\Domain\\CreditApplication::class, 'origin_application_id');
+        return $this->belongsTo(CreditApplication::class, 'origin_application_id');
     }
 
     public function productVersion(): BelongsTo
     {
-        return $this->belongsTo(\App\Models\Domain\\CreditProductVersion::class, 'product_version_id');
+        return $this->belongsTo(CreditProductVersion::class, 'product_version_id');
     }
 
     public function policy(): BelongsTo
     {
-        return $this->belongsTo(\App\Models\Domain\\CreditLinePolicy::class, 'policy_id');
+        return $this->belongsTo(CreditLinePolicy::class, 'policy_id');
     }
 
     public function authorizedBy(): BelongsTo

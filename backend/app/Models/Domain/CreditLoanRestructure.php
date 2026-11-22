@@ -21,17 +21,17 @@ class CreditLoanRestructure extends Model
 
     public function loan(): BelongsTo
     {
-        return $this->belongsTo(\App\Models\Domain\\CreditLoan::class, 'loan_id');
+        return $this->belongsTo(CreditLoan::class, 'loan_id');
     }
 
     public function newTerms(): BelongsTo
     {
-        return $this->belongsTo(\App\Models\Domain\\CreditLoanTerm::class, 'new_terms_id');
+        return $this->belongsTo(CreditLoanTerm::class, 'new_terms_id');
     }
 
     public function newSchedule(): BelongsTo
     {
-        return $this->belongsTo(\App\Models\Domain\\CreditAmortizationSchedule::class, 'new_schedule_id');
+        return $this->belongsTo(CreditAmortizationSchedule::class, 'new_schedule_id');
     }
 
     public function approvedBy(): BelongsTo

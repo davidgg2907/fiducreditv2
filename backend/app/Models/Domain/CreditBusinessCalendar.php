@@ -19,9 +19,16 @@ class CreditBusinessCalendar extends Model
         'updated_at',
     ];
 
+    protected function casts(): array
+    {
+        return [
+            'non_business_weekdays' => 'array',
+        ];
+    }
+
     public function company(): BelongsTo
     {
-        return $this->belongsTo(\App\Models\Domain\\CreditCompany::class, 'company_id');
+        return $this->belongsTo(CreditCompany::class, 'company_id');
     }
 
     public function creditBusinessHolidays(): HasMany

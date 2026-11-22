@@ -21,12 +21,12 @@ class PldClientProfile extends Model
 
     public function client(): BelongsTo
     {
-        return $this->belongsTo(\App\Models\Domain\\CreditClient::class, 'client_id');
+        return $this->belongsTo(CreditClient::class, 'client_id');
     }
 
     public function policyVersion(): BelongsTo
     {
-        return $this->belongsTo(\App\Models\Domain\\PldPolicyVersion::class, 'policy_version_id');
+        return $this->belongsTo(PldPolicyVersion::class, 'policy_version_id');
     }
 
     public function assessedBy(): BelongsTo

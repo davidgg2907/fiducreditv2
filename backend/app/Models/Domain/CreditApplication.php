@@ -21,37 +21,37 @@ class CreditApplication extends Model
 
     public function client(): BelongsTo
     {
-        return $this->belongsTo(\App\Models\Domain\\CreditClient::class, 'client_id');
+        return $this->belongsTo(CreditClient::class, 'client_id');
     }
 
     public function productVersion(): BelongsTo
     {
-        return $this->belongsTo(\App\Models\Domain\\CreditProductVersion::class, 'product_version_id');
+        return $this->belongsTo(CreditProductVersion::class, 'product_version_id');
     }
 
     public function advisor(): BelongsTo
     {
-        return $this->belongsTo(\App\Models\Domain\\CreditAdvisor::class, 'advisor_id');
+        return $this->belongsTo(CreditAdvisor::class, 'advisor_id');
     }
 
     public function branch(): BelongsTo
     {
-        return $this->belongsTo(\App\Models\Domain\\CreditBranch::class, 'branch_id');
+        return $this->belongsTo(CreditBranch::class, 'branch_id');
     }
 
     public function addressVersion(): BelongsTo
     {
-        return $this->belongsTo(\App\Models\Domain\\CreditClientAddressVersion::class, 'address_version_id');
+        return $this->belongsTo(CreditClientAddressVersion::class, 'address_version_id');
     }
 
     public function bankAccount(): BelongsTo
     {
-        return $this->belongsTo(\App\Models\Domain\\CreditClientBankAccount::class, 'bank_account_id');
+        return $this->belongsTo(CreditClientBankAccount::class, 'bank_account_id');
     }
 
     public function previousApplication(): BelongsTo
     {
-        return $this->belongsTo(\App\Models\Domain\\CreditApplication::class, 'previous_application_id');
+        return $this->belongsTo(CreditApplication::class, 'previous_application_id');
     }
 
     public function createdBy(): BelongsTo

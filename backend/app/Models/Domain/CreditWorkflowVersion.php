@@ -21,7 +21,7 @@ class CreditWorkflowVersion extends Model
 
     public function workflow(): BelongsTo
     {
-        return $this->belongsTo(\App\Models\Domain\\CreditWorkflow::class, 'workflow_id');
+        return $this->belongsTo(CreditWorkflow::class, 'workflow_id');
     }
 
     public function publishedBy(): BelongsTo

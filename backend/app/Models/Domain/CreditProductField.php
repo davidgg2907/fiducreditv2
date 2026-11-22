@@ -21,11 +21,11 @@ class CreditProductField extends Model
 
     public function productVersion(): BelongsTo
     {
-        return $this->belongsTo(\App\Models\Domain\\CreditProductVersion::class, 'product_version_id');
+        return $this->belongsTo(CreditProductVersion::class, 'product_version_id');
     }
 
     public function customField(): BelongsTo
     {
-        return $this->belongsTo(\App\Models\Domain\\CreditCustomField::class, 'custom_field_id');
+        return $this->belongsTo(CreditCustomField::class, 'custom_field_id');
     }
 }

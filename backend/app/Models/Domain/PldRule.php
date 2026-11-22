@@ -19,9 +19,16 @@ class PldRule extends Model
         'updated_at',
     ];
 
+    protected function casts(): array
+    {
+        return [
+            'parameters' => 'array',
+        ];
+    }
+
     public function policyVersion(): BelongsTo
     {
-        return $this->belongsTo(\App\Models\Domain\\PldPolicyVersion::class, 'policy_version_id');
+        return $this->belongsTo(PldPolicyVersion::class, 'policy_version_id');
     }
 
     public function pldAlerts(): HasMany

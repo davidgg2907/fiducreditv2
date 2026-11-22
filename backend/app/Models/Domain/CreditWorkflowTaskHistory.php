@@ -19,9 +19,16 @@ class CreditWorkflowTaskHistory extends Model
         'updated_at',
     ];
 
+    protected function casts(): array
+    {
+        return [
+            'details' => 'array',
+        ];
+    }
+
     public function task(): BelongsTo
     {
-        return $this->belongsTo(\App\Models\Domain\\CreditWorkflowTask::class, 'task_id');
+        return $this->belongsTo(CreditWorkflowTask::class, 'task_id');
     }
 
     public function previousAssignee(): BelongsTo

@@ -21,6 +21,6 @@ class CreditApplicationCondition extends Model
 
     public function application(): BelongsTo
     {
-        return $this->belongsTo(\App\Models\Domain\\CreditApplication::class, 'application_id');
+        return $this->belongsTo(CreditApplication::class, 'application_id');
     }
 }

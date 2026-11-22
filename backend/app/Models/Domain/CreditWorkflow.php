@@ -21,12 +21,12 @@ class CreditWorkflow extends Model
 
     public function company(): BelongsTo
     {
-        return $this->belongsTo(\App\Models\Domain\\CreditCompany::class, 'company_id');
+        return $this->belongsTo(CreditCompany::class, 'company_id');
     }
 
     public function product(): BelongsTo
     {
-        return $this->belongsTo(\App\Models\Domain\\CreditProduct::class, 'product_id');
+        return $this->belongsTo(CreditProduct::class, 'product_id');
     }
 
     public function createdBy(): BelongsTo

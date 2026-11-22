@@ -21,7 +21,7 @@ class CreditProductVersion extends Model
 
     public function product(): BelongsTo
     {
-        return $this->belongsTo(\App\Models\Domain\\CreditProduct::class, 'product_id');
+        return $this->belongsTo(CreditProduct::class, 'product_id');
     }
 
     public function creditProductFees(): HasMany

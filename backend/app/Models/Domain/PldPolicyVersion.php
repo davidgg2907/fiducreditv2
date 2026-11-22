@@ -19,9 +19,16 @@ class PldPolicyVersion extends Model
         'updated_at',
     ];
 
+    protected function casts(): array
+    {
+        return [
+            'monitoring_config' => 'array',
+        ];
+    }
+
     public function policy(): BelongsTo
     {
-        return $this->belongsTo(\App\Models\Domain\\PldPolicy::class, 'policy_id');
+        return $this->belongsTo(PldPolicy::class, 'policy_id');
     }
 
     public function approvedBy(): BelongsTo

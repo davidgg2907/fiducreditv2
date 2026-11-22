@@ -19,13 +19,20 @@ class CreditApplicationField extends Model
         'updated_at',
     ];
 
+    protected function casts(): array
+    {
+        return [
+            'field_value' => 'array',
+        ];
+    }
+
     public function application(): BelongsTo
     {
-        return $this->belongsTo(\App\Models\Domain\\CreditApplication::class, 'application_id');
+        return $this->belongsTo(CreditApplication::class, 'application_id');
     }
 
     public function customField(): BelongsTo
     {
-        return $this->belongsTo(\App\Models\Domain\\CreditCustomField::class, 'custom_field_id');
+        return $this->belongsTo(CreditCustomField::class, 'custom_field_id');
     }
 }

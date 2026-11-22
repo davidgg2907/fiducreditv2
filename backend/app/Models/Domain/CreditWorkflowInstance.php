@@ -21,17 +21,17 @@ class CreditWorkflowInstance extends Model
 
     public function application(): BelongsTo
     {
-        return $this->belongsTo(\App\Models\Domain\\CreditApplication::class, 'application_id');
+        return $this->belongsTo(CreditApplication::class, 'application_id');
     }
 
     public function workflowVersion(): BelongsTo
     {
-        return $this->belongsTo(\App\Models\Domain\\CreditWorkflowVersion::class, 'workflow_version_id');
+        return $this->belongsTo(CreditWorkflowVersion::class, 'workflow_version_id');
     }
 
     public function currentStep(): BelongsTo
     {
-        return $this->belongsTo(\App\Models\Domain\\CreditWorkflowStep::class, 'current_step_id');
+        return $this->belongsTo(CreditWorkflowStep::class, 'current_step_id');
     }
 
     public function startedBy(): BelongsTo

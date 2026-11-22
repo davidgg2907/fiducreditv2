@@ -21,7 +21,7 @@ class PldAlertAction extends Model
 
     public function alert(): BelongsTo
     {
-        return $this->belongsTo(\App\Models\Domain\\PldAlert::class, 'alert_id');
+        return $this->belongsTo(PldAlert::class, 'alert_id');
     }
 
     public function actor(): BelongsTo

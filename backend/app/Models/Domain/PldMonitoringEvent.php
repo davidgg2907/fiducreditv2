@@ -19,39 +19,46 @@ class PldMonitoringEvent extends Model
         'updated_at',
     ];
 
+    protected function casts(): array
+    {
+        return [
+            'facts' => 'array',
+        ];
+    }
+
     public function client(): BelongsTo
     {
-        return $this->belongsTo(\App\Models\Domain\\CreditClient::class, 'client_id');
+        return $this->belongsTo(CreditClient::class, 'client_id');
     }
 
     public function line(): BelongsTo
     {
-        return $this->belongsTo(\App\Models\Domain\\CreditLine::class, 'line_id');
+        return $this->belongsTo(CreditLine::class, 'line_id');
     }
 
     public function loan(): BelongsTo
     {
-        return $this->belongsTo(\App\Models\Domain\\CreditLoan::class, 'loan_id');
+        return $this->belongsTo(CreditLoan::class, 'loan_id');
     }
 
     public function payment(): BelongsTo
     {
-        return $this->belongsTo(\App\Models\Domain\\CreditPayment::class, 'payment_id');
+        return $this->belongsTo(CreditPayment::class, 'payment_id');
     }
 
     public function drawdown(): BelongsTo
     {
-        return $this->belongsTo(\App\Models\Domain\\CreditDrawdown::class, 'drawdown_id');
+        return $this->belongsTo(CreditDrawdown::class, 'drawdown_id');
     }
 
     public function settlement(): BelongsTo
     {
-        return $this->belongsTo(\App\Models\Domain\\CreditSettlement::class, 'settlement_id');
+        return $this->belongsTo(CreditSettlement::class, 'settlement_id');
     }
 
     public function policyVersion(): BelongsTo
     {
-        return $this->belongsTo(\App\Models\Domain\\PldPolicyVersion::class, 'policy_version_id');
+        return $this->belongsTo(PldPolicyVersion::class, 'policy_version_id');
     }
 
     public function pldAlerts(): HasMany

@@ -19,9 +19,17 @@ class CreditApplicationEvent extends Model
         'updated_at',
     ];
 
+    protected function casts(): array
+    {
+        return [
+            'before_data' => 'array',
+            'after_data' => 'array',
+        ];
+    }
+
     public function application(): BelongsTo
     {
-        return $this->belongsTo(\App\Models\Domain\\CreditApplication::class, 'application_id');
+        return $this->belongsTo(CreditApplication::class, 'application_id');
     }
 
     public function actor(): BelongsTo

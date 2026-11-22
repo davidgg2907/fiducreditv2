@@ -19,8 +19,15 @@ class CreditProductRule extends Model
         'updated_at',
     ];
 
+    protected function casts(): array
+    {
+        return [
+            'rule_value' => 'array',
+        ];
+    }
+
     public function productVersion(): BelongsTo
     {
-        return $this->belongsTo(\App\Models\Domain\\CreditProductVersion::class, 'product_version_id');
+        return $this->belongsTo(CreditProductVersion::class, 'product_version_id');
     }
 }

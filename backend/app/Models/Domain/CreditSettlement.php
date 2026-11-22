@@ -21,17 +21,17 @@ class CreditSettlement extends Model
 
     public function loan(): BelongsTo
     {
-        return $this->belongsTo(\App\Models\Domain\\CreditLoan::class, 'loan_id');
+        return $this->belongsTo(CreditLoan::class, 'loan_id');
     }
 
     public function quote(): BelongsTo
     {
-        return $this->belongsTo(\App\Models\Domain\\CreditPayoffQuote::class, 'quote_id');
+        return $this->belongsTo(CreditPayoffQuote::class, 'quote_id');
     }
 
     public function payment(): BelongsTo
     {
-        return $this->belongsTo(\App\Models\Domain\\CreditPayment::class, 'payment_id');
+        return $this->belongsTo(CreditPayment::class, 'payment_id');
     }
 
     public function authorizedBy(): BelongsTo

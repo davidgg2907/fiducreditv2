@@ -21,6 +21,6 @@ class CreditBusinessHoliday extends Model
 
     public function calendar(): BelongsTo
     {
-        return $this->belongsTo(\App\Models\Domain\\CreditBusinessCalendar::class, 'calendar_id');
+        return $this->belongsTo(CreditBusinessCalendar::class, 'calendar_id');
     }
 }

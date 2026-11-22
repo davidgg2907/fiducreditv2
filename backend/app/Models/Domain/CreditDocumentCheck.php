@@ -21,12 +21,12 @@ class CreditDocumentCheck extends Model
 
     public function applicationDocument(): BelongsTo
     {
-        return $this->belongsTo(\App\Models\Domain\\CreditApplicationDocument::class, 'application_document_id');
+        return $this->belongsTo(CreditApplicationDocument::class, 'application_document_id');
     }
 
     public function validationRule(): BelongsTo
     {
-        return $this->belongsTo(\App\Models\Domain\\CreditDocumentValidationRule::class, 'validation_rule_id');
+        return $this->belongsTo(CreditDocumentValidationRule::class, 'validation_rule_id');
     }
 
     public function checkedBy(): BelongsTo

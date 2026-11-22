@@ -21,7 +21,7 @@ class CreditPaymentApplicationPolicy extends Model
 
     public function productVersion(): BelongsTo
     {
-        return $this->belongsTo(\App\Models\Domain\\CreditProductVersion::class, 'product_version_id');
+        return $this->belongsTo(CreditProductVersion::class, 'product_version_id');
     }
 
     public function creditPaymentApplicationPriorities(): HasMany

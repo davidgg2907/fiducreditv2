@@ -19,13 +19,20 @@ class CreditWorkflowStepRule extends Model
         'updated_at',
     ];
 
+    protected function casts(): array
+    {
+        return [
+            'parameters' => 'array',
+        ];
+    }
+
     public function step(): BelongsTo
     {
-        return $this->belongsTo(\App\Models\Domain\\CreditWorkflowStep::class, 'step_id');
+        return $this->belongsTo(CreditWorkflowStep::class, 'step_id');
     }
 
     public function transition(): BelongsTo
     {
-        return $this->belongsTo(\App\Models\Domain\\CreditWorkflowTransition::class, 'transition_id');
+        return $this->belongsTo(CreditWorkflowTransition::class, 'transition_id');
     }
 }

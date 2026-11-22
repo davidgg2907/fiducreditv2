@@ -26,12 +26,12 @@ class CreditAdvisor extends Model
 
     public function company(): BelongsTo
     {
-        return $this->belongsTo(\App\Models\Domain\\CreditCompany::class, 'company_id');
+        return $this->belongsTo(CreditCompany::class, 'company_id');
     }
 
     public function branch(): BelongsTo
     {
-        return $this->belongsTo(\App\Models\Domain\\CreditBranch::class, 'branch_id');
+        return $this->belongsTo(CreditBranch::class, 'branch_id');
     }
 
     public function creditApplications(): HasMany
