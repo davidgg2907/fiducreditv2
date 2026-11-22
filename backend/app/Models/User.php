@@ -20,6 +20,7 @@ class User extends Authenticatable
             'email_verified_at' => 'datetime',
             'password' => 'hashed',
             'is_superadmin' => 'boolean',
+            'is_active' => 'boolean',
             'mfa_secret' => 'encrypted',
             'mfa_last_step' => 'integer',
         ];

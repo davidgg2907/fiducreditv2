@@ -241,8 +241,17 @@ class AuthController extends Controller
             'isAdmin' => (bool) $user->is_superadmin,
             'role' => $role?->only(['id', 'name']),
             'permissions' => $permissions,
-            'menu' => $this->menu->forPermissions($permissions, (bool) $user->is_superadmin),
+            'menu' => $this->menu->forPermissions($permissions, (bool) $user->is_superadmin, $this->requestedFrontend()),
         ];
+    }
+
+    private function requestedFrontend(): ?string
+    {
+        $value = request()->header('X-Frontend-App');
+        return in_array($value, [
+            'originacion', 'administracion', 'pld-operacion',
+            'pld-configuracion', 'configuracion-sistema',
+        ], true) ? $value : null;
     }
 
     private function profileData(User $user): array

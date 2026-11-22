@@ -28,12 +28,15 @@ export class InterceptorService implements HttpInterceptor {
     const apiPath = target.origin === this.api.origin && target.pathname.startsWith(this.api.pathname)
       ? target.pathname.slice(this.api.pathname.length)
       : null;
+    const scopedRequest = apiPath !== null
+      ? request.clone({ setHeaders: { 'X-Frontend-App': 'configuracion-sistema' } })
+      : request;
     const protectedApi = apiPath !== null && !/^(?:login|logout|password)(?:\/|$)/.test(apiPath);
     const token = protectedApi ? this.authService.token() : null;
 
     if (!skipLoading) this.spinnerService.loadingOn();
 
-    return next.handle(token ? this.withToken(request, token) : request).pipe(
+    return next.handle(token ? this.withToken(scopedRequest, token) : scopedRequest).pipe(
       catchError(error => {
         if (error.status !== 401 || !protectedApi) {
           return throwError(() => error);
@@ -51,7 +54,7 @@ export class InterceptorService implements HttpInterceptor {
           }),
           switchMap(() => {
             const renewed = this.authService.token();
-            return renewed ? next.handle(this.withToken(request, renewed)) : throwError(() => error);
+            return renewed ? next.handle(this.withToken(scopedRequest, renewed)) : throwError(() => error);
           }),
         );
       }),

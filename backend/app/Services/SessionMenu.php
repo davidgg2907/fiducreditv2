@@ -6,9 +6,11 @@ use Illuminate\Support\Facades\DB;
 
 final class SessionMenu
 {
-    public function forPermissions(array $permissions, bool $isSuperadmin): array
+    public function forPermissions(array $permissions, bool $isSuperadmin, ?string $appCode = null): array
     {
         $items = DB::table('menu_items')
+            ->where(fn ($query) => $query->whereNull('menu_items.app_code')
+                ->when($appCode !== null, fn ($q) => $q->orWhere('menu_items.app_code', $appCode)))
             ->leftJoin('module_actions', 'module_actions.id', '=', 'menu_items.module_action_id')
             ->orderBy('menu_items.position')
             ->orderBy('menu_items.code')
@@ -17,27 +19,29 @@ final class SessionMenu
                 || in_array($item->permission, $permissions, true))
             ->groupBy(fn (object $item) => $item->parent_id ?? 0);
 
-        $menu = [];
-        foreach ($items->get(0, []) as $item) {
-            $entry = $this->entry($item);
-            if ($item->route !== null) {
-                $menu[] = $entry;
+        return $this->children($items, 0);
+    }
+
+    private function children($groups, int $parent, array $visited = []): array
+    {
+        $result = [];
+        foreach ($groups->get($parent, []) as $item) {
+            if (isset($visited[$item->id])) {
                 continue;
             }
-
-            $children = [];
-            foreach ($items->get($item->id, []) as $child) {
-                if ($child->route !== null) {
-                    $children[] = $this->entry($child);
-                }
+            $next = $visited;
+            $next[$item->id] = true;
+            $children = $this->children($groups, $item->id, $next);
+            if ($item->route === null && $children === []) {
+                continue;
             }
-
+            $entry = $this->entry($item);
             if ($children !== []) {
-                $menu[] = [...$entry, 'children' => $children];
+                $entry['children'] = $children;
             }
+            $result[] = $entry;
         }
-
-        return $menu;
+        return $result;
     }
 
     private function entry(object $item): array

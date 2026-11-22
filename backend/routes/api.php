@@ -1,6 +1,8 @@
 <?php
 
 use App\Http\Controllers\AccessRoleController;
+use App\Http\Controllers\AccessUserController;
+use App\Http\Controllers\AccessCatalogController;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\LoginBrandingController;
 use App\Http\Middleware\AuthenticateAccessToken;
@@ -22,6 +24,26 @@ Route::middleware(AuthenticateAccessToken::class)->group(function (): void {
     Route::prefix('access')->middleware('can:manage-access')->group(function (): void {
         Route::get('catalog', [AccessRoleController::class, 'catalog']);
         Route::get('roles', [AccessRoleController::class, 'index']);
+        Route::get('roles/{role}', [AccessRoleController::class, 'show'])->whereNumber('role');
+        Route::delete('roles/{role}', [AccessRoleController::class, 'destroy'])->whereNumber('role');
+        Route::get('users', [AccessUserController::class, 'index']);
+        Route::post('users', [AccessUserController::class, 'store']);
+        Route::get('users/{user}', [AccessUserController::class, 'show'])->whereNumber('user');
+        Route::put('users/{user}', [AccessUserController::class, 'update'])->whereNumber('user');
+        Route::patch('users/{user}', [AccessUserController::class, 'update'])->whereNumber('user');
+        Route::patch('users/{user}/status', [AccessUserController::class, 'setStatus'])->whereNumber('user');
+        Route::get('modules', [AccessCatalogController::class, 'modules']);
+        Route::post('modules', [AccessCatalogController::class, 'storeModule']);
+        Route::put('modules/{module}', [AccessCatalogController::class, 'updateModule'])->whereNumber('module');
+        Route::delete('modules/{module}', [AccessCatalogController::class, 'deleteModule'])->whereNumber('module');
+        Route::get('actions', [AccessCatalogController::class, 'actions']);
+        Route::post('actions', [AccessCatalogController::class, 'storeAction']);
+        Route::put('actions/{action}', [AccessCatalogController::class, 'updateAction'])->whereNumber('action');
+        Route::delete('actions/{action}', [AccessCatalogController::class, 'deleteAction'])->whereNumber('action');
+        Route::get('menus', [AccessCatalogController::class, 'menus']);
+        Route::post('menus', [AccessCatalogController::class, 'storeMenu']);
+        Route::put('menus/{menu}', [AccessCatalogController::class, 'updateMenu'])->whereNumber('menu');
+        Route::delete('menus/{menu}', [AccessCatalogController::class, 'deleteMenu'])->whereNumber('menu');
         Route::post('roles', [AccessRoleController::class, 'store']);
         Route::put('roles/{role}', [AccessRoleController::class, 'update'])->whereNumber('role');
         Route::put('users/{user}/role', [AccessRoleController::class, 'assign'])->whereNumber('user');

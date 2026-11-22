@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Role;
+use App\Repositories\AuthTokenRepository;
 use App\Models\User;
 use Illuminate\Database\UniqueConstraintViolationException;
 use Illuminate\Http\JsonResponse;
@@ -35,6 +36,24 @@ final class AccessRoleController extends Controller
         return response()->json(['isSuccess' => true, 'data' => Role::orderBy('name')->get(['id', 'name', 'permissions'])]);
     }
 
+    public function show(int $role): JsonResponse
+    {
+        return response()->json(['isSuccess' => true, 'data' => Role::findOrFail($role)->only(['id', 'name', 'permissions'])]);
+    }
+
+    public function destroy(int $role): JsonResponse
+    {
+        DB::transaction(function () use ($role) {
+            $target = Role::lockForUpdate()->findOrFail($role);
+            if (User::where('role_id', $target->id)->exists()
+                || DB::table('credit_workflow_step_roles')->where('role_id', $target->id)->exists()) {
+                throw ValidationException::withMessages(['role' => 'El rol está en uso por usuarios o flujos y no puede eliminarse.']);
+            }
+            $target->delete();
+        }, 3);
+        return response()->json(['isSuccess' => true]);
+    }
+
     public function store(Request $request): JsonResponse
     {
         return $this->save($request, new Role, 201);
@@ -50,8 +69,13 @@ final class AccessRoleController extends Controller
         $user = User::findOrFail($user);
         abort_if($user->is_superadmin, 403);
         $data = $request->validate(['role_id' => ['present', 'nullable', 'integer', Rule::exists('roles', 'id')]]);
-        $user->role()->associate($data['role_id']);
-        $user->save();
+        DB::transaction(function () use ($user, $data) {
+            $target = User::lockForUpdate()->findOrFail($user->id);
+            abort_if($target->is_superadmin, 403);
+            $target->role()->associate($data['role_id']);
+            $target->save();
+            app(AuthTokenRepository::class)->revokeForUser($target->id);
+        }, 3);
 
         return response()->json(['isSuccess' => true, 'data' => ['userId' => $user->id, 'roleId' => $user->role_id]]);
     }
