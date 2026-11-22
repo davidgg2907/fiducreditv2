@@ -9,7 +9,7 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Schema;
 use Illuminate\Validation\ValidationException;
 
-final class DomainCrudService
+class DomainCrudService
 {
     public function paginate(string $modelClass, array $options): LengthAwarePaginator
     {

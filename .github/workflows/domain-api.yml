@@ -3,21 +3,23 @@ name: Validar API de recursos de dominio
 on:
   pull_request:
     paths:
-      - 'backend/app/Models/Domain/**'
-      - 'backend/app/Http/Controllers/Domain/**'
-      - 'backend/app/Http/Requests/Domain/**'
-      - 'backend/app/Http/Resources/Domain/**'
-      - 'backend/app/Services/Domain/**'
+      - 'backend/app/Models/**'
+      - 'backend/app/Http/Controllers/**'
+      - 'backend/app/Http/Requests/**'
+      - 'backend/app/Http/Resources/**'
+      - 'backend/app/Services/**'
+      - 'backend/composer.json'
       - 'backend/routes/api.php'
       - '.github/workflows/domain-api.yml'
   push:
     branches: [main]
     paths:
-      - 'backend/app/Models/Domain/**'
-      - 'backend/app/Http/Controllers/Domain/**'
-      - 'backend/app/Http/Requests/Domain/**'
-      - 'backend/app/Http/Resources/Domain/**'
-      - 'backend/app/Services/Domain/**'
+      - 'backend/app/Models/**'
+      - 'backend/app/Http/Controllers/**'
+      - 'backend/app/Http/Requests/**'
+      - 'backend/app/Http/Resources/**'
+      - 'backend/app/Services/**'
+      - 'backend/composer.json'
       - 'backend/routes/api.php'
       - '.github/workflows/domain-api.yml'
 
@@ -41,7 +43,7 @@ jobs:
       - run: composer install --prefer-dist --no-interaction --no-progress
       - name: Verificar formato y sintaxis PHP
         run: |
-          find app/Models/Domain app/Http/Controllers/Domain app/Http/Requests/Domain app/Http/Resources/Domain app/Services/Domain -type f -name '*.php' -print0 | xargs -0 -n1 php -l
+          find app/Models app/Http/Controllers app/Http/Requests app/Http/Resources app/Services -type f -name '*.php' -print0 | xargs -0 -n1 php -l
           php -l routes/api.php
       - name: Registrar rutas de API
         env:

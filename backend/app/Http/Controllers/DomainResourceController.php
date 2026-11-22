@@ -19,8 +19,12 @@ abstract class DomainResourceController extends Controller
 
     protected bool $allowDirectWrites = false;
 
-    public function __construct(private readonly DomainCrudService $service)
+    protected function service(): DomainCrudService
     {
+        $serviceClass = 'App\\Services\\Domain\\'
+            .class_basename($this->modelClass).'Service';
+
+        return app($serviceClass);
     }
 
     private function authorizeDomain(string $operation): void
@@ -59,7 +63,7 @@ abstract class DomainResourceController extends Controller
         ]);
 
         $result = $this->resourceClass::collection(
-            $this->service->paginate($this->modelClass, $query)
+            $this->service()->paginate($this->modelClass, $query)
         );
 
         return response()->json([
@@ -76,7 +80,7 @@ abstract class DomainResourceController extends Controller
             'include' => ['sometimes', 'string', 'max:500'],
         ]);
 
-        $model = $this->service->find(
+        $model = $this->service()->find(
             $this->modelClass,
             $id,
             $query['include'] ?? ''
@@ -94,7 +98,7 @@ abstract class DomainResourceController extends Controller
         abort_unless($this->allowDirectWrites, 405);
 
         $data = app($this->storeRequestClass)->validated();
-        $model = $this->service->create($this->modelClass, $data);
+        $model = $this->service()->create($this->modelClass, $data);
 
         return response()->json([
             'isSuccess' => true,
@@ -108,7 +112,7 @@ abstract class DomainResourceController extends Controller
         abort_unless($this->allowDirectWrites, 405);
 
         $data = app($this->updateRequestClass)->validated();
-        $model = $this->service->update($this->modelClass, $id, $data);
+        $model = $this->service()->update($this->modelClass, $id, $data);
 
         return response()->json([
             'isSuccess' => true,
