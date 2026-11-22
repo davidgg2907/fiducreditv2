@@ -1,0 +1,46 @@
+@use '@angular/material' as mat;
+
+@include mat.core();
+
+// POS PYME: the Material palette is intentionally limited to the same
+// operational blue/teal family used by the application shell.
+$pos-primary: mat.define-palette(mat.$cyan-palette, 800, 600, 900);
+$pos-accent: mat.define-palette(mat.$teal-palette, 600, 400, 900);
+$pos-warn: mat.define-palette(mat.$red-palette, 700);
+
+// Define a dark theme
+$dark-theme: mat.define-dark-theme((
+ color: (
+   primary: $pos-primary,
+   accent: $pos-accent,
+   warn: $pos-warn,
+ ),
+
+));
+
+// Define a light theme
+$light-theme: mat.define-light-theme((
+ color: (
+   primary: $pos-primary,
+   accent: $pos-accent,
+   warn: $pos-warn,
+ ),
+));
+
+.dark_mode {
+
+  // Apply the dark theme
+  @include mat.all-component-colors($dark-theme);
+}
+
+// Apply the light theme only when the user prefers light themes.
+.light_mode {
+ // Use the `-color` mixins to only apply color styles without reapplying the same
+ // typography and density styles.
+  @include mat.all-component-colors($light-theme);
+
+}
+
+// "node_modules/@angular/material/prebuilt-themes/indigo-pink.css",
+
+

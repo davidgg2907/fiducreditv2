@@ -1,0 +1,27 @@
+
+    :host {
+      display: block;
+      width: 100%;
+    }
+
+    .searchable-select-field {
+      width: 100%;
+    }
+
+    .search-box {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      width: 100%;
+    }
+
+    .search-box input {
+      width: 100%;
+    }
+
+    .search-option {
+      height: auto !important;
+      padding-top: 0.25rem;
+      padding-bottom: 0.25rem;
+    }
+  

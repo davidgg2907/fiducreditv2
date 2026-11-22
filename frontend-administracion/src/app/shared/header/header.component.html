@@ -1,0 +1,59 @@
+<header class="top-header mat-elevation-z5" [class.hidden]="toggleSearch" [ngClass]="{'test' : getSideBarSate()}">
+  <div class="header-main">
+    <button mat-icon-button class="menu-toggle" (click)="toggleSidebar()">
+      <mat-icon class="material-icons-outlined">menu</mat-icon>
+    </button>
+
+    <div class="header-copy">
+      <h1>{{ headerTitle }}</h1>
+    </div>
+  </div>
+
+  <div class="top-header-actions">
+
+    <button mat-button class="user-summary" [matMenuTriggerFor]="UserProfile">
+      <span class="user-summary__content">
+        <span class="user-summary__avatar" [class.user-summary__avatar--image]="!!userPhotoUrl">
+          <img *ngIf="userPhotoUrl" [src]="userPhotoUrl" [alt]="userName || 'Usuario'">
+          <span *ngIf="!userPhotoUrl">{{ userInitials }}</span>
+        </span>
+        <span class="user-summary__copy">
+          <strong class="user-summary__primary">{{ userName || 'Usuario' }}</strong>
+        </span>
+        <mat-icon class="material-icons-outlined user-summary__chevron">expand_more</mat-icon>
+      </span>
+    </button>
+    <mat-menu #UserProfile="matMenu" class="dropdown-userprofile">
+      <div class="menu-userprofile" (click)="$event.stopPropagation()">
+        <span class="menu-userprofile__avatar" [class.menu-userprofile__avatar--image]="!!userPhotoUrl">
+          <img *ngIf="userPhotoUrl" [src]="userPhotoUrl" [alt]="userName || 'Usuario'">
+          <span *ngIf="!userPhotoUrl">{{ userInitials }}</span>
+        </span>
+        <div class="menu-userprofile__identity">
+          <strong class="menu-userprofile__name">{{userName}}</strong>
+          <small class="menu-userprofile__email" *ngIf="userSecondary" [title]="userSecondary">{{userSecondary}}</small>
+        </div>
+      </div>
+      <mat-divider></mat-divider>
+      <button mat-menu-item routerLink="/perfil">
+        <mat-icon>account_circle</mat-icon><span>Mi perfil</span>
+      </button>
+      <mat-divider></mat-divider>
+      <button mat-menu-item (click)="logOut()">
+        <mat-icon>logout</mat-icon><span>Cerrar sesión</span>
+      </button>
+    </mat-menu>
+  </div>
+</header>
+
+<!--start search toolbar-->
+<mat-toolbar color="primary" class="searchbar mat-elevation-z5 justify-content-between"  [ngClass]="{'full-search' : getSideBarSate()}" [class.searchVisible]="toggleSearch">
+  <button mat-icon-button class="btn-search">
+    <mat-icon class="material-icons-outlined">search</mat-icon>
+  </button>
+  <input class="w-100 search-control" placeholder="Search">
+  <button mat-icon-button class="btn-search" (click)="searchClose()">
+    <mat-icon class="material-icons-outlined">close</mat-icon>
+  </button>
+</mat-toolbar>
+<!--end search toolbar-->

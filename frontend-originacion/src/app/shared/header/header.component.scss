@@ -1,0 +1,365 @@
+.top-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: auto;
+  min-height: 84px;
+  padding: 0 1.5rem 0 1.15rem;
+  position: fixed;
+  top: 0;
+  left: 260px;
+  right: 0;
+  background: var(--app-header-gradient);
+  border-bottom: 1px solid var(--app-shell-border);
+  box-shadow: 0 16px 32px rgba(79, 158, 150, 0.12);
+  z-index: 7;
+
+  &.hidden {
+    opacity: 0;
+  }
+
+  button {
+    color: #204540;
+  }
+}
+
+.header-main {
+  display: flex;
+  align-items: center;
+  gap: 0.8rem;
+  min-width: 0;
+}
+
+.menu-toggle {
+  --mdc-icon-button-state-layer-size: 40px;
+  width: 40px;
+  height: 40px;
+  padding: 0;
+  display: grid;
+  place-items: center;
+  flex: 0 0 40px;
+  background: rgba(255, 255, 255, 0.72);
+  border: 1px solid rgba(79, 158, 150, 0.18);
+  border-radius: 50%;
+
+  mat-icon {
+    width: 22px;
+    height: 22px;
+    font-size: 22px;
+    line-height: 22px;
+  }
+}
+
+.header-copy {
+  min-width: 0;
+  display: flex;
+  align-items: center;
+}
+
+.header-copy h1 {
+  margin: 0;
+  color: #163a36;
+  font-size: clamp(1.25rem, 2.6vw, 1.95rem);
+  font-weight: 800;
+  line-height: 1.05;
+}
+
+.top-header-actions {
+  margin-left: 1rem;
+  display: flex;
+  flex-direction: row;
+  flex-wrap: nowrap;
+  align-items: center;
+  gap: 0.5rem;
+  height: 54px;
+}
+
+.top-header-actions > button {
+  flex: 0 0 auto;
+}
+
+.app-name {
+  color: #212529;
+  font-size: 0.8rem;
+  text-decoration: none;
+  font-weight: 500;
+}
+
+.user-summary {
+  box-sizing: border-box;
+  display: inline-flex;
+  align-items: center;
+  justify-content: flex-start;
+  min-width: clamp(210px, 24vw, 290px);
+  max-width: 100%;
+  height: 54px;
+  min-height: 54px;
+  padding: 0;
+  border-radius: 18px;
+  border: 1px solid rgba(79, 158, 150, 0.16);
+  background: rgba(255, 255, 255, 0.82);
+  box-shadow: 0 14px 28px rgba(79, 158, 150, 0.12);
+  overflow: hidden;
+  line-height: 1;
+}
+
+.user-summary .mdc-button__label {
+  display: flex;
+  align-items: center;
+  width: 100%;
+  height: 100%;
+}
+
+.user-summary__content {
+  display: grid;
+  grid-template-columns: 40px minmax(0, 1fr) 18px;
+  align-items: center;
+  gap: 0.72rem;
+  width: 100%;
+  padding: 0.45rem 0.78rem 0.45rem 0.55rem;
+}
+
+.user-summary__avatar,
+.menu-userprofile__avatar {
+  display: grid;
+  place-items: center;
+  overflow: hidden;
+  border-radius: 999px;
+  background: linear-gradient(135deg, rgba(199, 237, 243, 0.96), rgba(217, 244, 239, 1));
+  color: #1d5e58;
+  font-weight: 800;
+  flex-shrink: 0;
+}
+
+.user-summary__avatar {
+  width: 40px;
+  height: 40px;
+  font-size: 0.92rem;
+  box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.45);
+}
+
+.menu-userprofile__avatar {
+  width: 56px;
+  height: 56px;
+  font-size: 1rem;
+}
+
+.user-summary__avatar--image,
+.menu-userprofile__avatar--image {
+  background: #e2e8f0;
+  color: transparent;
+}
+
+.user-summary__avatar img,
+.menu-userprofile__avatar img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.user-summary__copy {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: 0.2rem;
+  text-align: left;
+  min-width: 0;
+}
+
+.user-summary__primary {
+  display: block;
+  color: #173f3a;
+  font-size: 0.98rem;
+  font-weight: 700;
+  line-height: 1.08;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.user-summary__secondary {
+  display: block;
+  color: #5a6f6d;
+  font-size: 0.76rem;
+  font-weight: 600;
+  line-height: 1.05;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  letter-spacing: 0.03em;
+}
+
+.user-summary__chevron {
+  width: 18px;
+  height: 18px;
+  font-size: 18px;
+  color: #516866;
+}
+
+.menu-userprofile {
+  display: flex;
+  align-items: center;
+  gap: 0.85rem;
+  padding: 0.35rem 0.2rem;
+}
+
+.menu-userprofile .username {
+  color: #173f3a;
+}
+
+.menu-userprofile p,
+.menu-userprofile small {
+  color: #5a6f6d;
+}
+
+.searchbar {
+  position: fixed;
+  z-index: 8;
+  top: 0;
+  left: 260px;
+  right: 0;
+  height: 84px;
+  background-color: #ffffff;
+  width: 0;
+  display: flex;
+  visibility: hidden;
+  transition: width 250ms ease-in-out;
+
+  .search-control {
+    font-size: 16px;
+    color: #212529;
+    height: 45px;
+    padding: 0 1rem;
+    outline: none;
+    border: 0;
+    border-bottom: 2px solid #ffffff;
+    background-color: #ffffff;
+    transition: border-color 250ms ease-in-out;
+
+    &:focus {
+      border-bottom: 2px solid #3f51b5;
+      transition: border-color 250ms ease-in-out;
+      backface-visibility: hidden;
+    }
+  }
+
+  ::placeholder {
+    font-size: 16px !important;
+    opacity: 0.5 !important;
+    color: #212529;
+  }
+}
+
+.full-search {
+  left: 0 !important;
+}
+
+.full-search.searchVisible {
+  width: calc(100% - 0px);
+}
+
+.searchVisible {
+  width: calc(100% - 260px);
+  visibility: visible;
+  transition: width 250ms ease-in-out;
+}
+
+::ng-deep .mat-menu-panel {
+  max-width: fit-content !important;
+}
+
+.test {
+  left: 0px !important;
+}
+
+@media (max-width: 900px) {
+  .top-header {
+    padding-right: 0.85rem;
+    padding-left: 0.85rem;
+  }
+
+  .top-header-actions {
+    margin-left: 0.5rem;
+  }
+
+  .header-copy h1 {
+    font-size: 1.1rem;
+  }
+
+  .user-summary__copy {
+    display: none;
+  }
+
+  .user-summary {
+    min-width: 58px;
+  }
+
+  .user-summary__content {
+    grid-template-columns: 40px 18px;
+    gap: 0.45rem;
+    padding-right: 0.55rem;
+  }
+}
+
+/* Full-width header above the horizontal navigation */
+.top-header,.top-header.test {left:0!important;right:0;width:100%;box-sizing:border-box;box-shadow:0 3px 14px rgba(58,70,91,.06);}
+.top-header .menu-toggle {display:none;}
+.searchbar,.searchbar.full-search {left:0!important;right:0;}
+.searchVisible {width:100%!important;}
+
+/* Logotipo junto al nombre del módulo en la franja superior. */
+.header-company-logo{height:62px;width:104px;display:flex;align-items:center;justify-content:center;flex:none;padding:5px 12px;background:rgba(255,255,255,.65);border:1px solid rgba(79,158,150,.2);border-radius:12px;box-sizing:border-box}
+.header-company-logo img{display:block;max-width:100%;max-height:100%;object-fit:contain}
+@media(max-width:600px){.header-company-logo{height:48px;width:70px;padding:4px 6px}.header-main{gap:.55rem}}
+
+/* Menú de sesión: ancho estable, columnas consistentes y texto sin desbordar. */
+::ng-deep .dropdown-userprofile.mat-mdc-menu-panel {
+  width: min(350px, calc(100vw - 24px)) !important;
+  min-width: min(290px, calc(100vw - 24px)) !important;
+  max-width: calc(100vw - 24px) !important;
+  border-radius: 16px !important;
+  overflow: hidden !important;
+}
+::ng-deep .dropdown-userprofile .mat-mdc-menu-content { padding: 8px 0 !important; }
+::ng-deep .dropdown-userprofile .mat-mdc-menu-item {
+  min-height: 48px;
+  display:flex;
+  align-items:center;
+  gap:12px;
+  font-size:14px;
+}
+::ng-deep .dropdown-userprofile .mat-mdc-menu-item mat-icon {
+  flex:0 0 24px;
+  margin:0 !important;
+}
+::ng-deep .dropdown-userprofile .menu-userprofile {
+  box-sizing:border-box;
+  display:grid;
+  grid-template-columns:48px minmax(0,1fr);
+  align-items:center;
+  gap:12px;
+  padding:16px 18px;
+  width:100%;
+  min-width:0;
+  text-align:left;
+}
+::ng-deep .dropdown-userprofile .menu-userprofile__avatar {
+  width:48px;height:48px;font-size:14px;
+  display:grid;place-items:center;overflow:hidden;
+  border-radius:50%;background:#e8edf7;color:#334c73;
+}
+::ng-deep .dropdown-userprofile .menu-userprofile__identity {
+  display:flex;flex-direction:column;gap:3px;min-width:0;max-width:100%;
+}
+::ng-deep .dropdown-userprofile .menu-userprofile__name {
+  font-size:15px;font-weight:750;line-height:1.25;color:#24344a;
+  white-space:normal;overflow-wrap:anywhere;
+}
+::ng-deep .dropdown-userprofile .menu-userprofile__role {
+  font-size:12px;color:#607087;line-height:1.25;
+}
+::ng-deep .dropdown-userprofile .menu-userprofile__email {
+  display:block;max-width:100%;font-size:11px;color:#6f7e94;
+  white-space:nowrap;overflow:hidden;text-overflow:ellipsis;
+}
+::ng-deep .dropdown-userprofile .menu-userprofile__avatar img {width:100%;height:100%;object-fit:cover;}

@@ -1,0 +1,30 @@
+<nav class="top-navigation" aria-label="Navegación principal">
+ <div class="top-navigation__inner">
+  <span class="top-navigation__brand"><span class="top-navigation__brand-name">Recursos Humanos</span></span>
+  <div class="top-navigation__groups">
+   <ng-container *ngFor="let item of menuItems; trackBy: trackByCode">
+    <div class="top-navigation__group" *ngIf="item.children?.length; else enlaceSimple">
+     <button type="button" class="top-navigation__trigger" [matMenuTriggerFor]="subMenu"
+       [attr.aria-label]="'Abrir '+item.text">
+      <mat-icon *ngIf="item.icon">{{item.icon}}</mat-icon><span>{{item.text}}</span><mat-icon class="top-navigation__chevron">expand_more</mat-icon>
+     </button>
+     <mat-menu #subMenu="matMenu" class="hr-top-menu">
+      <ng-container *ngFor="let child of item.children; trackBy: trackByCode">
+       <a mat-menu-item *ngIf="child.routerLink" [routerLink]="child.routerLink">
+        <mat-icon *ngIf="child.icon">{{child.icon}}</mat-icon><span>{{child.text}}</span>
+       </a>
+      </ng-container>
+     </mat-menu>
+    </div>
+    <ng-template #enlaceSimple>
+     <a class="top-navigation__trigger" *ngIf="item.routerLink" [routerLink]="item.routerLink">
+      <mat-icon *ngIf="item.icon">{{item.icon}}</mat-icon><span>{{item.text}}</span>
+     </a>
+    </ng-template>
+   </ng-container>
+  </div>
+  <button class="top-navigation__logout" type="button" (click)="logOut()">
+   <mat-icon>logout</mat-icon><span>Salir</span>
+  </button>
+ </div>
+</nav>
