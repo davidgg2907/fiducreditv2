@@ -1,0 +1,50 @@
+name: Verificar 5 frontends FiduCredit V2
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'frontend-originacion/**'
+      - 'frontend-administracion/**'
+      - 'frontend-pld-operacion/**'
+      - 'frontend-pld-configuracion/**'
+      - 'frontend-configuracion-sistema/**'
+      - '.github/workflows/frontends-fiducredit.yml'
+  pull_request:
+    paths:
+      - 'frontend-originacion/**'
+      - 'frontend-administracion/**'
+      - 'frontend-pld-operacion/**'
+      - 'frontend-pld-configuracion/**'
+      - 'frontend-configuracion-sistema/**'
+      - '.github/workflows/frontends-fiducredit.yml'
+
+permissions:
+  contents: read
+
+jobs:
+  angular:
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        frontend:
+          - frontend-originacion
+          - frontend-administracion
+          - frontend-pld-operacion
+          - frontend-pld-configuracion
+          - frontend-configuracion-sistema
+    defaults:
+      run:
+        working-directory: ${{ matrix.frontend }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Instalar dependencias
+        run: npm install --no-audit --no-fund
+      - name: Verificar estructura heredada
+        run: npm run verify:archetype
+      - name: Compilar frontend independiente
+        run: npm run build
