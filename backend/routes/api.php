@@ -35,9 +35,11 @@ Route::middleware(AuthenticateAccessToken::class)->group(function (): void {
         Route::get('modules', [AccessCatalogController::class, 'modules']);
         Route::post('modules', [AccessCatalogController::class, 'storeModule']);
         Route::put('modules/{module}', [AccessCatalogController::class, 'updateModule'])->whereNumber('module');
+        Route::delete('modules/{module}', [AccessCatalogController::class, 'deleteModule'])->whereNumber('module');
         Route::get('actions', [AccessCatalogController::class, 'actions']);
         Route::post('actions', [AccessCatalogController::class, 'storeAction']);
         Route::put('actions/{action}', [AccessCatalogController::class, 'updateAction'])->whereNumber('action');
+        Route::delete('actions/{action}', [AccessCatalogController::class, 'deleteAction'])->whereNumber('action');
         Route::get('menus', [AccessCatalogController::class, 'menus']);
         Route::post('menus', [AccessCatalogController::class, 'storeMenu']);
         Route::put('menus/{menu}', [AccessCatalogController::class, 'updateMenu'])->whereNumber('menu');
