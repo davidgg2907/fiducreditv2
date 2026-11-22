@@ -5,17 +5,88 @@ namespace App\Http\Controllers;
 use App\Http\Requests\StoreCreditProductFieldRequest;
 use App\Http\Requests\UpdateCreditProductFieldRequest;
 use App\Http\Resources\CreditProductFieldResource;
-use App\Models\CreditProductField;
+use App\Services\CreditProductFieldService;
+use Illuminate\Http\JsonResponse;
+use Illuminate\Http\Request;
 
-final class CreditProductFieldController extends DomainResourceController
+final class CreditProductFieldController extends Controller
 {
-    protected string $modelClass = CreditProductField::class;
+    public function __construct(private readonly CreditProductFieldService $service)
+    {
+    }
 
-    protected string $resourceClass = CreditProductFieldResource::class;
+    public function index(Request $request): JsonResponse
+    {
+        $this->authorizeAction($request, 'view');
+        $query = $request->validate([
+            'per_page' => ['sometimes', 'integer', 'between:1,100'],
+            'sort' => ['sometimes', 'string', 'max:80'],
+            'direction' => ['sometimes', 'in:asc,desc'],
+            'include' => ['sometimes', 'string', 'max:500'],
+            'filter' => ['sometimes', 'array'],
+            'filter.*' => ['nullable', 'string', 'max:255'],
+        ]);
 
-    protected string $storeRequestClass = StoreCreditProductFieldRequest::class;
+        $records = CreditProductFieldResource::collection($this->service->paginate($query));
 
-    protected string $updateRequestClass = UpdateCreditProductFieldRequest::class;
+        return response()->json([
+            'isSuccess' => true,
+            'data' => $records->response()->getData(true),
+        ]);
+    }
 
-    protected bool $allowDirectWrites = true;
+    public function show(Request $request, string $id): JsonResponse
+    {
+        $this->authorizeAction($request, 'view');
+        $query = $request->validate([
+            'include' => ['sometimes', 'string', 'max:500'],
+        ]);
+
+        return response()->json([
+            'isSuccess' => true,
+            'data' => (new CreditProductFieldResource(
+                $this->service->find($id, $query['include'] ?? '')
+            ))->resolve(),
+        ]);
+    }
+
+    public function store(StoreCreditProductFieldRequest $request): JsonResponse
+    {
+        $this->authorizeAction($request, 'write');
+        
+
+        $record = $this->service->create($request->validated());
+
+        return response()->json([
+            'isSuccess' => true,
+            'data' => (new CreditProductFieldResource($record))->resolve(),
+        ], 201);
+    }
+
+    public function update(UpdateCreditProductFieldRequest $request, string $id): JsonResponse
+    {
+        $this->authorizeAction($request, 'write');
+        
+
+        $record = $this->service->update($id, $request->validated());
+
+        return response()->json([
+            'isSuccess' => true,
+            'data' => (new CreditProductFieldResource($record))->resolve(),
+        ]);
+    }
+
+    public function destroy(Request $request, string $id): JsonResponse
+    {
+        $this->authorizeAction($request, 'write');
+
+        abort(405, 'Eliminación física deshabilitada para proteger el historial.');
+    }
+
+    private function authorizeAction(Request $request, string $operation): void
+    {
+        $user = $request->user();
+        abort_unless($user?->is_superadmin === true, 403);
+        
+    }
 }

@@ -2,9 +2,35 @@
 
 namespace App\Http\Requests;
 
-use App\Models\CreditClientBankAccount;
+use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Validation\Rule;
 
-final class UpdateCreditClientBankAccountRequest extends DomainWriteRequest
+final class UpdateCreditClientBankAccountRequest extends FormRequest
 {
-    protected string $modelClass = CreditClientBankAccount::class;
+    public function authorize(): bool
+    {
+        $user = $this->user();
+
+        if ($user?->is_superadmin !== true) {
+            return false;
+        }
+
+        return true;
+    }
+
+    public function rules(): array
+    {
+        return [
+            'client_id' => ['sometimes', 'uuid', 'exists:credit_clients,id'],
+            'bank_code' => ['sometimes', 'nullable', 'string', 'max:5'],
+            'bank_name' => ['sometimes', 'string', 'max:255'],
+            'holder_name' => ['sometimes', 'string', 'max:255'],
+            'clabe' => ['sometimes', 'nullable', 'string', 'max:18'],
+            'account_last4' => ['sometimes', 'nullable', 'string', 'max:4'],
+            'account_type' => ['sometimes', 'string', 'max:255'],
+            'verified' => ['sometimes', 'boolean'],
+            'primary' => ['sometimes', 'boolean'],
+            'active' => ['sometimes', 'boolean'],
+        ];
+    }
 }

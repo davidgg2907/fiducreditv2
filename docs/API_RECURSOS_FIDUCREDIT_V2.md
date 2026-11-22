@@ -1,117 +1,83 @@
-# API de recursos de FiduCredit V2
+# FiduCredit V2 — API transaccional independiente por entidad
 
-**Etapa:** infraestructura CRUD preliminar para 5 frontends, sin reglas de negocio.
+## Arquitectura adoptada
 
-**Cobertura:** 83 entidades de dominio; 1 modelo, 1 controlador, 2 requests y 1 response (API Resource) por tabla; un servicio compartido. No se exponen tablas internas de Laravel como sesiones, tokens, caché o colas.
+El backend Laravel es único para los cinco frontends Angular y la base de datos compartida. No utiliza `DomainResourceController`, `DomainCrudService` ni `DomainWriteRequest` como CRUD genéricos.
 
-## Contrato
+Cada una de las 83 entidades tiene archivos independientes en las carpetas raíz existentes:
 
-- Base: `/api/v1/credit-clients` (nombres de tablas en kebab-case).
-- Listado: `GET /api/v1/credit-clients?per_page=25&filter[company_id]=UUID&include=company`
-- Detalle: `GET /api/v1/credit-clients/{uuid}?include=creditApplications`
-- Escritura habilitada: `POST`, `PUT`, `PATCH` para tablas que no están marcadas como operativas bloqueadas, exclusivamente para superadministración.
-- Borrado: `DELETE` devuelve 405 para preservar evidencia y relaciones.
-- Operaciones en créditos, pagos, disposiciones, devengos, contabilidad, casos PLD, reportes, historiales y tareas de workflow: escritura devuelve 405 y requerirá endpoint de caso de uso.
-- La lista permite filtros exactos por columna, ordenamiento y paginación hasta 100; includes simples de máximo seis relaciones declaradas.
-- Respuesta: `{ "isSuccess": true, "data": ... }`; listados contienen estructura de paginación Laravel.
+- `backend/app/Http/Controllers/{Entidad}Controller.php`: métodos HTTP explícitos `index`, `show`, `store`, `update`, `destroy`.
+- `backend/app/Http/Requests/Store{Entidad}Request.php` y `Update{Entidad}Request.php`: validaciones por columna, basadas en migraciones, que evolucionarán según cada flujo.
+- `backend/app/Http/Resources/{Entidad}Resource.php`: representación de respuesta; personalizar según visibilidad de datos y cada audiencia.
+- `backend/app/Models/{Entidad}.php`: entidad y asociaciones Eloquent.
+- `backend/app/Services/{Entidad}Service.php`: lógica de coordinación, transacciones y evolución de reglas por caso de uso.
+- `backend/app/Repositories/{Entidad}Repository.php`: persistencia Eloquent, consultas paginadas y relaciones, separadas del HTTP.
 
-## Seguridad y límites
+**No se generan reglas de negocio ficticias.** En futuras etapas, cada servicio coordinará reglas especializadas y repositorios en transacciones atómicas; pueden incorporarse componentes `Business` o acciones independientes cuando el proceso lo justifique.
 
-- Por ahora **solo superadministrador**. Los usuarios operativos y los cinco frontends todavía necesitan políticas de alcance por empresa/sucursal (no hay mapeo de institución a usuario). No se debe ampliar el acceso hasta implementar autorización multiinstitución.
-- Tablas PLD: además de la autenticación, requieren el permiso explícito `pld-data.view` o `pld-data.write` en el rol, sin habilitarlo automáticamente por ser superadministrador.
-- Las validaciones iniciales verifican tipos básicos de columnas, pero no todas las restricciones cruzadas. No se ha desarrollado auditoría completa de cambios ni protección selectiva de atributos sensibles: no habilitar escritura operativa en producción.
-- Los modelos reflejan las relaciones explícitas del diccionario; las relaciones generadas deben cotejarse con las migraciones antes de su uso productivo.
-- Los documentos y datos privados requieren API de almacenamiento seguro específica, no CRUD de rutas.
-- Las tablas de productos y versiones publicadas requieren inmutabilidad y publicación formal antes de autorizar uso real.
-- El código no contiene motores financieros, lógica de workflow, reglas PLD ni controles regulatorios certificados.
+## Rutas de API
 
-## Recursos generados
+El prefijo sigue siendo `/api/v1`. Los 83 recursos mantienen los nombres `credit-...` y `pld-...`, y parámetros cortos `{id}` compatibles con Symfony. El CRUD base permite consultas y algunas escrituras administrativas; no habilita por sí mismo los procesos financieros.
 
-- `credit_companies` → `CreditCompanyController` (CRUD parcial sin borrado).
-- `credit_branches` → `CreditBranchController` (CRUD parcial sin borrado).
-- `credit_advisors` → `CreditAdvisorController` (CRUD parcial sin borrado).
-- `credit_products` → `CreditProductController` (CRUD parcial sin borrado).
-- `credit_product_versions` → `CreditProductVersionController` (CRUD parcial sin borrado).
-- `credit_product_fees` → `CreditProductFeeController` (CRUD parcial sin borrado).
-- `credit_product_rules` → `CreditProductRuleController` (CRUD parcial sin borrado).
-- `credit_custom_fields` → `CreditCustomFieldController` (CRUD parcial sin borrado).
-- `credit_product_fields` → `CreditProductFieldController` (CRUD parcial sin borrado).
-- `credit_clients` → `CreditClientController` (CRUD parcial sin borrado).
-- `credit_client_addresses` → `CreditClientAddressController` (CRUD parcial sin borrado).
-- `credit_client_address_versions` → `CreditClientAddressVersionController` (CRUD parcial sin borrado).
-- `credit_client_bank_accounts` → `CreditClientBankAccountController` (CRUD parcial sin borrado).
-- `credit_document_types` → `CreditDocumentTypeController` (CRUD parcial sin borrado).
-- `credit_document_validation_rules` → `CreditDocumentValidationRuleController` (CRUD parcial sin borrado).
-- `credit_product_documents` → `CreditProductDocumentController` (CRUD parcial sin borrado).
-- `credit_applications` → `CreditApplicationController` (CRUD parcial sin borrado).
-- `credit_application_fields` → `CreditApplicationFieldController` (CRUD parcial sin borrado).
-- `credit_application_documents` → `CreditApplicationDocumentController` (CRUD parcial sin borrado).
-- `credit_document_checks` → `CreditDocumentCheckController` (solo lectura).
-- `credit_application_financial_items` → `CreditApplicationFinancialItemController` (CRUD parcial sin borrado).
-- `credit_application_financial_summaries` → `CreditApplicationFinancialSummaryController` (CRUD parcial sin borrado).
-- `credit_bureau_inquiries` → `CreditBureauInquiryController` (CRUD parcial sin borrado).
-- `credit_application_analyses` → `CreditApplicationAnalyseController` (CRUD parcial sin borrado).
-- `credit_application_decisions` → `CreditApplicationDecisionController` (solo lectura).
-- `credit_application_status_history` → `CreditApplicationStatusHistoryController` (solo lectura).
-- `credit_application_events` → `CreditApplicationEventController` (solo lectura).
-- `credit_application_consents` → `CreditApplicationConsentController` (CRUD parcial sin borrado).
-- `credit_application_guarantors` → `CreditApplicationGuarantorController` (CRUD parcial sin borrado).
-- `credit_application_conditions` → `CreditApplicationConditionController` (CRUD parcial sin borrado).
-- `credit_workflows` → `CreditWorkflowController` (CRUD parcial sin borrado).
-- `credit_workflow_versions` → `CreditWorkflowVersionController` (CRUD parcial sin borrado).
-- `credit_workflow_steps` → `CreditWorkflowStepController` (CRUD parcial sin borrado).
-- `credit_workflow_transitions` → `CreditWorkflowTransitionController` (CRUD parcial sin borrado).
-- `credit_workflow_step_roles` → `CreditWorkflowStepRoleController` (CRUD parcial sin borrado).
-- `credit_workflow_step_rules` → `CreditWorkflowStepRuleController` (CRUD parcial sin borrado).
-- `credit_workflow_instances` → `CreditWorkflowInstanceController` (solo lectura).
-- `credit_workflow_tasks` → `CreditWorkflowTaskController` (solo lectura).
-- `credit_workflow_task_history` → `CreditWorkflowTaskHistoryController` (solo lectura).
-- `credit_workflow_sla` → `CreditWorkflowSlaController` (CRUD parcial sin borrado).
-- `credit_line_policies` → `CreditLinePolicyController` (CRUD parcial sin borrado).
-- `credit_lines` → `CreditLineController` (solo lectura).
-- `credit_line_limit_history` → `CreditLineLimitHistoryController` (solo lectura).
-- `credit_line_movements` → `CreditLineMovementController` (solo lectura).
-- `credit_drawdowns` → `CreditDrawdownController` (solo lectura).
-- `credit_contracts` → `CreditContractController` (solo lectura).
-- `credit_loans` → `CreditLoanController` (solo lectura).
-- `credit_loan_terms` → `CreditLoanTermController` (solo lectura).
-- `credit_amortization_schedules` → `CreditAmortizationScheduleController` (solo lectura).
-- `credit_amortization_installments` → `CreditAmortizationInstallmentController` (solo lectura).
-- `credit_interest_accruals` → `CreditInterestAccrualController` (solo lectura).
-- `credit_penalty_accruals` → `CreditPenaltyAccrualController` (solo lectura).
-- `credit_loan_balances` → `CreditLoanBalanceController` (solo lectura).
-- `credit_delinquency_snapshots` → `CreditDelinquencySnapshotController` (solo lectura).
-- `credit_loan_rate_revisions` → `CreditLoanRateRevisionController` (solo lectura).
-- `credit_business_calendars` → `CreditBusinessCalendarController` (CRUD parcial sin borrado).
-- `credit_business_holidays` → `CreditBusinessHolidayController` (CRUD parcial sin borrado).
-- `credit_product_calendars` → `CreditProductCalendarController` (CRUD parcial sin borrado).
-- `credit_payment_channels` → `CreditPaymentChannelController` (CRUD parcial sin borrado).
-- `credit_payments` → `CreditPaymentController` (solo lectura).
-- `credit_payment_allocations` → `CreditPaymentAllocationController` (solo lectura).
-- `credit_loan_ledger_entries` → `CreditLoanLedgerEntryController` (solo lectura).
-- `credit_loan_events` → `CreditLoanEventController` (solo lectura).
-- `credit_payoff_quotes` → `CreditPayoffQuoteController` (solo lectura).
-- `credit_payoff_quote_items` → `CreditPayoffQuoteItemController` (solo lectura).
-- `credit_settlements` → `CreditSettlementController` (solo lectura).
-- `credit_loan_restructures` → `CreditLoanRestructureController` (solo lectura).
-- `credit_loan_adjustments` → `CreditLoanAdjustmentController` (solo lectura).
-- `credit_payment_application_policies` → `CreditPaymentApplicationPolicyController` (CRUD parcial sin borrado).
-- `credit_payment_application_priorities` → `CreditPaymentApplicationPriorityController` (CRUD parcial sin borrado).
-- `pld_policies` → `PldPolicyController` (CRUD parcial sin borrado).
-- `pld_policy_versions` → `PldPolicyVersionController` (CRUD parcial sin borrado).
-- `pld_rules` → `PldRuleController` (CRUD parcial sin borrado).
-- `pld_product_policies` → `PldProductPolicyController` (CRUD parcial sin borrado).
-- `pld_client_profiles` → `PldClientProfileController` (CRUD parcial sin borrado).
-- `pld_beneficial_owners` → `PldBeneficialOwnerController` (CRUD parcial sin borrado).
-- `pld_screenings` → `PldScreeningController` (solo lectura).
-- `pld_monitoring_events` → `PldMonitoringEventController` (solo lectura).
-- `pld_alerts` → `PldAlertController` (solo lectura).
-- `pld_alert_actions` → `PldAlertActionController` (solo lectura).
-- `pld_cases` → `PldCaseController` (solo lectura).
-- `pld_case_events` → `PldCaseEventController` (solo lectura).
-- `pld_reports` → `PldReportController` (solo lectura).
+- `GET /api/v1/credit-clients?per_page=25&filter[company_id]={uuid}`
+- `GET /api/v1/credit-applications/{id}?include=creditApplicationDocuments,creditApplicationFinancialItems`
+- `POST /api/v1/credit-applications`: captura compuesta de un **borrador**, sus conceptos financieros, consentimientos y archivos.
+- `POST /api/v1/credit-applications/{id}/financial-items/batch`: uno o varios conceptos, hasta 200, con una transacción SQL y control de estado.
+- `POST /api/v1/credit-application-financial-items`: captura individual, asociada a la solicitud.
 
-## Estructura plana definitiva
+## Captura compuesta de solicitudes
 
-Los 83 controladores se alojan en `backend/app/Http/Controllers`, los 83 modelos en `backend/app/Models`, las solicitudes en `backend/app/Http/Requests`, las respuestas en `backend/app/Http/Resources` y los servicios en `backend/app/Services`. Los namespaces ahora son PSR-4 estándar de Laravel; no hay carpeta ni namespace `Domain`.
-Las 83 rutas API llevan el parámetro explícito `{id}` para evitar el límite de 32 caracteres de Symfony.
+`POST /api/v1/credit-applications` acepta **multipart/form-data** cuando hay archivos y permite arreglos anidados:
+
+- Campos de la tabla `credit_applications`: cliente, producto, asesor, sucursal, versión de domicilio, monto, plazo, folio y datos declarados.
+- `financial_items[n][entry_type|concept|amount|frequency|...]`.
+- `documents[n][document_type_id]` y `documents[n][file]` (archivo real, máximo 10 MiB).
+- `consents[n][consent_type|version|accepted]`.
+
+El servicio abre una transacción, crea la solicitud, inserta conceptos, guarda archivos en disco privado, versiona los documentos de esa nueva solicitud, registra consentimientos y un evento de auditoría, y devuelve el expediente con relaciones. En caso de rollback elimina los archivos recién creados. `created_by`, `captured_by` y `uploaded_by` se toman del usuario autenticado, no del JSON enviado por el cliente.
+
+**Limitaciones:** la operación crea una solicitud en estado `captured`; no la autoriza ni la presenta al workflow. El versionado posterior de documentos, la verificación bancaria/KYC y el almacenamiento de evidencias regulatorias siguen pendientes de su respectivo caso de uso.
+
+## Captura masiva
+
+`POST /api/v1/credit-applications/{id}/financial-items/batch`:
+
+```json
+{
+  "items": [
+    {
+      "entry_type": "income",
+      "concept": "Sueldo",
+      "amount": "25000.00",
+      "frequency": "monthly"
+    },
+    {
+      "entry_type": "expense",
+      "concept": "Renta",
+      "amount": "6000.00",
+      "frequency": "monthly"
+    }
+  ]
+}
+```
+
+Se valida la colección y se registra con un solo `INSERT` de múltiples filas dentro de una transacción. Se bloquea la solicitud mediante `lockForUpdate` y se verifica que siga en captura. No se pueden modificar solicitudes autorizadas mediante esta operación.
+
+## Seguridad
+
+- Todas las rutas están autenticadas mediante el middleware de token existente.
+- Por ahora, se exige `is_superadmin` para consumir estos recursos. Los módulos operativos por empresa/sucursal y los perfiles separados aún requieren autorización propia.
+- PLD requiere además permisos `pld-data.view` y `pld-data.write`.
+- No se admiten borrados físicos: `DELETE` devuelve 405.
+- Las escrituras directas sobre movimientos financieros, saldos, historiales, workflow runtime y otros recursos de alto riesgo permanecen bloqueadas (405). Sus futuras operaciones deberán pasar por servicios de negocio específicos.
+- Se restringió la escritura directa de documentos del expediente para evitar referencias arbitrarias a rutas de almacenamiento y sobreescritura del historial.
+
+## Validación y requisitos pendientes
+
+- Las reglas de `FormRequest` son estructurales; no sustituyen verificación multiinstitución, identidad, límites financieros, KYC, segregación de funciones ni controles PLD.
+- Versiones publicadas de productos, reglas y flujos requieren políticas de inmutabilidad antes del uso productivo.
+- Falta reforzar autorización y filtrado por compañía/sucursal, visibilidad de campos sensibles, auditoría de cada modificación, validación cruzada de relaciones y límites por estado.
+- Los repositorios actuales permiten ordenar por columnas físicas con validación de columnas existentes. Se deben definir índices y filtros propios de cada caso de uso para producción.
+- La entrega incluye una prueba estructural de que todos los controladores declaran sus métodos y tienen modelos, servicios, repositorios y requests propios; GitHub Actions verifica sintaxis y rutas.
+
+**No ejecutar procesos reales de crédito, pago, dispersión, liquidación o reporte regulatorio usando solamente este andamiaje.** No se han implementado todavía las reglas financieras ni la autorización operativa definitiva.

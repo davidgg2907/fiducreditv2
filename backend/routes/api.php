@@ -33,6 +33,13 @@ Route::middleware(AuthenticateAccessToken::class)->group(function (): void {
 });
 
 
+// Captura masiva transaccional de ingresos y egresos de una solicitud.
+Route::middleware(AuthenticateAccessToken::class)
+    ->post(
+        'v1/credit-applications/{id}/financial-items/batch',
+        [\App\Http\Controllers\CreditApplicationFinancialItemController::class, 'storeBatch']
+    );
+
 // Los cinco frontends comparten estos recursos. Solo acceso administrativo
 // hasta implementar políticas operativas por empresa, sucursal y flujo.
 Route::middleware(AuthenticateAccessToken::class)

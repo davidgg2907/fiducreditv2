@@ -11,6 +11,8 @@ class CreditApplicationEvent extends Model
 {
     use HasUuids;
 
+    public $timestamps = false;
+
     protected $table = 'credit_application_events';
 
     protected $guarded = [

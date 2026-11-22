@@ -5,17 +5,92 @@ namespace App\Http\Controllers;
 use App\Http\Requests\StoreCreditApplicationDocumentRequest;
 use App\Http\Requests\UpdateCreditApplicationDocumentRequest;
 use App\Http\Resources\CreditApplicationDocumentResource;
-use App\Models\CreditApplicationDocument;
+use App\Services\CreditApplicationDocumentService;
+use Illuminate\Http\JsonResponse;
+use Illuminate\Http\Request;
 
-final class CreditApplicationDocumentController extends DomainResourceController
+final class CreditApplicationDocumentController extends Controller
 {
-    protected string $modelClass = CreditApplicationDocument::class;
+    public function __construct(private readonly CreditApplicationDocumentService $service)
+    {
+    }
 
-    protected string $resourceClass = CreditApplicationDocumentResource::class;
+    public function index(Request $request): JsonResponse
+    {
+        $this->authorizeAction($request, 'view');
+        $query = $request->validate([
+            'per_page' => ['sometimes', 'integer', 'between:1,100'],
+            'sort' => ['sometimes', 'string', 'max:80'],
+            'direction' => ['sometimes', 'in:asc,desc'],
+            'include' => ['sometimes', 'string', 'max:500'],
+            'filter' => ['sometimes', 'array'],
+            'filter.*' => ['nullable', 'string', 'max:255'],
+        ]);
 
-    protected string $storeRequestClass = StoreCreditApplicationDocumentRequest::class;
+        $records = CreditApplicationDocumentResource::collection($this->service->paginate($query));
 
-    protected string $updateRequestClass = UpdateCreditApplicationDocumentRequest::class;
+        return response()->json([
+            'isSuccess' => true,
+            'data' => $records->response()->getData(true),
+        ]);
+    }
 
-    protected bool $allowDirectWrites = true;
+    public function show(Request $request, string $id): JsonResponse
+    {
+        $this->authorizeAction($request, 'view');
+        $query = $request->validate([
+            'include' => ['sometimes', 'string', 'max:500'],
+        ]);
+
+        return response()->json([
+            'isSuccess' => true,
+            'data' => (new CreditApplicationDocumentResource(
+                $this->service->find($id, $query['include'] ?? '')
+            ))->resolve(),
+        ]);
+    }
+
+    public function store(StoreCreditApplicationDocumentRequest $request): JsonResponse
+    {
+        $this->authorizeAction($request, 'write');
+        
+
+        abort(405, 'Utiliza la carga segura de documentos del expediente.');
+
+        $record = $this->service->create($request->validated());
+
+        return response()->json([
+            'isSuccess' => true,
+            'data' => (new CreditApplicationDocumentResource($record))->resolve(),
+        ], 201);
+    }
+
+    public function update(UpdateCreditApplicationDocumentRequest $request, string $id): JsonResponse
+    {
+        $this->authorizeAction($request, 'write');
+        
+
+        abort(405, 'Los documentos se versionan; no se editan.');
+
+        $record = $this->service->update($id, $request->validated());
+
+        return response()->json([
+            'isSuccess' => true,
+            'data' => (new CreditApplicationDocumentResource($record))->resolve(),
+        ]);
+    }
+
+    public function destroy(Request $request, string $id): JsonResponse
+    {
+        $this->authorizeAction($request, 'write');
+
+        abort(405, 'Eliminación física deshabilitada para proteger el historial.');
+    }
+
+    private function authorizeAction(Request $request, string $operation): void
+    {
+        $user = $request->user();
+        abort_unless($user?->is_superadmin === true, 403);
+        
+    }
 }
