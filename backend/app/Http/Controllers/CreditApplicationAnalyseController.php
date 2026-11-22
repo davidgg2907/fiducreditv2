@@ -5,17 +5,88 @@ namespace App\Http\Controllers;
 use App\Http\Requests\StoreCreditApplicationAnalyseRequest;
 use App\Http\Requests\UpdateCreditApplicationAnalyseRequest;
 use App\Http\Resources\CreditApplicationAnalyseResource;
-use App\Models\CreditApplicationAnalyse;
+use App\Services\CreditApplicationAnalyseService;
+use Illuminate\Http\JsonResponse;
+use Illuminate\Http\Request;
 
-final class CreditApplicationAnalyseController extends DomainResourceController
+final class CreditApplicationAnalyseController extends Controller
 {
-    protected string $modelClass = CreditApplicationAnalyse::class;
+    public function __construct(private readonly CreditApplicationAnalyseService $service)
+    {
+    }
 
-    protected string $resourceClass = CreditApplicationAnalyseResource::class;
+    public function index(Request $request): JsonResponse
+    {
+        $this->authorizeAction($request, 'view');
+        $query = $request->validate([
+            'per_page' => ['sometimes', 'integer', 'between:1,100'],
+            'sort' => ['sometimes', 'string', 'max:80'],
+            'direction' => ['sometimes', 'in:asc,desc'],
+            'include' => ['sometimes', 'string', 'max:500'],
+            'filter' => ['sometimes', 'array'],
+            'filter.*' => ['nullable', 'string', 'max:255'],
+        ]);
 
-    protected string $storeRequestClass = StoreCreditApplicationAnalyseRequest::class;
+        $records = CreditApplicationAnalyseResource::collection($this->service->paginate($query));
 
-    protected string $updateRequestClass = UpdateCreditApplicationAnalyseRequest::class;
+        return response()->json([
+            'isSuccess' => true,
+            'data' => $records->response()->getData(true),
+        ]);
+    }
 
-    protected bool $allowDirectWrites = true;
+    public function show(Request $request, string $id): JsonResponse
+    {
+        $this->authorizeAction($request, 'view');
+        $query = $request->validate([
+            'include' => ['sometimes', 'string', 'max:500'],
+        ]);
+
+        return response()->json([
+            'isSuccess' => true,
+            'data' => (new CreditApplicationAnalyseResource(
+                $this->service->find($id, $query['include'] ?? '')
+            ))->resolve(),
+        ]);
+    }
+
+    public function store(StoreCreditApplicationAnalyseRequest $request): JsonResponse
+    {
+        $this->authorizeAction($request, 'write');
+        
+
+        $record = $this->service->create($request->validated());
+
+        return response()->json([
+            'isSuccess' => true,
+            'data' => (new CreditApplicationAnalyseResource($record))->resolve(),
+        ], 201);
+    }
+
+    public function update(UpdateCreditApplicationAnalyseRequest $request, string $id): JsonResponse
+    {
+        $this->authorizeAction($request, 'write');
+        
+
+        $record = $this->service->update($id, $request->validated());
+
+        return response()->json([
+            'isSuccess' => true,
+            'data' => (new CreditApplicationAnalyseResource($record))->resolve(),
+        ]);
+    }
+
+    public function destroy(Request $request, string $id): JsonResponse
+    {
+        $this->authorizeAction($request, 'write');
+
+        abort(405, 'Eliminación física deshabilitada para proteger el historial.');
+    }
+
+    private function authorizeAction(Request $request, string $operation): void
+    {
+        $user = $request->user();
+        abort_unless($user?->is_superadmin === true, 403);
+        
+    }
 }

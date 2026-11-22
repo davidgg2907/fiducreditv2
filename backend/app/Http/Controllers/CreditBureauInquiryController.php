@@ -5,17 +5,88 @@ namespace App\Http\Controllers;
 use App\Http\Requests\StoreCreditBureauInquiryRequest;
 use App\Http\Requests\UpdateCreditBureauInquiryRequest;
 use App\Http\Resources\CreditBureauInquiryResource;
-use App\Models\CreditBureauInquiry;
+use App\Services\CreditBureauInquiryService;
+use Illuminate\Http\JsonResponse;
+use Illuminate\Http\Request;
 
-final class CreditBureauInquiryController extends DomainResourceController
+final class CreditBureauInquiryController extends Controller
 {
-    protected string $modelClass = CreditBureauInquiry::class;
+    public function __construct(private readonly CreditBureauInquiryService $service)
+    {
+    }
 
-    protected string $resourceClass = CreditBureauInquiryResource::class;
+    public function index(Request $request): JsonResponse
+    {
+        $this->authorizeAction($request, 'view');
+        $query = $request->validate([
+            'per_page' => ['sometimes', 'integer', 'between:1,100'],
+            'sort' => ['sometimes', 'string', 'max:80'],
+            'direction' => ['sometimes', 'in:asc,desc'],
+            'include' => ['sometimes', 'string', 'max:500'],
+            'filter' => ['sometimes', 'array'],
+            'filter.*' => ['nullable', 'string', 'max:255'],
+        ]);
 
-    protected string $storeRequestClass = StoreCreditBureauInquiryRequest::class;
+        $records = CreditBureauInquiryResource::collection($this->service->paginate($query));
 
-    protected string $updateRequestClass = UpdateCreditBureauInquiryRequest::class;
+        return response()->json([
+            'isSuccess' => true,
+            'data' => $records->response()->getData(true),
+        ]);
+    }
 
-    protected bool $allowDirectWrites = true;
+    public function show(Request $request, string $id): JsonResponse
+    {
+        $this->authorizeAction($request, 'view');
+        $query = $request->validate([
+            'include' => ['sometimes', 'string', 'max:500'],
+        ]);
+
+        return response()->json([
+            'isSuccess' => true,
+            'data' => (new CreditBureauInquiryResource(
+                $this->service->find($id, $query['include'] ?? '')
+            ))->resolve(),
+        ]);
+    }
+
+    public function store(StoreCreditBureauInquiryRequest $request): JsonResponse
+    {
+        $this->authorizeAction($request, 'write');
+        
+
+        $record = $this->service->create($request->validated());
+
+        return response()->json([
+            'isSuccess' => true,
+            'data' => (new CreditBureauInquiryResource($record))->resolve(),
+        ], 201);
+    }
+
+    public function update(UpdateCreditBureauInquiryRequest $request, string $id): JsonResponse
+    {
+        $this->authorizeAction($request, 'write');
+        
+
+        $record = $this->service->update($id, $request->validated());
+
+        return response()->json([
+            'isSuccess' => true,
+            'data' => (new CreditBureauInquiryResource($record))->resolve(),
+        ]);
+    }
+
+    public function destroy(Request $request, string $id): JsonResponse
+    {
+        $this->authorizeAction($request, 'write');
+
+        abort(405, 'Eliminación física deshabilitada para proteger el historial.');
+    }
+
+    private function authorizeAction(Request $request, string $operation): void
+    {
+        $user = $request->user();
+        abort_unless($user?->is_superadmin === true, 403);
+        
+    }
 }

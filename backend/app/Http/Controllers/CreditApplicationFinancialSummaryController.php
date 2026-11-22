@@ -5,17 +5,88 @@ namespace App\Http\Controllers;
 use App\Http\Requests\StoreCreditApplicationFinancialSummaryRequest;
 use App\Http\Requests\UpdateCreditApplicationFinancialSummaryRequest;
 use App\Http\Resources\CreditApplicationFinancialSummaryResource;
-use App\Models\CreditApplicationFinancialSummary;
+use App\Services\CreditApplicationFinancialSummaryService;
+use Illuminate\Http\JsonResponse;
+use Illuminate\Http\Request;
 
-final class CreditApplicationFinancialSummaryController extends DomainResourceController
+final class CreditApplicationFinancialSummaryController extends Controller
 {
-    protected string $modelClass = CreditApplicationFinancialSummary::class;
+    public function __construct(private readonly CreditApplicationFinancialSummaryService $service)
+    {
+    }
 
-    protected string $resourceClass = CreditApplicationFinancialSummaryResource::class;
+    public function index(Request $request): JsonResponse
+    {
+        $this->authorizeAction($request, 'view');
+        $query = $request->validate([
+            'per_page' => ['sometimes', 'integer', 'between:1,100'],
+            'sort' => ['sometimes', 'string', 'max:80'],
+            'direction' => ['sometimes', 'in:asc,desc'],
+            'include' => ['sometimes', 'string', 'max:500'],
+            'filter' => ['sometimes', 'array'],
+            'filter.*' => ['nullable', 'string', 'max:255'],
+        ]);
 
-    protected string $storeRequestClass = StoreCreditApplicationFinancialSummaryRequest::class;
+        $records = CreditApplicationFinancialSummaryResource::collection($this->service->paginate($query));
 
-    protected string $updateRequestClass = UpdateCreditApplicationFinancialSummaryRequest::class;
+        return response()->json([
+            'isSuccess' => true,
+            'data' => $records->response()->getData(true),
+        ]);
+    }
 
-    protected bool $allowDirectWrites = true;
+    public function show(Request $request, string $id): JsonResponse
+    {
+        $this->authorizeAction($request, 'view');
+        $query = $request->validate([
+            'include' => ['sometimes', 'string', 'max:500'],
+        ]);
+
+        return response()->json([
+            'isSuccess' => true,
+            'data' => (new CreditApplicationFinancialSummaryResource(
+                $this->service->find($id, $query['include'] ?? '')
+            ))->resolve(),
+        ]);
+    }
+
+    public function store(StoreCreditApplicationFinancialSummaryRequest $request): JsonResponse
+    {
+        $this->authorizeAction($request, 'write');
+        
+
+        $record = $this->service->create($request->validated());
+
+        return response()->json([
+            'isSuccess' => true,
+            'data' => (new CreditApplicationFinancialSummaryResource($record))->resolve(),
+        ], 201);
+    }
+
+    public function update(UpdateCreditApplicationFinancialSummaryRequest $request, string $id): JsonResponse
+    {
+        $this->authorizeAction($request, 'write');
+        
+
+        $record = $this->service->update($id, $request->validated());
+
+        return response()->json([
+            'isSuccess' => true,
+            'data' => (new CreditApplicationFinancialSummaryResource($record))->resolve(),
+        ]);
+    }
+
+    public function destroy(Request $request, string $id): JsonResponse
+    {
+        $this->authorizeAction($request, 'write');
+
+        abort(405, 'Eliminación física deshabilitada para proteger el historial.');
+    }
+
+    private function authorizeAction(Request $request, string $operation): void
+    {
+        $user = $request->user();
+        abort_unless($user?->is_superadmin === true, 403);
+        
+    }
 }
