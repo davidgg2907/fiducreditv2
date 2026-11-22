@@ -45,8 +45,9 @@ final class AccessRoleController extends Controller
     {
         DB::transaction(function () use ($role) {
             $target = Role::lockForUpdate()->findOrFail($role);
-            if (User::where('role_id', $target->id)->exists()) {
-                throw ValidationException::withMessages(['role' => 'El rol tiene usuarios asignados y no puede eliminarse.']);
+            if (User::where('role_id', $target->id)->exists()
+                || DB::table('credit_workflow_step_roles')->where('role_id', $target->id)->exists()) {
+                throw ValidationException::withMessages(['role' => 'El rol está en uso por usuarios o flujos y no puede eliminarse.']);
             }
             $target->delete();
         }, 3);
