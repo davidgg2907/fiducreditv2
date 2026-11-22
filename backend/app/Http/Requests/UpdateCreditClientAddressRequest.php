@@ -2,9 +2,29 @@
 
 namespace App\Http\Requests;
 
-use App\Models\CreditClientAddress;
+use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Validation\Rule;
 
-final class UpdateCreditClientAddressRequest extends DomainWriteRequest
+final class UpdateCreditClientAddressRequest extends FormRequest
 {
-    protected string $modelClass = CreditClientAddress::class;
+    public function authorize(): bool
+    {
+        $user = $this->user();
+
+        if ($user?->is_superadmin !== true) {
+            return false;
+        }
+
+        return true;
+    }
+
+    public function rules(): array
+    {
+        return [
+            'client_id' => ['sometimes', 'uuid', 'exists:credit_clients,id'],
+            'address_type' => ['sometimes', 'string', 'max:255'],
+            'primary' => ['sometimes', 'boolean'],
+            'active' => ['sometimes', 'boolean'],
+        ];
+    }
 }
