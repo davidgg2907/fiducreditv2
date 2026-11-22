@@ -8,6 +8,8 @@ on:
       - 'backend/app/Http/Requests/**'
       - 'backend/app/Http/Resources/**'
       - 'backend/app/Services/**'
+      - 'backend/app/Repositories/**'
+      - 'backend/tests/Feature/DomainApiRefactorTest.php'
       - 'backend/composer.json'
       - 'backend/routes/api.php'
       - '.github/workflows/domain-api.yml'
@@ -19,6 +21,8 @@ on:
       - 'backend/app/Http/Requests/**'
       - 'backend/app/Http/Resources/**'
       - 'backend/app/Services/**'
+      - 'backend/app/Repositories/**'
+      - 'backend/tests/Feature/DomainApiRefactorTest.php'
       - 'backend/composer.json'
       - 'backend/routes/api.php'
       - '.github/workflows/domain-api.yml'
@@ -43,7 +47,7 @@ jobs:
       - run: composer install --prefer-dist --no-interaction --no-progress
       - name: Verificar formato y sintaxis PHP
         run: |
-          find app/Models app/Http/Controllers app/Http/Requests app/Http/Resources app/Services -type f -name '*.php' -print0 | xargs -0 -n1 php -l
+          find app/Models app/Http/Controllers app/Http/Requests app/Http/Resources app/Services app/Repositories -type f -name '*.php' -print0 | xargs -0 -n1 php -l
           php -l routes/api.php
       - name: Registrar rutas de API
         env:
@@ -56,3 +60,12 @@ jobs:
         run: |
           php artisan route:list --path=api/v1 --json > /tmp/fiducredit-api-routes.json
           php -r '$r=json_decode(file_get_contents("/tmp/fiducredit-api-routes.json"), true); if(count($r)<400){fwrite(STDERR, "Faltan rutas de dominio: ".count($r)); exit(1);} echo count($r)." rutas registradas\n";'
+      - name: Verificar contratos de recursos y autorización
+        env:
+          APP_ENV: testing
+          APP_KEY: base64:AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=
+          DB_CONNECTION: sqlite
+          DB_DATABASE: ':memory:'
+          CACHE_STORE: array
+          SESSION_DRIVER: array
+        run: php artisan test --filter=DomainApiRefactorTest
