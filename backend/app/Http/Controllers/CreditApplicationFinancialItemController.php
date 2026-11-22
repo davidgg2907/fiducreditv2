@@ -3,11 +3,13 @@
 namespace App\Http\Controllers;
 
 use App\Http\Requests\StoreCreditApplicationFinancialItemRequest;
+use App\Http\Requests\StoreCreditApplicationFinancialItemsBatchRequest;
 use App\Http\Requests\UpdateCreditApplicationFinancialItemRequest;
 use App\Http\Resources\CreditApplicationFinancialItemResource;
 use App\Services\CreditApplicationFinancialItemService;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
+use App\Http\Resources\CreditApplicationFinancialItemResource;
 
 final class CreditApplicationFinancialItemController extends Controller
 {
@@ -74,6 +76,24 @@ final class CreditApplicationFinancialItemController extends Controller
             'isSuccess' => true,
             'data' => (new CreditApplicationFinancialItemResource($record))->resolve(),
         ]);
+    }
+
+    public function storeBatch(
+        StoreCreditApplicationFinancialItemsBatchRequest $request,
+        string $id
+    ): JsonResponse {
+        $this->authorizeAction($request, 'write');
+
+        $items = $this->service->createBatch(
+            $id,
+            $request->validated()['items'],
+            (int) $request->user()->id
+        );
+
+        return response()->json([
+            'isSuccess' => true,
+            'data' => CreditApplicationFinancialItemResource::collection($items)->resolve(),
+        ], 201);
     }
 
     public function destroy(Request $request, string $id): JsonResponse

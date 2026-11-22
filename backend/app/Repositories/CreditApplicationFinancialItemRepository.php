@@ -7,6 +7,8 @@ use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Relations\Relation;
 use Illuminate\Pagination\LengthAwarePaginator;
 use Illuminate\Support\Facades\Schema;
+use Illuminate\Support\Str;
+use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Validation\ValidationException;
 
 class CreditApplicationFinancialItemRepository
@@ -62,6 +64,36 @@ class CreditApplicationFinancialItemRepository
         $record->save();
 
         return $record->refresh();
+    }
+
+    public function insertBatch(
+        string $applicationId,
+        array $items,
+        int $actorId
+    ): Collection {
+        $timestamp = now();
+        $ids = [];
+        $rows = [];
+
+        foreach ($items as $item) {
+            $id = (string) Str::uuid();
+            $ids[] = $id;
+            $rows[] = [
+                ...$item,
+                'id' => $id,
+                'application_id' => $applicationId,
+                'captured_by' => $actorId,
+                'verified' => false,
+                'created_at' => $timestamp,
+                'updated_at' => $timestamp,
+            ];
+        }
+
+        CreditApplicationFinancialItem::query()->insert($rows);
+
+        return CreditApplicationFinancialItem::query()
+            ->whereIn('id', $ids)
+            ->get();
     }
 
     private function includeRelations(Builder $query, string $include): void
