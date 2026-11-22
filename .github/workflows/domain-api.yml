@@ -10,6 +10,7 @@ on:
       - 'backend/app/Services/**'
       - 'backend/app/Repositories/**'
       - 'backend/tests/Feature/DomainApiRefactorTest.php'
+      - 'backend/tests/Feature/CreditApplicationCaptureTest.php'
       - 'backend/composer.json'
       - 'backend/routes/api.php'
       - '.github/workflows/domain-api.yml'
@@ -23,6 +24,7 @@ on:
       - 'backend/app/Services/**'
       - 'backend/app/Repositories/**'
       - 'backend/tests/Feature/DomainApiRefactorTest.php'
+      - 'backend/tests/Feature/CreditApplicationCaptureTest.php'
       - 'backend/composer.json'
       - 'backend/routes/api.php'
       - '.github/workflows/domain-api.yml'
@@ -68,4 +70,6 @@ jobs:
           DB_DATABASE: ':memory:'
           CACHE_STORE: array
           SESSION_DRIVER: array
-        run: php artisan test --filter=DomainApiRefactorTest
+        run: |
+          php artisan test --filter=DomainApiRefactorTest
+          php artisan test --filter=CreditApplicationCaptureTest
