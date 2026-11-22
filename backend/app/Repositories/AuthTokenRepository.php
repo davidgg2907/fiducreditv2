@@ -19,13 +19,13 @@ class AuthTokenRepository
     {
         $candidate = User::where('email', $email)->first();
 
-        if (!$candidate || !Hash::check($password, $candidate->password)) {
+        if (!$candidate || !$candidate->is_active || !Hash::check($password, $candidate->password)) {
             return null;
         }
 
         return DB::transaction(function () use ($candidate, $password, $remember, $code, $totp) {
             $user = User::lockForUpdate()->find($candidate->id);
-            if (!$user || $user->password !== $candidate->password || $user->email !== $candidate->email) {
+            if (!$user || !$user->is_active || $user->password !== $candidate->password || $user->email !== $candidate->email) {
                 return null;
             }
 
@@ -68,7 +68,7 @@ class AuthTokenRepository
         return DB::transaction(function () use ($userId, $credential) {
             $user = User::lockForUpdate()->find($userId);
             $session = $this->session($userId);
-            if (!$user || !$session || !$this->matchesRefresh($session, $credential)) {
+            if (!$user || !$user->is_active || !$session || !$this->matchesRefresh($session, $credential)) {
                 return null;
             }
 
@@ -94,7 +94,7 @@ class AuthTokenRepository
         return DB::transaction(function () use ($userId, $hash) {
             $user = User::lockForUpdate()->find($userId);
             $session = $this->session($userId);
-            if (!$user || !$session || !hash_equals($session->access_token_id, $hash)) {
+            if (!$user || !$user->is_active || !$session || !hash_equals($session->access_token_id, $hash)) {
                 return null;
             }
             if (!$this->isActive($session)) {
