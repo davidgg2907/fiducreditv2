@@ -49,6 +49,12 @@ final class CreditAdministrationSeeder extends Seeder
                 PldCasesSeeder::class,
                 PldCaseEventsSeeder::class,
                 PldReportsSeeder::class,
+                CreditPaymentApplicationPoliciesSeeder::class,
+                CreditPaymentApplicationPrioritiesSeeder::class,
+                CreditBusinessCalendarsSeeder::class,
+                CreditBusinessHolidaysSeeder::class,
+                CreditLoanRateRevisionsSeeder::class,
+                CreditProductCalendarsSeeder::class,
             ]);
         });
     }
