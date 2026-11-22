@@ -714,7 +714,84 @@ final class CreditAdministrationFixtures
       "occurred_at": "2026-11-21 15:05:00"
     }
   ],
-  "pld_reports": []
+  "pld_reports": [],
+  "credit_payment_application_policies": [
+    {
+      "product_version_id": "@origin:credit_product_versions",
+      "prepayment_mode": "reduce_term",
+      "allow_early_payment": true,
+      "recalculate_interest_after_prepayment": true,
+      "allow_overpayment": false,
+      "surplus_handling": "unapplied",
+      "enabled": true
+    }
+  ],
+  "credit_payment_application_priorities": [
+    {
+      "_key": "payment_priority.penalty_interest",
+      "policy_id": "@ref:credit_payment_application_policies",
+      "component": "penalty_interest",
+      "priority": 1,
+      "enabled": true
+    },
+    {
+      "_key": "payment_priority.fees",
+      "policy_id": "@ref:credit_payment_application_policies",
+      "component": "fees",
+      "priority": 2,
+      "enabled": true
+    },
+    {
+      "_key": "payment_priority.tax",
+      "policy_id": "@ref:credit_payment_application_policies",
+      "component": "tax",
+      "priority": 3,
+      "enabled": true
+    },
+    {
+      "_key": "payment_priority.ordinary_interest",
+      "policy_id": "@ref:credit_payment_application_policies",
+      "component": "ordinary_interest",
+      "priority": 4,
+      "enabled": true
+    },
+    {
+      "_key": "payment_priority.principal",
+      "policy_id": "@ref:credit_payment_application_policies",
+      "component": "principal",
+      "priority": 5,
+      "enabled": true
+    }
+  ],
+  "credit_business_calendars": [
+    {
+      "company_id": "@origin:credit_companies",
+      "code": "MX-NL-BANCARIO",
+      "name": "Calendario operativo Nuevo León",
+      "timezone": "America/Monterrey",
+      "non_business_weekdays": [
+        0,
+        6
+      ],
+      "due_date_adjustment": "next_business_day",
+      "enabled": true
+    }
+  ],
+  "credit_business_holidays": [
+    {
+      "calendar_id": "@ref:credit_business_calendars",
+      "holiday_date": "2026-12-25",
+      "description": "Navidad",
+      "recurring": true
+    }
+  ],
+  "credit_loan_rate_revisions": [],
+  "credit_product_calendars": [
+    {
+      "product_version_id": "@origin:credit_product_versions",
+      "calendar_id": "@ref:credit_business_calendars"
+    }
+  ]
 }
 JSON, true, 512, JSON_THROW_ON_ERROR);
         if (!array_key_exists($table, $fixtures)) {
