@@ -136,6 +136,10 @@ class AccessMenuTest extends TestCase
         $this->putJson('/api/access/users/'.$root->id.'/role', ['role_id' => $role['id']])->assertForbidden();
         $this->putJson('/api/access/users/'.$ordinary->id.'/role', ['role_id' => $role['id']])->assertOk();
 
+        // Changing a role revokes previous sessions to prevent stale access.
+        $this->withToken($ordinaryToken)->getJson('/api/me')->assertUnauthorized();
+        $ordinaryLogin = $this->login($ordinary);
+        $ordinaryToken = $ordinaryLogin->json('data.tokens.accessToken');
         $this->withToken($ordinaryToken)->getJson('/api/me')->assertOk()
             ->assertJsonPath('data.user.role.name', 'Lectura')
             ->assertJsonCount(1, 'data.user.menu.2.children')
