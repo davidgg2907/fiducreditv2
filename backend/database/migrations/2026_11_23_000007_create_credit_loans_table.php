@@ -29,10 +29,16 @@ return new class extends Migration
             $table->index(['line_id','status']);
             $table->timestamps();
         });
+        Schema::table('credit_line_movements', function (Blueprint $table) {
+            $table->foreign('loan_id')->references('id')->on('credit_loans')->restrictOnDelete();
+        });
     }
 
     public function down(): void
     {
+        Schema::table('credit_line_movements', function (Blueprint $table) {
+            $table->dropForeign(['loan_id']);
+        });
         Schema::dropIfExists('credit_loans');
     }
 };
