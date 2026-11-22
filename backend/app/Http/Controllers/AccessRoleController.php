@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Role;
+use App\Repositories\AuthTokenRepository;
 use App\Models\User;
 use Illuminate\Database\UniqueConstraintViolationException;
 use Illuminate\Http\JsonResponse;
@@ -72,7 +73,7 @@ final class AccessRoleController extends Controller
             abort_if($target->is_superadmin, 403);
             $target->role()->associate($data['role_id']);
             $target->save();
-            app(\\App\\Repositories\\AuthTokenRepository::class)->revokeForUser($target->id);
+            app(AuthTokenRepository::class)->revokeForUser($target->id);
         }, 3);
 
         return response()->json(['isSuccess' => true, 'data' => ['userId' => $user->id, 'roleId' => $user->role_id]]);
