@@ -6,9 +6,11 @@ use Illuminate\Support\Facades\DB;
 
 final class SessionMenu
 {
-    public function forPermissions(array $permissions, bool $isSuperadmin): array
+    public function forPermissions(array $permissions, bool $isSuperadmin, ?string $appCode = null): array
     {
         $items = DB::table('menu_items')
+            ->where(fn ($query) => $query->whereNull('menu_items.app_code')
+                ->when($appCode !== null, fn ($q) => $q->orWhere('menu_items.app_code', $appCode)))
             ->leftJoin('module_actions', 'module_actions.id', '=', 'menu_items.module_action_id')
             ->orderBy('menu_items.position')
             ->orderBy('menu_items.code')
