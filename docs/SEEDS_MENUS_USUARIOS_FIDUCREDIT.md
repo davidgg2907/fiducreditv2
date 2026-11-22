@@ -33,27 +33,22 @@ php artisan test --filter=CreditSystemMenusSeederTest
 
 Los cinco interceptores Angular añaden `X-Frontend-App` con su identificador. `/api/me` usa ese valor para devolver opciones de la aplicación más menús globales. **Ese encabezado es una preferencia de presentación, NO una fuente confiable de autorización.** Los endpoints deberán seguir verificando rol, permiso, empresa y sucursal en el servidor; la separación y segregación PLD requiere políticas completas.
 
-## Usuario administrador inicial
+## Usuario administrador inicial automático (local)
 
-El seeder `CreditAdministratorSeeder` es deliberadamente **explícito** y no se ejecuta por `DatabaseSeeder`: evita crear cuentas privilegiadas inadvertidamente. Genera `administrador@nahuicredit.com` sólo si no existe otro superadministrador y el correo está libre. No cambia la contraseña de una cuenta existente.
+El comando único `php artisan migrate --seed` ejecuta `CreditAdministratorSeeder` desde `DatabaseSeeder`, sin pedir variables `FIDUCREDIT_ADMIN_PASSWORD` ni `FIDUCREDIT_ADMIN_MFA_SECRET`.
 
-El valor solicitado `admin23` es demasiado corto y conocido para una cuenta administradora: el backend exige 12 caracteres como mínimo y 72 bytes como máximo. No se incorpora ninguna contraseña fija al repositorio.
+Cuando `APP_ENV=local`, si todavía no existe un superadministrador, crea **administrador@nahuicredit.com**, genera una contraseña aleatoria de 24 caracteres y un secreto TOTP nuevo. Ambos valores se imprimen **una sola vez** en la salida de la consola: deben copiarse de inmediato a un gestor de contraseñas. En la aplicación autenticadora, registrar el secreto TOTP para que el login con MFA funcione.
 
-En un entorno privado y seguro, generar un secreto TOTP Base32 (32 caracteres), registrar el secreto en una aplicación de autenticación compatible y configurar las variables de entorno:
+La contraseña solicitada `admin23` NO se usa: es insuficiente para la política de seguridad de cuentas privilegiadas. El seeder no cambia contraseñas existentes ni crea un segundo superadministrador; si encuentra otro superadministrador, lo conserva. Si el correo ya corresponde a un usuario sin privilegios y todavía no existe un superadministrador, informa del conflicto para su revisión.
 
-```dotenv
-FIDUCREDIT_ADMIN_PASSWORD=<contraseña-segura-de-12-o-más-caracteres>
-FIDUCREDIT_ADMIN_MFA_SECRET=<secreto-TOTP-Base32-generado-privadamente>
-```
-
-Los valores entre <> son marcadores; nunca subir el archivo .env. No usar esas variables compartidas entre entornos. Ejecutar:
+En `testing`, `production` y cualquier ambiente distinto de `local`, no se crea una cuenta privilegiada automáticamente. En producción se requiere un proceso formal de aprovisionamiento de identidad y MFA.
 
 ```bash
-php artisan config:clear
-php artisan db:seed --class=CreditAdministratorSeeder
+cd backend
+php artisan migrate --seed
 ```
 
-La autenticación de superadministrador ya requiere MFA. La cuenta sólo podrá ingresar si el secreto TOTP queda correctamente registrado en su aplicación autenticadora. Proteger el secreto y rotarlo según el procedimiento de seguridad. 
+No hace falta ejecutar el seeder de administrador por separado. Si el superadministrador ya existe, la contraseña no se vuelve a imprimir; utiliza recuperación segura y controles de seguridad en lugar de regenerarla mediante seeds.
 
 ## Validaciones y pendientes
 

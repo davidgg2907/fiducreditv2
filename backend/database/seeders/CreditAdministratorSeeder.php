@@ -3,48 +3,66 @@
 namespace Database\Seeders;
 
 use App\Models\User;
+use App\Services\Totp;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Str;
 use RuntimeException;
 
 final class CreditAdministratorSeeder extends Seeder
 {
+    private const EMAIL = 'administrador@nahuicredit.com';
+
     public function run(): void
     {
-        // Never commit a known privileged password, including 'admin23'.
-        $password = env('FIDUCREDIT_ADMIN_PASSWORD');
-        if (!is_string($password) || mb_strlen(trim($password)) < 12 || strlen($password) > 72) {
-            throw new RuntimeException('Configura FIDUCREDIT_ADMIN_PASSWORD con al menos 12 caracteres y máximo 72 bytes.');
+        // Auto-bootstrap is strictly for local development. Never create a
+        // privileged account implicitly in production, staging or tests.
+        if (! app()->environment('local')) {
+            return;
         }
 
-        $mfaSecret = env('FIDUCREDIT_ADMIN_MFA_SECRET');
-        if (!is_string($mfaSecret) || !preg_match('/\\A[A-Z2-7]{32,128}\\z/', $mfaSecret)) {
-            throw new RuntimeException('Configura FIDUCREDIT_ADMIN_MFA_SECRET con un secreto TOTP Base32 de al menos 32 caracteres.');
-        }
-        DB::transaction(function () use ($password, $mfaSecret): void {
-            $existingRoot = User::where('is_superadmin', true)->lockForUpdate()->first();
-            $existing = User::where('email', 'administrador@nahuicredit.com')->lockForUpdate()->first();
+        $credentials = DB::transaction(function (): ?array {
+            $root = User::where('is_superadmin', true)->lockForUpdate()->first();
+            $existing = User::where('email', self::EMAIL)->lockForUpdate()->first();
 
-            if ($existingRoot && (!$existing || $existingRoot->id !== $existing->id)) {
-                throw new RuntimeException('Ya existe un superadministrador distinto. No se creará otro ni se promoverá un usuario.');
+            if ($root) {
+                // Existing bootstrap credentials must never be reset by seeding.
+                return null;
             }
             if ($existing) {
-                if (!$existing->is_superadmin) {
-                    throw new RuntimeException('El correo ya pertenece a un usuario normal. Revisión manual obligatoria.');
-                }
-                // Repeatable and non-destructive: do not reset credentials of an existing administrator.
-                return;
+                throw new RuntimeException(
+                    'El correo del administrador ya pertenece a un usuario sin privilegios. '
+                    .'Revisa esta cuenta manualmente antes de crear el superadministrador.'
+                );
             }
+
+            $password = Str::random(24);
+            $secret = app(Totp::class)->generateSecret();
 
             User::unguarded(fn () => User::create([
                 'name' => 'Administrador FiduCredit',
-                'email' => 'administrador@nahuicredit.com',
+                'email' => self::EMAIL,
                 'password' => $password,
                 'is_superadmin' => true,
                 'is_active' => true,
-                'mfa_secret' => $mfaSecret,
+                'mfa_secret' => $secret,
                 'role_id' => null,
             ]));
+
+            return ['password' => $password, 'mfa_secret' => $secret];
         }, 3);
+
+        if ($credentials === null) {
+            $this->command?->line('Administrador existente: se conservan sus credenciales.');
+            return;
+        }
+
+        // Shown only at initial local bootstrap; never persisted as plaintext
+        // in seeders, .env, the database or committed files.
+        $this->command?->warn('CREDENCIALES INICIALES - SOLO ENTORNO LOCAL. GUARDAR EN LUGAR SEGURO.');
+        $this->command?->line('Usuario: '.self::EMAIL);
+        $this->command?->line('Contraseña temporal: '.$credentials['password']);
+        $this->command?->line('Clave TOTP para la aplicación autenticadora: '.$credentials['mfa_secret']);
+        $this->command?->warn('Estas claves no se volverán a mostrar al ejecutar el seeder.');
     }
 }
