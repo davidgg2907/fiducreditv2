@@ -1,8 +1,8 @@
 <?php
 
-namespace App\Http\Requests\Domain;
+namespace App\Http\Requests;
 
-use App\Models\Domain\CreditSettlement;
+use App\Models\CreditSettlement;
 
 final class UpdateCreditSettlementRequest extends DomainWriteRequest
 {

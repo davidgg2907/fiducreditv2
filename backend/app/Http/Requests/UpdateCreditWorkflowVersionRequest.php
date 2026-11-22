@@ -1,8 +1,8 @@
 <?php
 
-namespace App\Http\Requests\Domain;
+namespace App\Http\Requests;
 
-use App\Models\Domain\CreditWorkflowVersion;
+use App\Models\CreditWorkflowVersion;
 
 final class UpdateCreditWorkflowVersionRequest extends DomainWriteRequest
 {

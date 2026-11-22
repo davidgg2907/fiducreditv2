@@ -1,8 +1,8 @@
 <?php
 
-namespace App\Http\Requests\Domain;
+namespace App\Http\Requests;
 
-use App\Models\Domain\CreditLoanBalance;
+use App\Models\CreditLoanBalance;
 
 final class UpdateCreditLoanBalanceRequest extends DomainWriteRequest
 {

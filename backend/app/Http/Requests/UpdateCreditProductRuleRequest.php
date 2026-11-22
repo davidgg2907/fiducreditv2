@@ -1,8 +1,8 @@
 <?php
 
-namespace App\Http\Requests\Domain;
+namespace App\Http\Requests;
 
-use App\Models\Domain\CreditProductRule;
+use App\Models\CreditProductRule;
 
 final class UpdateCreditProductRuleRequest extends DomainWriteRequest
 {

@@ -1,8 +1,8 @@
 <?php
 
-namespace App\Http\Requests\Domain;
+namespace App\Http\Requests;
 
-use App\Models\Domain\CreditLineLimitHistory;
+use App\Models\CreditLineLimitHistory;
 
 final class UpdateCreditLineLimitHistoryRequest extends DomainWriteRequest
 {

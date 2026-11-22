@@ -1,8 +1,8 @@
 <?php
 
-namespace App\Http\Requests\Domain;
+namespace App\Http\Requests;
 
-use App\Models\Domain\PldReport;
+use App\Models\PldReport;
 
 final class UpdatePldReportRequest extends DomainWriteRequest
 {

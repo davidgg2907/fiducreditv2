@@ -1,8 +1,8 @@
 <?php
 
-namespace App\Http\Requests\Domain;
+namespace App\Http\Requests;
 
-use App\Models\Domain\CreditWorkflowInstance;
+use App\Models\CreditWorkflowInstance;
 
 final class UpdateCreditWorkflowInstanceRequest extends DomainWriteRequest
 {
