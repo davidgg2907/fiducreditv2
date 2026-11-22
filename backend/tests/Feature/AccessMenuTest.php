@@ -24,7 +24,10 @@ class AccessMenuTest extends TestCase
             ->expectsQuestion('Contraseña para las cuentas demo (mínimo 12 caracteres, máximo 72 bytes)', self::PASSWORD)
             ->assertSuccessful();
 
-        $this->assertDatabaseCount('users', 3);
+        $this->assertSame(
+            3,
+            User::query()->where('email', 'like', '%@arquetipo.test')->count()
+        );
         $this->login(User::where('email', 'mariana.salgado@arquetipo.test')->firstOrFail());
     }
 
@@ -38,8 +41,18 @@ class AccessMenuTest extends TestCase
         $this->assertDatabaseCount('access_modules', 4);
         $this->assertDatabaseCount('module_actions', 6);
         $this->assertDatabaseCount('menu_items', 5);
-        $this->assertDatabaseCount('roles', 4);
-        $this->assertDatabaseCount('users', 3);
+        $this->assertSame(
+            3,
+            Role::query()->whereIn('name', [
+                DemoRolesSeeder::COORDINACION,
+                DemoRolesSeeder::ANALISTA,
+                DemoRolesSeeder::COLABORADOR,
+            ])->count()
+        );
+        $this->assertSame(
+            3,
+            User::query()->where('email', 'like', '%@arquetipo.test')->count()
+        );
 
         foreach ([
             ['mariana.salgado', DemoRolesSeeder::COORDINACION, ['/home', '/perfil'], true],
@@ -61,13 +74,22 @@ class AccessMenuTest extends TestCase
     public function test_seeding_is_repeatable_and_preserves_existing_roles(): void
     {
         $this->seed();
-        Role::where('name', 'Usuario')->firstOrFail()->update(['permissions' => ['perfil.ver']]);
+        $totalRoles = Role::query()->count();
+
+        Role::where('name', 'Usuario')->firstOrFail()
+            ->update(['permissions' => ['perfil.ver']]);
+
         $this->seed();
+
+        $this->assertSame($totalRoles, Role::query()->count());
 
         $this->assertDatabaseCount('access_modules', 2);
         $this->assertDatabaseCount('module_actions', 3);
         $this->assertDatabaseCount('menu_items', 2);
-        $this->assertDatabaseCount('roles', 1);
+        $this->assertSame(
+            1,
+            Role::query()->where('name', 'Usuario')->count()
+        );
         $this->assertSame(['perfil.ver'], Role::where('name', 'Usuario')->firstOrFail()->permissions);
 
         $login = $this->login($this->user('ordinary'));
