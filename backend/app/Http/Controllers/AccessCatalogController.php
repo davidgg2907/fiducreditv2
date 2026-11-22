@@ -34,6 +34,16 @@ final class AccessCatalogController extends Controller
         return response()->json(['isSuccess' => true, 'data' => DB::table('access_modules')->find($module)]);
     }
 
+    public function deleteModule(int $module): JsonResponse
+    {
+        abort_unless(DB::table('access_modules')->where('id', $module)->exists(), 404);
+        if (DB::table('module_actions')->where('module_id', $module)->exists()) {
+            throw ValidationException::withMessages(['module' => 'No se puede eliminar un módulo con acciones.']);
+        }
+        DB::table('access_modules')->where('id', $module)->delete();
+        return response()->json(['isSuccess' => true]);
+    }
+
     public function actions(): JsonResponse
     {
         return response()->json(['isSuccess' => true, 'data' => DB::table('module_actions')->orderBy('permission')->get()]);
@@ -60,6 +70,22 @@ final class AccessCatalogController extends Controller
         ]);
         DB::table('module_actions')->where('id', $action)->update($data);
         return response()->json(['isSuccess' => true, 'data' => DB::table('module_actions')->find($action)]);
+    }
+
+    public function deleteAction(int $action): JsonResponse
+    {
+        $permission = DB::table('module_actions')->where('id', $action)->value('permission');
+        abort_if($permission === null, 404);
+        if (DB::table('menu_items')->where('module_action_id', $action)->exists()) {
+            throw ValidationException::withMessages(['action' => 'La acción está ligada a una opción del menú.']);
+        }
+        foreach (\App\Models\Role::query()->get(['permissions']) as $role) {
+            if (in_array($permission, $role->permissions ?? [], true)) {
+                throw ValidationException::withMessages(['action' => 'La acción está asignada a un rol.']);
+            }
+        }
+        DB::table('module_actions')->where('id', $action)->delete();
+        return response()->json(['isSuccess' => true]);
     }
 
     public function menus(): JsonResponse
