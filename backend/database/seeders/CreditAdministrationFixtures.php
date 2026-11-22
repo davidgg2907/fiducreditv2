@@ -464,7 +464,7 @@ final class CreditAdministrationFixtures
       "penalty_interest_due": 0,
       "tax_due": 0,
       "fee_due": 0,
-      "unapplied_payments": 1000,
+      "unapplied_payments": 0,
       "total_due": 9.33,
       "as_of_date": "2026-11-21",
       "lock_version": 0
@@ -498,7 +498,7 @@ final class CreditAdministrationFixtures
       "fees_amount": 0,
       "credits_amount": 0,
       "total_to_settle": 12009.33,
-      "status": "expired",
+      "status": "quoted",
       "generated_by": "@user",
       "calculation_snapshot": {
         "principal": 12000,
