@@ -98,6 +98,18 @@ final class DomainCrudService
                     'include' => 'Relación no permitida.',
                 ]);
             }
+
+            $relatedTable = $model->{$relation}()->getRelated()->getTable();
+
+            if (str_starts_with($relatedTable, 'pld_')) {
+                $permissions = request()->user()?->permissions() ?? [];
+
+                if (!in_array('pld-data.view', $permissions, true)) {
+                    throw ValidationException::withMessages([
+                        'include' => 'La relación requiere autorización de cumplimiento.',
+                    ]);
+                }
+            }
         }
 
         $query->with($relations);
