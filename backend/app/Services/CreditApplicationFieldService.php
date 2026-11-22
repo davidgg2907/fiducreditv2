@@ -1,8 +1,8 @@
 <?php
 
-namespace App\Services\Domain;
+namespace App\Services;
 
 class CreditApplicationFieldService extends DomainCrudService
 {
-    // Punto de extensión específico de la entidad CreditApplicationField.
+    // Servicio de persistencia correspondiente a CreditApplicationField.
 }

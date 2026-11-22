@@ -110,3 +110,8 @@
 - `pld_cases` → `PldCaseController` (solo lectura).
 - `pld_case_events` → `PldCaseEventController` (solo lectura).
 - `pld_reports` → `PldReportController` (solo lectura).
+
+## Estructura plana definitiva
+
+Los 83 controladores se alojan en `backend/app/Http/Controllers`, los 83 modelos en `backend/app/Models`, las solicitudes en `backend/app/Http/Requests`, las respuestas en `backend/app/Http/Resources` y los servicios en `backend/app/Services`. Los namespaces ahora son PSR-4 estándar de Laravel; no hay carpeta ni namespace `Domain`.
+Las 83 rutas API llevan el parámetro explícito `{id}` para evitar el límite de 32 caracteres de Symfony.

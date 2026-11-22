@@ -1,8 +1,8 @@
 <?php
 
-namespace App\Services\Domain;
+namespace App\Services;
 
 class PldAlertActionService extends DomainCrudService
 {
-    // Punto de extensión específico de la entidad PldAlertAction.
+    // Servicio de persistencia correspondiente a PldAlertAction.
 }

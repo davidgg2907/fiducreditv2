@@ -1,8 +1,8 @@
 <?php
 
-namespace App\Services\Domain;
+namespace App\Services;
 
 class PldProductPolicyService extends DomainCrudService
 {
-    // Punto de extensión específico de la entidad PldProductPolicy.
+    // Servicio de persistencia correspondiente a PldProductPolicy.
 }

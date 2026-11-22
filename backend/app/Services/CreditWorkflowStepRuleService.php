@@ -1,8 +1,8 @@
 <?php
 
-namespace App\Services\Domain;
+namespace App\Services;
 
 class CreditWorkflowStepRuleService extends DomainCrudService
 {
-    // Punto de extensión específico de la entidad CreditWorkflowStepRule.
+    // Servicio de persistencia correspondiente a CreditWorkflowStepRule.
 }

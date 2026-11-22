@@ -1,9 +1,9 @@
 <?php
 
-namespace App\Http\Controllers\Domain;
+namespace App\Http\Controllers;
 
 use App\Http\Controllers\Controller;
-use App\Services\Domain\DomainCrudService;
+use App\Services\DomainCrudService;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 

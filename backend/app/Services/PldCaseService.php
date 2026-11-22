@@ -1,8 +1,8 @@
 <?php
 
-namespace App\Services\Domain;
+namespace App\Services;
 
 class PldCaseService extends DomainCrudService
 {
-    // Punto de extensión específico de la entidad PldCase.
+    // Servicio de persistencia correspondiente a PldCase.
 }

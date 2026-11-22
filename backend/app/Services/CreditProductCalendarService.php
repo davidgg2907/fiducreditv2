@@ -1,8 +1,8 @@
 <?php
 
-namespace App\Services\Domain;
+namespace App\Services;
 
 class CreditProductCalendarService extends DomainCrudService
 {
-    // Punto de extensión específico de la entidad CreditProductCalendar.
+    // Servicio de persistencia correspondiente a CreditProductCalendar.
 }

@@ -1,8 +1,8 @@
 <?php
 
-namespace App\Services\Domain;
+namespace App\Services;
 
 class PldScreeningService extends DomainCrudService
 {
-    // Punto de extensión específico de la entidad PldScreening.
+    // Servicio de persistencia correspondiente a PldScreening.
 }

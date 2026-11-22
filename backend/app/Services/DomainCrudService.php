@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Services\Domain;
+namespace App\Services;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\Relation;

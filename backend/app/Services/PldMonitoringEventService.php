@@ -1,8 +1,8 @@
 <?php
 
-namespace App\Services\Domain;
+namespace App\Services;
 
 class PldMonitoringEventService extends DomainCrudService
 {
-    // Punto de extensión específico de la entidad PldMonitoringEvent.
+    // Servicio de persistencia correspondiente a PldMonitoringEvent.
 }

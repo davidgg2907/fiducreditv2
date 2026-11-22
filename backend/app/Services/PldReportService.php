@@ -1,8 +1,8 @@
 <?php
 
-namespace App\Services\Domain;
+namespace App\Services;
 
 class PldReportService extends DomainCrudService
 {
-    // Punto de extensión específico de la entidad PldReport.
+    // Servicio de persistencia correspondiente a PldReport.
 }

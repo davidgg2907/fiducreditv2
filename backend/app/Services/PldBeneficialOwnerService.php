@@ -1,8 +1,8 @@
 <?php
 
-namespace App\Services\Domain;
+namespace App\Services;
 
 class PldBeneficialOwnerService extends DomainCrudService
 {
-    // Punto de extensión específico de la entidad PldBeneficialOwner.
+    // Servicio de persistencia correspondiente a PldBeneficialOwner.
 }
