@@ -5,17 +5,88 @@ namespace App\Http\Controllers;
 use App\Http\Requests\StoreCreditWorkflowStepRuleRequest;
 use App\Http\Requests\UpdateCreditWorkflowStepRuleRequest;
 use App\Http\Resources\CreditWorkflowStepRuleResource;
-use App\Models\CreditWorkflowStepRule;
+use App\Services\CreditWorkflowStepRuleService;
+use Illuminate\Http\JsonResponse;
+use Illuminate\Http\Request;
 
-final class CreditWorkflowStepRuleController extends DomainResourceController
+final class CreditWorkflowStepRuleController extends Controller
 {
-    protected string $modelClass = CreditWorkflowStepRule::class;
+    public function __construct(private readonly CreditWorkflowStepRuleService $service)
+    {
+    }
 
-    protected string $resourceClass = CreditWorkflowStepRuleResource::class;
+    public function index(Request $request): JsonResponse
+    {
+        $this->authorizeAction($request, 'view');
+        $query = $request->validate([
+            'per_page' => ['sometimes', 'integer', 'between:1,100'],
+            'sort' => ['sometimes', 'string', 'max:80'],
+            'direction' => ['sometimes', 'in:asc,desc'],
+            'include' => ['sometimes', 'string', 'max:500'],
+            'filter' => ['sometimes', 'array'],
+            'filter.*' => ['nullable', 'string', 'max:255'],
+        ]);
 
-    protected string $storeRequestClass = StoreCreditWorkflowStepRuleRequest::class;
+        $records = CreditWorkflowStepRuleResource::collection($this->service->paginate($query));
 
-    protected string $updateRequestClass = UpdateCreditWorkflowStepRuleRequest::class;
+        return response()->json([
+            'isSuccess' => true,
+            'data' => $records->response()->getData(true),
+        ]);
+    }
 
-    protected bool $allowDirectWrites = true;
+    public function show(Request $request, string $id): JsonResponse
+    {
+        $this->authorizeAction($request, 'view');
+        $query = $request->validate([
+            'include' => ['sometimes', 'string', 'max:500'],
+        ]);
+
+        return response()->json([
+            'isSuccess' => true,
+            'data' => (new CreditWorkflowStepRuleResource(
+                $this->service->find($id, $query['include'] ?? '')
+            ))->resolve(),
+        ]);
+    }
+
+    public function store(StoreCreditWorkflowStepRuleRequest $request): JsonResponse
+    {
+        $this->authorizeAction($request, 'write');
+        
+
+        $record = $this->service->create($request->validated());
+
+        return response()->json([
+            'isSuccess' => true,
+            'data' => (new CreditWorkflowStepRuleResource($record))->resolve(),
+        ], 201);
+    }
+
+    public function update(UpdateCreditWorkflowStepRuleRequest $request, string $id): JsonResponse
+    {
+        $this->authorizeAction($request, 'write');
+        
+
+        $record = $this->service->update($id, $request->validated());
+
+        return response()->json([
+            'isSuccess' => true,
+            'data' => (new CreditWorkflowStepRuleResource($record))->resolve(),
+        ]);
+    }
+
+    public function destroy(Request $request, string $id): JsonResponse
+    {
+        $this->authorizeAction($request, 'write');
+
+        abort(405, 'Eliminación física deshabilitada para proteger el historial.');
+    }
+
+    private function authorizeAction(Request $request, string $operation): void
+    {
+        $user = $request->user();
+        abort_unless($user?->is_superadmin === true, 403);
+        
+    }
 }

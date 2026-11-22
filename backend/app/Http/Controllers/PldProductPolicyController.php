@@ -5,17 +5,94 @@ namespace App\Http\Controllers;
 use App\Http\Requests\StorePldProductPolicyRequest;
 use App\Http\Requests\UpdatePldProductPolicyRequest;
 use App\Http\Resources\PldProductPolicyResource;
-use App\Models\PldProductPolicy;
+use App\Services\PldProductPolicyService;
+use Illuminate\Http\JsonResponse;
+use Illuminate\Http\Request;
 
-final class PldProductPolicyController extends DomainResourceController
+final class PldProductPolicyController extends Controller
 {
-    protected string $modelClass = PldProductPolicy::class;
+    public function __construct(private readonly PldProductPolicyService $service)
+    {
+    }
 
-    protected string $resourceClass = PldProductPolicyResource::class;
+    public function index(Request $request): JsonResponse
+    {
+        $this->authorizeAction($request, 'view');
+        $query = $request->validate([
+            'per_page' => ['sometimes', 'integer', 'between:1,100'],
+            'sort' => ['sometimes', 'string', 'max:80'],
+            'direction' => ['sometimes', 'in:asc,desc'],
+            'include' => ['sometimes', 'string', 'max:500'],
+            'filter' => ['sometimes', 'array'],
+            'filter.*' => ['nullable', 'string', 'max:255'],
+        ]);
 
-    protected string $storeRequestClass = StorePldProductPolicyRequest::class;
+        $records = PldProductPolicyResource::collection($this->service->paginate($query));
 
-    protected string $updateRequestClass = UpdatePldProductPolicyRequest::class;
+        return response()->json([
+            'isSuccess' => true,
+            'data' => $records->response()->getData(true),
+        ]);
+    }
 
-    protected bool $allowDirectWrites = true;
+    public function show(Request $request, string $id): JsonResponse
+    {
+        $this->authorizeAction($request, 'view');
+        $query = $request->validate([
+            'include' => ['sometimes', 'string', 'max:500'],
+        ]);
+
+        return response()->json([
+            'isSuccess' => true,
+            'data' => (new PldProductPolicyResource(
+                $this->service->find($id, $query['include'] ?? '')
+            ))->resolve(),
+        ]);
+    }
+
+    public function store(StorePldProductPolicyRequest $request): JsonResponse
+    {
+        $this->authorizeAction($request, 'write');
+        
+
+        $record = $this->service->create($request->validated());
+
+        return response()->json([
+            'isSuccess' => true,
+            'data' => (new PldProductPolicyResource($record))->resolve(),
+        ], 201);
+    }
+
+    public function update(UpdatePldProductPolicyRequest $request, string $id): JsonResponse
+    {
+        $this->authorizeAction($request, 'write');
+        
+
+        $record = $this->service->update($id, $request->validated());
+
+        return response()->json([
+            'isSuccess' => true,
+            'data' => (new PldProductPolicyResource($record))->resolve(),
+        ]);
+    }
+
+    public function destroy(Request $request, string $id): JsonResponse
+    {
+        $this->authorizeAction($request, 'write');
+
+        abort(405, 'Eliminación física deshabilitada para proteger el historial.');
+    }
+
+    private function authorizeAction(Request $request, string $operation): void
+    {
+        $user = $request->user();
+        abort_unless($user?->is_superadmin === true, 403);
+
+        abort_unless(
+            in_array('pld-data.'.$operation, $user->permissions(), true),
+            403,
+            'Requiere permiso específico de cumplimiento.'
+        );
+        
+    }
 }
