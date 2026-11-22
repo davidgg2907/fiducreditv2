@@ -1,0 +1,49 @@
+name: Validar base de datos crediticia
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'backend/database/**'
+      - 'backend/composer.json'
+      - 'backend/composer.lock'
+      - '.github/workflows/credit-schema.yml'
+  pull_request:
+    paths:
+      - 'backend/database/**'
+      - 'backend/composer.json'
+      - 'backend/composer.lock'
+      - '.github/workflows/credit-schema.yml'
+
+permissions:
+  contents: read
+
+jobs:
+  schema-sqlite:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: backend
+    steps:
+      - uses: actions/checkout@v4
+      - uses: shivammathur/setup-php@v2
+        with:
+          php-version: '8.4'
+          extensions: mbstring, dom, xml, zip, pdo_sqlite
+          coverage: none
+          tools: composer:v2
+      - name: Instalar dependencias
+        run: composer install --prefer-dist --no-interaction --no-progress
+      - name: Verificar sintaxis de migraciones y seeders
+        run: |
+          find database/migrations database/seeders -type f -name '*.php' -print0 | xargs -0 -n1 php -l
+      - name: Migrar y cargar datos de prueba en SQLite temporal
+        env:
+          APP_ENV: testing
+          APP_KEY: base64:AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=
+          DB_CONNECTION: sqlite
+          DB_DATABASE: ':memory:'
+          CACHE_STORE: array
+          SESSION_DRIVER: array
+          QUEUE_CONNECTION: sync
+        run: php artisan migrate:fresh --seed --force
