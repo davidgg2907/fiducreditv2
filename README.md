@@ -109,3 +109,11 @@ Para agrupar enlaces, crea una entrada raíz con `route = null` y vincula sus en
 ## Pruebas
 
 Ejecuta `composer test` en `backend` con la extensión SQLite habilitada. Las pruebas de integración usan una base de datos en memoria. En `frontend` ejecuta `npm run verify:archetype` y `npm run build`. El workflow hace estas comprobaciones para cada pull request.
+
+
+## Documentación de arquitectura de datos FiduCredit V2
+
+- [Diccionario integral de datos, relaciones y guía de endpoints](docs/ARQUITECTURA_DATOS_FIDUCREDIT_V2.md): consulta principal para las sesiones de desarrollo de Originación, Administración, Amortización y PLD.
+- [Modelo de Originación](docs/ORIGINACION_BD.md)
+- [Flujos y mesa de control](docs/ORIGINACION_WORKFLOW.md)
+- [Administración de Créditos y PLD](docs/ADMINISTRACION_CREDITOS_PLD.md)
