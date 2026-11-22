@@ -2,9 +2,33 @@
 
 namespace App\Http\Requests;
 
-use App\Models\CreditWorkflowInstance;
+use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Validation\Rule;
 
-final class UpdateCreditWorkflowInstanceRequest extends DomainWriteRequest
+final class UpdateCreditWorkflowInstanceRequest extends FormRequest
 {
-    protected string $modelClass = CreditWorkflowInstance::class;
+    public function authorize(): bool
+    {
+        $user = $this->user();
+
+        if ($user?->is_superadmin !== true) {
+            return false;
+        }
+
+        return true;
+    }
+
+    public function rules(): array
+    {
+        return [
+            'application_id' => ['sometimes', 'uuid', 'exists:credit_applications,id', Rule::unique('credit_workflow_instances', 'application_id')->ignore($this->route('id'))],
+            'workflow_version_id' => ['sometimes', 'uuid', 'exists:credit_workflow_versions,id'],
+            'current_step_id' => ['sometimes', 'uuid', 'exists:credit_workflow_steps,id'],
+            'status' => ['sometimes', 'string', 'max:30'],
+            'started_at' => ['sometimes', 'date'],
+            'completed_at' => ['sometimes', 'nullable', 'date'],
+            'started_by' => ['sometimes', 'integer', 'exists:users,id'],
+            'lock_version' => ['sometimes', 'integer'],
+        ];
+    }
 }
