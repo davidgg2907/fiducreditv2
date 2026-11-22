@@ -1,0 +1,26 @@
+<?php
+
+namespace App\Models\Domain;
+
+use Illuminate\Database\Eloquent\Concerns\HasUuids;
+use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\HasMany;
+
+class CreditPayoffQuoteItem extends Model
+{
+    use HasUuids;
+
+    protected $table = 'credit_payoff_quote_items';
+
+    protected $guarded = [
+        'id',
+        'created_at',
+        'updated_at',
+    ];
+
+    public function quote(): BelongsTo
+    {
+        return $this->belongsTo(CreditPayoffQuote::class, 'quote_id');
+    }
+}
