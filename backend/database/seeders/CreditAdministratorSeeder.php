@@ -17,7 +17,11 @@ final class CreditAdministratorSeeder extends Seeder
             throw new RuntimeException('Configura FIDUCREDIT_ADMIN_PASSWORD con al menos 12 caracteres y máximo 72 bytes.');
         }
 
-        DB::transaction(function () use ($password): void {
+        $mfaSecret = env('FIDUCREDIT_ADMIN_MFA_SECRET');
+        if (!is_string($mfaSecret) || !preg_match('/\\A[A-Z2-7]{32,128}\\z/', $mfaSecret)) {
+            throw new RuntimeException('Configura FIDUCREDIT_ADMIN_MFA_SECRET con un secreto TOTP Base32 de al menos 32 caracteres.');
+        }
+        DB::transaction(function () use ($password, $mfaSecret): void {
             $existingRoot = User::where('is_superadmin', true)->lockForUpdate()->first();
             $existing = User::where('email', 'administrador@nahuicredit.com')->lockForUpdate()->first();
 
@@ -38,6 +42,7 @@ final class CreditAdministratorSeeder extends Seeder
                 'password' => $password,
                 'is_superadmin' => true,
                 'is_active' => true,
+                'mfa_secret' => $mfaSecret,
                 'role_id' => null,
             ]));
         }, 3);
