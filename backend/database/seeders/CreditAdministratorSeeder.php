@@ -7,13 +7,16 @@ use App\Models\User;
 use App\Services\Totp;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Str;
+use App\Repositories\AuthTokenRepository;
+use Illuminate\Support\Facades\Hash;
 use RuntimeException;
 
 final class CreditAdministratorSeeder extends Seeder
 {
     private const EMAIL = 'administrador@nahuicredit.com';
     private const ROLE = 'Superadministrador NAHUICREDIT';
+    // Contraseña solicitada exclusivamente para desarrollo local; nunca en producción.
+    private const LOCAL_PASSWORD = 'admin23';
 
     public function run(): void
     {
@@ -43,7 +46,7 @@ final class CreditAdministratorSeeder extends Seeder
                     throw new RuntimeException('Existe un superadministrador distinto. Revisa las cuentas antes del bootstrap.');
                 }
 
-                $password = Str::random(24);
+                $password = self::LOCAL_PASSWORD;
                 $secret = app(Totp::class)->generateSecret();
                 $admin = User::unguarded(fn () => User::create([
                     'name' => 'Administrador NAHUICREDIT',
@@ -54,12 +57,18 @@ final class CreditAdministratorSeeder extends Seeder
                     'role_id' => $role->id,
                     'mfa_secret' => $secret,
                 ]));
-                $this->command?->warn('CREDENCIALES INICIALES (solo local): resguárdalas; no volverán a mostrarse.');
+                $this->command?->warn('SOLO DESARROLLO LOCAL: contraseña temporal deliberadamente débil. Cambiar antes de producción.');
                 $this->command?->line('Usuario: '.self::EMAIL);
                 $this->command?->line('Contraseña temporal: '.$password);
                 $this->command?->line('Clave TOTP para uso futuro: '.$secret);
             } else {
-                // La sincronización conserva contraseña, MFA y sesiones.
+                // En local, migrate --seed garantiza credenciales de prueba reproducibles.
+                // No modifica contraseña ni sesiones en ambientes distintos de local.
+                if (app()->environment('local') && !Hash::check(self::LOCAL_PASSWORD, $admin->password)) {
+                    $admin->password = self::LOCAL_PASSWORD;
+                    app(AuthTokenRepository::class)->revokeForUser($admin->id);
+                    $this->command?->warn('Contraseña local restablecida a admin23. Nunca usar en producción.');
+                }
                 $admin->role_id = $role->id;
                 $admin->is_superadmin = true;
                 $admin->is_active = true;
