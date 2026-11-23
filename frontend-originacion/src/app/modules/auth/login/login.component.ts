@@ -24,7 +24,7 @@ export class LoginComponent {
       next: (response) => { this.loading = false; if (!this.auth.isAuthenticated()) { this.error = response.message ?? 'La respuesta no incluyó un token de acceso.'; return; } void this.router.navigateByUrl(this.route.snapshot.queryParamMap.get('returnUrl') || '/home'); },
       error: (error) => {
         this.loading = false;
-        if (error?.status === 401) this.mfaRequired = error?.error?.mfaRequired === true;
+        if (error?.error?.mfaRequired === true) this.mfaRequired = true;
         this.mfaCode = '';
         this.error = error?.error?.message
           ?? (error?.status === 401 ? 'Usuario o contraseña incorrectos.' : 'No fue posible iniciar sesión.');

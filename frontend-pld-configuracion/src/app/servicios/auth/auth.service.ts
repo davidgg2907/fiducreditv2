@@ -12,6 +12,8 @@ export class AuthService {
   private accessToken: string | null = null;
   private accessExpiresAt = 0;
   private refreshRequest$?: Observable<boolean>;
+  // Indicador de UX, nunca prueba de autenticación. El servidor valida la cookie HttpOnly.
+  private readonly sessionHintKey = 'nahuicredit.auth.session-established';
 
   constructor(private readonly http: HttpClient) {
     for (const key of ['auth.user', 'auth.access_token', 'auth.access_token_expires_at', 'auth.refresh_token', 'auth.remember', 'auth.last_activity_at']) {
@@ -46,6 +48,7 @@ export class AuthService {
   }
 
   clear(): void {
+    sessionStorage.removeItem(this.sessionHintKey);
     this.accessToken = null;
     this.accessExpiresAt = 0;
     this.sessionUser$.next(null);
@@ -62,6 +65,9 @@ export class AuthService {
       return of(true);
     }
 
+    // No enviar POST /login/refresh en una visita anónima sin sesión previa.
+    if (!sessionStorage.getItem(this.sessionHintKey)) return of(false);
+
     return this.refresh().pipe(catchError(() => {
       this.clear();
       return of(false);
@@ -69,6 +75,7 @@ export class AuthService {
   }
 
   refresh(): Observable<boolean> {
+    if (!sessionStorage.getItem(this.sessionHintKey)) return of(false);
     this.refreshRequest$ ??= this.serializeCookieRequest(() =>
       this.http.post<LoginResponse>(this.apiUrl + 'login/refresh', {}, this.options),
     ).pipe(
@@ -92,5 +99,6 @@ export class AuthService {
     this.accessToken = tokens.accessToken;
     this.accessExpiresAt = Date.parse(tokens.accessTokenExpiresAt);
     this.updateSessionUser(user);
+    sessionStorage.setItem(this.sessionHintKey, '1');
   }
 }
