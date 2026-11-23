@@ -363,3 +363,9 @@
   white-space:nowrap;overflow:hidden;text-overflow:ellipsis;
 }
 ::ng-deep .dropdown-userprofile .menu-userprofile__avatar img {width:100%;height:100%;object-fit:cover;}
+
+/* Configuración: header compacto alineado al sidebar (sin navegación horizontal). */
+.top-header,.top-header.test{left:260px!important;right:0!important;width:calc(100% - 260px)!important;min-height:76px}
+.top-header .menu-toggle{display:none}
+.searchbar,.searchbar.full-search{left:260px!important;right:0!important}
+@media(max-width:900px){.top-header,.top-header.test{left:0!important;width:100%!important}.top-header .menu-toggle{display:grid}.searchbar,.searchbar.full-search{left:0!important}}

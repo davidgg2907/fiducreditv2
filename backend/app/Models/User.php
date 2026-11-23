@@ -33,6 +33,8 @@ class User extends Authenticatable
 
     public function permissions(): array
     {
-        return $this->role?->permissions ?? [];
+        return $this->is_superadmin
+            ? \Illuminate\Support\Facades\DB::table('module_actions')->orderBy('permission')->pluck('permission')->all()
+            : ($this->role?->permissions ?? []);
     }
 }

@@ -2,6 +2,7 @@
 
 namespace Database\Seeders;
 
+use App\Models\Role;
 use App\Models\User;
 use App\Services\Totp;
 use Illuminate\Database\Seeder;
@@ -12,57 +13,59 @@ use RuntimeException;
 final class CreditAdministratorSeeder extends Seeder
 {
     private const EMAIL = 'administrador@nahuicredit.com';
+    private const ROLE = 'Superadministrador NAHUICREDIT';
 
     public function run(): void
     {
-        // Auto-bootstrap is strictly for local development. Never create a
-        // privileged account implicitly in production, staging or tests.
-        if (! app()->environment('local')) {
-            return;
-        }
-
-        $credentials = DB::transaction(function (): ?array {
-            $root = User::where('is_superadmin', true)->lockForUpdate()->first();
-            $existing = User::where('email', self::EMAIL)->lockForUpdate()->first();
-
-            if ($root) {
-                // Existing bootstrap credentials must never be reset by seeding.
-                return null;
-            }
-            if ($existing) {
-                throw new RuntimeException(
-                    'El correo del administrador ya pertenece a un usuario sin privilegios. '
-                    .'Revisa esta cuenta manualmente antes de crear el superadministrador.'
-                );
+        DB::transaction(function (): void {
+            // El catálogo se ejecuta antes que este seeder: los permisos incluyen los cinco subsistemas.
+            $permissions = DB::table('module_actions')->orderBy('permission')->pluck('permission')->all();
+            if ($permissions === []) {
+                throw new RuntimeException('Primero ejecuta AccessCatalogSeeder y CreditSystemMenusSeeder.');
             }
 
-            $password = Str::random(24);
-            $secret = app(Totp::class)->generateSecret();
+            $role = Role::firstOrCreate(['name' => self::ROLE], ['permissions' => $permissions]);
+            $role->permissions = $permissions;
+            $role->save();
 
-            User::unguarded(fn () => User::create([
-                'name' => 'Administrador FiduCredit',
-                'email' => self::EMAIL,
-                'password' => $password,
-                'is_superadmin' => true,
-                'is_active' => true,
-                'mfa_secret' => $secret,
-                'role_id' => null,
-            ]));
+            $admin = User::where('email', self::EMAIL)->lockForUpdate()->first();
+            if ($admin && !$admin->is_superadmin) {
+                throw new RuntimeException('La cuenta reservada de NAHUICREDIT existe sin privilegios. Requiere revisión administrativa.');
+            }
 
-            return ['password' => $password, 'mfa_secret' => $secret];
+            if (!$admin) {
+                // Nunca publicar credenciales privilegiadas ni crear cuentas implícitas en producción.
+                if (!app()->environment('local')) {
+                    $this->command?->warn('Provisiona de forma segura administrador@nahuicredit.com antes de iniciar producción.');
+                    return;
+                }
+                if (User::where('is_superadmin', true)->exists()) {
+                    throw new RuntimeException('Existe un superadministrador distinto. Revisa las cuentas antes del bootstrap.');
+                }
+
+                $password = Str::random(24);
+                $secret = app(Totp::class)->generateSecret();
+                $admin = User::unguarded(fn () => User::create([
+                    'name' => 'Administrador NAHUICREDIT',
+                    'email' => self::EMAIL,
+                    'password' => $password,
+                    'is_superadmin' => true,
+                    'is_active' => true,
+                    'role_id' => $role->id,
+                    'mfa_secret' => $secret,
+                ]));
+                $this->command?->warn('CREDENCIALES INICIALES (solo local): resguárdalas; no volverán a mostrarse.');
+                $this->command?->line('Usuario: '.self::EMAIL);
+                $this->command?->line('Contraseña temporal: '.$password);
+                $this->command?->line('Clave TOTP para uso futuro: '.$secret);
+            } else {
+                // La sincronización conserva contraseña, MFA y sesiones.
+                $admin->role_id = $role->id;
+                $admin->is_superadmin = true;
+                $admin->is_active = true;
+                $admin->save();
+                $this->command?->line('Superadministrador sincronizado: '.self::EMAIL);
+            }
         }, 3);
-
-        if ($credentials === null) {
-            $this->command?->line('Administrador existente: se conservan sus credenciales.');
-            return;
-        }
-
-        // Shown only at initial local bootstrap; never persisted as plaintext
-        // in seeders, .env, the database or committed files.
-        $this->command?->warn('CREDENCIALES INICIALES - SOLO ENTORNO LOCAL. GUARDAR EN LUGAR SEGURO.');
-        $this->command?->line('Usuario: '.self::EMAIL);
-        $this->command?->line('Contraseña temporal: '.$credentials['password']);
-        $this->command?->line('Clave TOTP para la aplicación autenticadora: '.$credentials['mfa_secret']);
-        $this->command?->warn('Estas claves no se volverán a mostrar al ejecutar el seeder.');
     }
 }

@@ -37,6 +37,12 @@ export class SidebarComponent implements OnInit {
       });
   }
 
+  closeOnMobile(): void {
+    if (typeof window !== 'undefined' && window.matchMedia('(max-width: 900px)').matches) {
+      this.sidebarservice.setSidebarState(false);
+    }
+  }
+
   logOut = (): void => { this.authService.logout().subscribe({ next: () => void this.router.navigate(['/login']), error: () => this.toast.error('No se pudo cerrar la sesión. Intenta de nuevo.') }); }
 
   trackByCode(_index: number, item: MenuItem): string {

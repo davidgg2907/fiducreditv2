@@ -1,30 +1,36 @@
-<nav class="top-navigation" aria-label="Navegación principal">
- <div class="top-navigation__inner">
-  <span class="top-navigation__brand"><span class="top-navigation__brand-name">Recursos Humanos</span></span>
-  <div class="top-navigation__groups">
-   <ng-container *ngFor="let item of menuItems; trackBy: trackByCode">
-    <div class="top-navigation__group" *ngIf="item.children?.length; else enlaceSimple">
-     <button type="button" class="top-navigation__trigger" [matMenuTriggerFor]="subMenu"
-       [attr.aria-label]="'Abrir '+item.text">
-      <mat-icon *ngIf="item.icon">{{item.icon}}</mat-icon><span>{{item.text}}</span><mat-icon class="top-navigation__chevron">expand_more</mat-icon>
-     </button>
-     <mat-menu #subMenu="matMenu" class="hr-top-menu">
-      <ng-container *ngFor="let child of item.children; trackBy: trackByCode">
-       <a mat-menu-item *ngIf="child.routerLink" [routerLink]="child.routerLink">
-        <mat-icon *ngIf="child.icon">{{child.icon}}</mat-icon><span>{{child.text}}</span>
-       </a>
-      </ng-container>
-     </mat-menu>
-    </div>
-    <ng-template #enlaceSimple>
-     <a class="top-navigation__trigger" *ngIf="item.routerLink" [routerLink]="item.routerLink">
-      <mat-icon *ngIf="item.icon">{{item.icon}}</mat-icon><span>{{item.text}}</span>
-     </a>
-    </ng-template>
-   </ng-container>
+<aside class="credit-sidebar" [class.credit-sidebar--open]="getSideBarSate()" aria-label="Menú principal de configuración">
+  <div class="credit-sidebar__brand">
+    <img src="assets/branding/logo-nahuicredit.webp" alt="NAHUICREDIT" class="credit-sidebar__logo">
+    <span>Configuración de Sistema</span>
   </div>
-  <button class="top-navigation__logout" type="button" (click)="logOut()">
-   <mat-icon>logout</mat-icon><span>Salir</span>
+  <nav class="credit-sidebar__navigation" aria-label="Módulos">
+    <ng-container *ngFor="let item of menuItems; trackBy: trackByCode">
+      <details class="credit-sidebar__section" *ngIf="item.children?.length; else simpleItem" open>
+        <summary class="credit-sidebar__heading">
+          <mat-icon aria-hidden="true">{{item.icon || 'folder'}}</mat-icon>
+          <span>{{item.text}}</span>
+          <mat-icon class="credit-sidebar__chevron" aria-hidden="true">expand_more</mat-icon>
+        </summary>
+        <div class="credit-sidebar__children">
+          <ng-container *ngFor="let child of item.children; trackBy: trackByCode">
+            <a *ngIf="child.routerLink" class="credit-sidebar__link" [routerLink]="child.routerLink"
+              routerLinkActive="credit-sidebar__link--active" (click)="closeOnMobile()">
+              <mat-icon aria-hidden="true">{{child.icon || 'chevron_right'}}</mat-icon>
+              <span>{{child.text}}</span>
+            </a>
+          </ng-container>
+        </div>
+      </details>
+      <ng-template #simpleItem>
+        <a *ngIf="item.routerLink" class="credit-sidebar__link" [routerLink]="item.routerLink"
+          routerLinkActive="credit-sidebar__link--active" (click)="closeOnMobile()">
+          <mat-icon aria-hidden="true">{{item.icon || 'dashboard'}}</mat-icon><span>{{item.text}}</span>
+        </a>
+      </ng-template>
+    </ng-container>
+  </nav>
+  <button type="button" class="credit-sidebar__logout" (click)="logOut()">
+    <mat-icon aria-hidden="true">logout</mat-icon><span>Cerrar sesión</span>
   </button>
- </div>
-</nav>
+</aside>
+<div *ngIf="getSideBarSate()" class="credit-sidebar__backdrop" (click)="closeOnMobile()" aria-hidden="true"></div>
