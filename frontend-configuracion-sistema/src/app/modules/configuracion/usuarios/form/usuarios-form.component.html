@@ -1,0 +1,13 @@
+<section class="cfg"><header><h2>{{id?'Editar':'Crear'}} · {{config.title}}</h2><a [routerLink]="home">Volver</a></header><p *ngIf="error" class="alert alert-danger">{{error}}</p>
+<form *ngIf="can(id?'editar':'crear')&&!busy" (ngSubmit)="save()" class="formgrid">
+<div class="field" *ngFor="let f of config.fields">
+<ng-container *ngIf="f.key!=='is_active'&&(!id||f.type!=='password')">
+<label [for]="f.key">{{f.label}}{{f.required?' *':''}}</label>
+<select *ngIf="f.type==='ref';else other" [id]="f.key" [name]="f.key" class="form-select" [(ngModel)]="data[f.key]" [required]="f.required"><option value="">Selecciona...</option><option *ngFor="let r of refs[f.key]||[]" [value]="r.id">{{refLabel(r)}}</option></select>
+<ng-template #other><ng-container *ngIf="f.type==='permissions';else standard"><label class="check" *ngFor="let p of catalog"><input type="checkbox" [checked]="checked(p.permission)" (change)="check(p.permission,$any($event.target).checked)"> {{p.module}} · {{p.permission}}</label></ng-container>
+<ng-template #standard><label class="check" *ngIf="f.type==='bool';else textfield"><input type="checkbox" [name]="f.key" [(ngModel)]="data[f.key]"> Habilitado</label>
+<ng-template #textfield><textarea *ngIf="f.type==='json';else inputfield" [id]="f.key" [name]="f.key" class="form-control" rows="5" [(ngModel)]="data[f.key]" [required]="f.required"></textarea>
+<ng-template #inputfield><input [type]="f.type==='number'?'number':f.type==='date'?'date':f.type==='password'?'password':'text'" [step]="f.type==='number'?'any':undefined" [id]="f.key" [name]="f.key" class="form-control" [(ngModel)]="data[f.key]" [required]="f.required"></ng-template></ng-template></ng-template></ng-template>
+</ng-container></div>
+<div class="buttons"><button class="btn btn-primary" type="submit" [disabled]="saving">{{saving?'Guardando...':'Guardar'}}</button><a class="btn btn-outline-secondary" [routerLink]="home">Cancelar</a></div>
+</form></section>

@@ -1,0 +1,9 @@
+<section class="cfg"><header><div><h2>{{config.title}}</h2><p>Listado de registros</p></div><a *ngIf="can('crear')" class="btn btn-primary" [routerLink]="[home,'nuevo']">Crear registro</a></header>
+<div *ngIf="error" class="alert alert-danger">{{error}}</div>
+<div *ngIf="config.key==='usuarios'" class="search"><input class="form-control" aria-label="Buscar" [(ngModel)]="search" placeholder="Buscar usuario" (keyup.enter)="page=1;load()"><button class="btn btn-outline-secondary" (click)="page=1;load()">Buscar</button></div>
+<div class="table-responsive"><table class="table table-hover"><thead><tr><th *ngFor="let f of columns">{{f.label}}</th><th>Acciones</th></tr></thead><tbody>
+<tr *ngFor="let row of records"><td *ngFor="let f of columns">{{value(row,f)}}</td><td class="actions"><a *ngIf="can('detalle')" [routerLink]="[home,row.id,'detalle']">Detalle</a><a *ngIf="can('editar')" [routerLink]="[home,row.id,'editar']">Editar</a>
+<button class="btn btn-link btn-sm" *ngIf="config.key==='usuarios'&&can('editar')&&!row['is_superadmin']" (click)="toggle(row)">{{row['is_active']?'Suspender':'Reactivar'}}</button>
+<button class="btn btn-link text-danger btn-sm" *ngIf="can('eliminar')" (click)="remove(row)">Eliminar</button></td></tr>
+<tr *ngIf="!records.length&&!busy"><td [attr.colspan]="columns.length+1">No hay registros</td></tr></tbody></table></div>
+<p *ngIf="busy">Cargando registros...</p><footer><span>{{total}} registros</span><div><button class="btn btn-outline-secondary btn-sm" [disabled]="page<=1||busy" (click)="move(page-1)">Anterior</button><span>{{page}} / {{last}}</span><button class="btn btn-outline-secondary btn-sm" [disabled]="page>=last||busy" (click)="move(page+1)">Siguiente</button></div></footer></section>
