@@ -1,20 +1,22 @@
 <main class="login-page">
-  <section class="login-visual" aria-label="Sistema de Recursos Humanos"><div class="hr-login-visual"><span>RH</span><h1>Recursos Humanos</h1><p>Administración de talento y personal</p></div></section>
+  <section class="login-visual" [attr.aria-label]="'NAHUICREDIT - ' + tituloSistema">
+    <img *ngIf="!heroFailed" class="login-visual__illustration" src="assets/branding/login-hero.webp" alt="" (error)="onIllustrationError()">
+    <div *ngIf="heroFailed" class="login-visual__fallback">
+      <strong class="login-visual__brand"><span>NAHUI</span>CREDIT</strong>
+      <h1>{{tituloSistema}}</h1><div class="login-visual__accent" aria-hidden="true"></div>
+      <p>{{descripcionSistema}}</p>
+    </div>
+  </section>
 
   <section class="login-access" aria-labelledby="login-heading">
     <div class="login-access__content">
       <div class="login-brand">
-        <div class="login-brand__logo" *ngIf="logoUrl && !logoFailed; else defaultLogo">
-          <img [src]="logoUrl" (error)="onLogoError()" alt="Logotipo de la empresa">
+        <div class="login-brand__logo" *ngIf="!logoFailed; else defaultLogo">
+          <img src="assets/branding/logo-nahuicredit.webp" (error)="onLogoError()" alt="NAHUICREDIT">
         </div>
-        <ng-template #defaultLogo>
-          <div class="login-brand__fallback" aria-hidden="true">
-            <svg xmlns="http://www.w3.org/2000/svg" width="41" height="41" viewBox="0 0 24 24"
-              fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">
-              <circle cx="12" cy="8" r="4"/><path d="M4 21v-2a8 8 0 0 1 16 0v2"/>
-            </svg>
-          </div>
-        </ng-template>
+        <ng-template #defaultLogo><div class="login-brand__fallback" aria-label="NAHUICREDIT">
+          <span class="login-brand__emblem">✦</span><strong><span>NAHUI</span>CREDIT</strong>
+        </div></ng-template>
         <p class="login-brand__system">{{tituloSistema}}</p>
       </div>
 
@@ -54,7 +56,7 @@
           {{ loading ? 'Ingresando…' : 'Iniciar sesión' }}
         </button>
       </form>
-      <a routerLink="/recuperar-acceso">Olvidé mi contraseña</a>
+      <a class="login-recovery" routerLink="/recuperar-acceso">Olvidé mi contraseña</a>
 
       <p class="login-access__foot">Acceso seguro para personal autorizado</p>
     </div>

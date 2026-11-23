@@ -1,31 +1,23 @@
-import { Component, OnInit } from '@angular/core';
+import { Component } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-import { runtimeConfig } from 'src/app/config/runtime-config';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { AuthService } from 'src/app/servicios/auth/auth.service';
 
 @Component({ selector: 'app-login', standalone: true, imports: [CommonModule, FormsModule, RouterLink], templateUrl: './login.component.html', styleUrls:['./login.component.scss'] })
-export class LoginComponent implements OnInit {
-  logoUrl: string | null = null;
+export class LoginComponent {
   logoFailed = false;
-  readonly tituloSistema = 'Sistema de Recursos Humanos';
-  imagenFondo = '';
-  onIllustrationError(): void { this.imagenFondo = ''; }
-
-  ngOnInit(): void {
-    this.http.get<{data:{title:string;logo_url:string|null}}>(`${runtimeConfig().appUrl}login/branding`).subscribe({
-      next: ({data}) => { this.logoUrl = data?.logo_url ? `${runtimeConfig().appUrl}${data.logo_url}` : null; },
-      error: () => { this.logoUrl = null; }
-    });
-  }
-  onLogoError(): void { this.logoFailed = true; this.logoUrl = null; }
+  heroFailed = false;
+  readonly tituloSistema = 'Configuración de Sistema';
+  readonly descripcionSistema = 'Parámetros, catálogos, usuarios y control operativo';
+  onIllustrationError(): void { this.heroFailed = true; }
+  onLogoError(): void { this.logoFailed = true; }
 
   mfaRequired = false;
   mfaCode = '';
   email = ''; password = ''; remember = false; loading = false; error = '';
-  constructor(private readonly auth: AuthService, private readonly router: Router, private readonly route: ActivatedRoute, private readonly http: HttpClient) {}
+  constructor(private readonly auth: AuthService, private readonly router: Router, private readonly route: ActivatedRoute) {}
   get avisoSesion(): boolean { return this.route.snapshot.queryParamMap.get('sessionExpired')==='1'; }
   submit(): void {
     this.error = ''; this.loading = true;
