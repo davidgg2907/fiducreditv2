@@ -39,12 +39,6 @@
         <input id="login-password" name="password" type="password" [(ngModel)]="password"
           required autocomplete="current-password" placeholder="Ingresa tu contraseña">
 
-        <ng-container *ngIf="mfaRequired">
-          <label for="login-code">Código del autenticador</label>
-          <input id="login-code" name="mfaCode" type="text" [(ngModel)]="mfaCode"
-            required inputmode="numeric" pattern="[0-9]{6}" maxlength="6" autocomplete="one-time-code">
-        </ng-container>
-
         <label class="remember" for="login-remember">
           <input id="login-remember" name="remember" type="checkbox" [(ngModel)]="remember">
           <span>Recordarme en este dispositivo</span>

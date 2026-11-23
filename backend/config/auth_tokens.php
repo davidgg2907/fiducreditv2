@@ -1,6 +1,8 @@
 <?php
 
 return [
+    // Primera entrega: acceso por contraseña. Activar solo tras habilitar el flujo MFA en los frontends.
+    'require_mfa' => (bool) env('AUTH_REQUIRE_MFA', false),
     'access_token_ttl' => (int) env('AUTH_ACCESS_TOKEN_TTL', 15),
     'refresh_token_ttl' => (int) env('AUTH_REFRESH_TOKEN_TTL', 1440),
     'refresh_token_ttl_remember' => (int) env('AUTH_REFRESH_TOKEN_TTL_REMEMBER', 43200),

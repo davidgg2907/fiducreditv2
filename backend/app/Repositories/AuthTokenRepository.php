@@ -29,7 +29,7 @@ class AuthTokenRepository
                 return null;
             }
 
-            if ($user->is_superadmin || $user->mfa_secret) {
+            if (config('auth_tokens.require_mfa', false) && ($user->is_superadmin || $user->mfa_secret)) {
                 $step = $code && $user->mfa_secret
                     ? $totp->matchingStep($user->mfa_secret, $code, $user->mfa_last_step)
                     : null;

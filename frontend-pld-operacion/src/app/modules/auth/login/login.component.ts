@@ -13,19 +13,15 @@ export class LoginComponent {
   onIllustrationError(): void { this.heroFailed = true; }
   onLogoError(): void { this.logoFailed = true; }
 
-  mfaRequired = false;
-  mfaCode = '';
   email = ''; password = ''; remember = false; loading = false; error = '';
   constructor(private readonly auth: AuthService, private readonly router: Router, private readonly route: ActivatedRoute) {}
   get avisoSesion(): boolean { return this.route.snapshot.queryParamMap.get('sessionExpired')==='1'; }
   submit(): void {
     this.error = ''; this.loading = true;
-    this.auth.login(this.email, this.password, this.remember, this.mfaRequired ? this.mfaCode : undefined).subscribe({
+    this.auth.login(this.email, this.password, this.remember).subscribe({
       next: (response) => { this.loading = false; if (!this.auth.isAuthenticated()) { this.error = response.message ?? 'La respuesta no incluyó un token de acceso.'; return; } void this.router.navigateByUrl(this.route.snapshot.queryParamMap.get('returnUrl') || '/home'); },
       error: (error) => {
         this.loading = false;
-        if (error?.error?.mfaRequired === true) this.mfaRequired = true;
-        this.mfaCode = '';
         this.error = error?.error?.message
           ?? (error?.status === 401 ? 'Usuario o contraseña incorrectos.' : 'No fue posible iniciar sesión.');
       }
