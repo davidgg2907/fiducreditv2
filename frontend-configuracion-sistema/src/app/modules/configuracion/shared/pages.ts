@@ -67,7 +67,7 @@ export class DetailPage extends PageBase implements OnInit{
  }
  loadRelated(){
  if(!this.item)return;
- for(const m of MODULES.filter(x=>x.parent===this.config.key)){
+ for(const m of MODULES.filter(x=>x.key!==this.config.key && this.permissions.can(x,'ver') && x.fields.some(f=>f.reference===this.config.key))){
  const foreign=m.fields.find(f=>f.reference===this.config.key);if(!foreign)continue;
  const section={config:m,rows:[] as Item[],error:''};this.relations.push(section);
  this.api.list(m.api,1,'',{[foreign.key]:String(this.item.id)}).subscribe({next:r=>section.rows=r.data,error:(e:HttpErrorResponse)=>section.error=errorText(e)});
