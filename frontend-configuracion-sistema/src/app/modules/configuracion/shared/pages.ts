@@ -1,4 +1,4 @@
-import {OnInit} from '@angular/core';
+import {Directive, OnInit} from '@angular/core';
 import {Router,ActivatedRoute} from '@angular/router';
 import {HttpErrorResponse} from '@angular/common/http';
 import {ConfigApi} from './api.service';
@@ -10,6 +10,7 @@ function errorText(e:HttpErrorResponse):string{
  if(e.status===422)return Object.values(e.error?.errors??{}).flat().join(' · ')||e.error?.message||'Datos inválidos.';
  return e.error?.message||'Error del servicio HTTP '+e.status;
 }
+@Directive()
 export class PageBase{
  error='';busy=false;
  constructor(public config:ModuleConfig,public api:ConfigApi,public permissions:ConfigPermissions,public router:Router,public route:ActivatedRoute){}
@@ -18,6 +19,7 @@ export class PageBase{
  get columns(){return this.config.fields.filter(x=>x.type!=='password').slice(0,5);}
  value(row:Item,field:Field){const v=row[field.key];return v==null?'—':typeof v==='object'?JSON.stringify(v):typeof v==='boolean'?(v?'Sí':'No'):String(v);}
 }
+@Directive()
 export class ListPage extends PageBase implements OnInit{
  records:Item[]=[];page=1;last=1;total=0;search='';
  ngOnInit(){if(this.can('ver'))this.load();else this.error='Sin permiso para consultar.';}
@@ -26,6 +28,7 @@ export class ListPage extends PageBase implements OnInit{
  remove(item:Item){if(!this.can('eliminar')||!confirm('¿Eliminar el registro?'))return;this.api.remove(this.config.api,String(item.id)).subscribe({next:()=>this.load(),error:(e:HttpErrorResponse)=>this.error=errorText(e)});}
  toggle(item:Item){if(this.config.key!=='usuarios'||!this.can('editar')||item['is_superadmin']||!confirm('¿Cambiar el estado de acceso?'))return;this.api.status(String(item.id),!item['is_active']).subscribe({next:()=>this.load(),error:(e:HttpErrorResponse)=>this.error=errorText(e)});}
 }
+@Directive()
 export class FormPage extends PageBase implements OnInit{
  id:string|null=null;data:Record<string,any>={};refs:Record<string,Item[]>={};saving=false;catalog:{permission:string;name:string;module:string}[]=[];
  ngOnInit(){
@@ -58,6 +61,7 @@ export class FormPage extends PageBase implements OnInit{
  this.api.save(this.config.api,payload,this.id??undefined).subscribe({next:()=>void this.router.navigate([this.home]),error:(e:HttpErrorResponse)=>{this.error=errorText(e);this.saving=false;}});
  }
 }
+@Directive()
 export class DetailPage extends PageBase implements OnInit{
  item:Item|null=null;relations:{config:ModuleConfig;rows:Item[];error:string}[]=[];
  ngOnInit(){
