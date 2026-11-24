@@ -1,10 +1,10 @@
 <section class="cfg"><header class="cfg-panel cfg-heading"><div><h2>{{id?'Editar':'Crear'}} · {{config.title}}</h2><p>Captura y edición de información</p></div><div class="cfg-header-actions">
-  <button class="btn btn-primary" form="config-form" type="submit" [disabled]="saving||busy">{{saving?'Guardando...':'Guardar'}}</button>
+  <button class="btn btn-primary" form="config-form" type="submit" [disabled]="saving||busy||rolesLoading||rolesFailed">{{saving?'Guardando...':'Guardar'}}</button>
   <a class="btn btn-outline-secondary cfg-header-cancel" [routerLink]="home"><span class="material-icons-outlined" aria-hidden="true">close</span> Cancelar</a>
 </div></header><p *ngIf="error" class="alert alert-danger">{{error}}</p>
 <form id="config-form" *ngIf="can(id?'editar':'crear')&&!busy" (ngSubmit)="save()" class="formgrid">
 <div class="field" *ngFor="let f of config.fields">
-<ng-container *ngIf="f.key!=='is_active'&&(!id||f.type!=='password')">
+<ng-container *ngIf="f.key!=='role_id'&&f.key!=='is_active'&&(!id||f.type!=='password')">
 <label [for]="f.key">{{f.label}}{{f.required?' *':''}}</label>
 <select *ngIf="f.type==='ref';else other" [id]="f.key" [name]="f.key" class="form-select" [(ngModel)]="data[f.key]" [required]="f.required"><option value="">Selecciona...</option><option *ngFor="let r of refs[f.key]||[]" [value]="r.id">{{refLabel(r)}}</option></select>
 <ng-template #other><ng-container *ngIf="f.type==='permissions';else standard"><label class="check" *ngFor="let p of catalog"><input type="checkbox" [checked]="checked(p.permission)" (change)="check(p.permission,$any($event.target).checked)"> {{p.module}} · {{p.permission}}</label></ng-container>
@@ -13,4 +13,14 @@
 <ng-template #inputfield><input [type]="f.type==='number'?'number':f.type==='date'?'date':f.type==='password'?'password':'text'" [step]="f.type==='number'?'any':undefined" [id]="f.key" [name]="f.key" class="form-control" [(ngModel)]="data[f.key]" [required]="f.required"></ng-template></ng-template></ng-template></ng-template>
 </ng-container><small *ngIf="f.key==='password_confirmation'&&data['password_confirmation']&&data['password']!==data['password_confirmation']" class="text-danger">Las contraseñas no coinciden.</small></div>
 
-</form></section>
+<section class="cfg-panel user-access">
+ <h3>Acceso al sistema</h3>
+ <div class="formgrid">
+  <div class="field"><label for="system">Sistema</label><select id="system" name="system" class="form-select" [ngModel]="selectedSystem" (ngModelChange)="selectSystem($event)" [disabled]="rolesLoading||rolesFailed">
+   <option value="">Selecciona un sistema...</option><option *ngFor="let s of systems" [value]="s.code">{{s.name}}</option><option value="general">Permisos generales / heredados</option>
+  </select></div>
+  <div class="field"><label for="role_id">Rol</label><select id="role_id" name="role_id" class="form-select" [(ngModel)]="data['role_id']" [disabled]="!selectedSystem||rolesLoading||rolesFailed" [required]="!!selectedSystem">
+   <option value="">Selecciona un rol...</option><option *ngFor="let r of filteredRoles" [value]="r.id">{{refLabel(r)}}</option>
+  </select><small *ngIf="selectedSystem&&!rolesLoading&&!filteredRoles.length">No hay roles disponibles para este sistema.</small></div>
+ </div><small>El usuario admite un solo rol. Si el rol incluye otros sistemas, conserva todos sus permisos; este selector únicamente filtra roles.</small>
+</section></form></section>
