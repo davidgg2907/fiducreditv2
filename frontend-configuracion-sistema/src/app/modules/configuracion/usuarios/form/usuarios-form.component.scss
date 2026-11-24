@@ -9,3 +9,5 @@ h2{font-size:1.35rem;margin:0;font-weight:700}h3{font-size:1.05rem}p{color:#6474
 .detail dd{border-bottom:1px solid #ddd;margin:0;padding-bottom:.6rem}.detail dt{color:#475569}
 .relation{border-top:1px solid #ddd;margin-top:1rem;padding-top:1rem}.relation-row{display:flex;justify-content:space-between;padding:.7rem;border-bottom:1px solid #eee}
 @media(max-width:600px){.detail{grid-template-columns:1fr}.cfg{padding:.8rem}}
+
+.user-access{grid-column:1/-1}.user-access h3{margin:0 0 .8rem}.user-access small{display:block;margin-top:.5rem;color:#64748b}

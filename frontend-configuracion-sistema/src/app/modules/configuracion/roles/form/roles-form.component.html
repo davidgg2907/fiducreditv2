@@ -2,15 +2,27 @@
   <button class="btn btn-primary" form="config-form" type="submit" [disabled]="saving||busy">{{saving?'Guardando...':'Guardar'}}</button>
   <a class="btn btn-outline-secondary cfg-header-cancel" [routerLink]="home"><span class="material-icons-outlined" aria-hidden="true">close</span> Cancelar</a>
 </div></header><p *ngIf="error" class="alert alert-danger">{{error}}</p>
-<form id="config-form" *ngIf="can(id?'editar':'crear')&&!busy" (ngSubmit)="save()" class="formgrid">
-<div class="field" *ngFor="let f of config.fields">
-<ng-container *ngIf="f.key!=='is_active'&&(!id||f.type!=='password')">
-<label [for]="f.key">{{f.label}}{{f.required?' *':''}}</label>
-<select *ngIf="f.type==='ref';else other" [id]="f.key" [name]="f.key" class="form-select" [(ngModel)]="data[f.key]" [required]="f.required"><option value="">Selecciona...</option><option *ngFor="let r of refs[f.key]||[]" [value]="r.id">{{refLabel(r)}}</option></select>
-<ng-template #other><ng-container *ngIf="f.type==='permissions';else standard"><label class="check" *ngFor="let p of catalog"><input type="checkbox" [checked]="checked(p.permission)" (change)="check(p.permission,$any($event.target).checked)"> {{p.module}} · {{p.permission}}</label></ng-container>
-<ng-template #standard><label class="check" *ngIf="f.type==='bool';else textfield"><input type="checkbox" [name]="f.key" [(ngModel)]="data[f.key]"> Habilitado</label>
-<ng-template #textfield><textarea *ngIf="f.type==='json';else inputfield" [id]="f.key" [name]="f.key" class="form-control" rows="5" [(ngModel)]="data[f.key]" [required]="f.required"></textarea>
-<ng-template #inputfield><input [type]="f.type==='number'?'number':f.type==='date'?'date':f.type==='password'?'password':'text'" [step]="f.type==='number'?'any':undefined" [id]="f.key" [name]="f.key" class="form-control" [(ngModel)]="data[f.key]" [required]="f.required"></ng-template></ng-template></ng-template></ng-template>
-</ng-container></div>
-
+<form id="config-form" *ngIf="can(id?'editar':'crear')&&!busy" (ngSubmit)="save()" class="access-form">
+ <div class="access-top">
+  <section class="cfg-panel field"><label for="name">Nombre del rol *</label><input id="name" name="name" class="form-control" [(ngModel)]="data['name']" required maxlength="100"></section>
+  <section class="cfg-panel"><h3>Sistemas</h3><div class="system-options">
+   <label class="check" *ngFor="let s of systems"><input type="checkbox" [checked]="selectedSystems.includes(s.code)" (change)="toggleSystem(s.code,$any($event.target).checked)"> {{s.name}}</label>
+  </div><small>Selecciona los sistemas y sus acciones. La selección se conserva mediante los permisos del rol.</small></section>
+ </div>
+ <section class="cfg-panel system-panel" *ngFor="let s of visibleSystems">
+  <h3>{{s.name}}</h3>
+  <div class="module-grid">
+   <section class="module-card" *ngFor="let m of modulesFor(s.code)">
+    <h4>{{m.name}}</h4>
+    <label class="check" *ngFor="let p of m.actions"><input type="checkbox" [checked]="checked(p.permission)" (change)="check(p.permission,$any($event.target).checked)"> {{p.name}}</label>
+   </section>
+  </div>
+ </section>
+ <section class="cfg-panel" *ngIf="modulesFor('').length">
+  <h3>Permisos generales y heredados</h3><div class="module-grid">
+   <section class="module-card" *ngFor="let m of modulesFor('')"><h4>{{m.name}}</h4>
+    <label class="check" *ngFor="let p of m.actions"><input type="checkbox" [checked]="checked(p.permission)" (change)="check(p.permission,$any($event.target).checked)"> {{p.name}}</label>
+   </section>
+  </div>
+ </section>
 </form></section>
