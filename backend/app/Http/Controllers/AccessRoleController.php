@@ -31,9 +31,18 @@ final class AccessRoleController extends Controller
         return response()->json(['isSuccess' => true, 'data' => $modules]);
     }
 
-    public function index(): JsonResponse
+    public function index(Request $request): JsonResponse
     {
-        return response()->json(['isSuccess' => true, 'data' => Role::orderBy('name')->get(['id', 'name', 'permissions'])]);
+        $data = $request->validate(['search' => ['sometimes', 'string', 'max:150'], 'per_page' => ['sometimes', 'integer', 'between:1,100']]);
+        $query = Role::query();
+        if (!empty($data['search'])) {
+            $value = '%'.addcslashes(trim($data['search']), '%_\\').'%';
+            $query->where(function ($q) use ($value) {
+                $q->where('name', 'like', $value)
+                  ->orWhereIn('id', DB::table('users')->select('role_id')->where('name', 'like', $value)->orWhere('email', 'like', $value));
+            });
+        }
+        return response()->json(['isSuccess' => true, 'data' => $query->orderBy('name')->paginate($data['per_page'] ?? 25, ['id','name','permissions'])]);
     }
 
     public function show(int $role): JsonResponse

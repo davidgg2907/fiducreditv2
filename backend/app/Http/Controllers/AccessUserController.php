@@ -25,7 +25,7 @@ final class AccessUserController extends Controller
         $query = User::query()->with('role')->orderBy('id');
         if (isset($data['search'])) {
             $search = addcslashes($data['search'], '%_\\');
-            $query->where(fn ($q) => $q->where('name', 'like', '%'.$search.'%')->orWhere('email', 'like', '%'.$search.'%'));
+            $query->where(fn ($q) => $q->where('name', 'like', '%'.$search.'%')->orWhere('email', 'like', '%'.$search.'%')->orWhereHas('role', fn ($role) => $role->where('name', 'like', '%'.$search.'%')));
         }
         if (array_key_exists('is_active', $data)) {
             $query->where('is_active', (bool) $data['is_active']);
