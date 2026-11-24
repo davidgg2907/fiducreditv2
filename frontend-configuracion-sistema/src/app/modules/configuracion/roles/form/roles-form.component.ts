@@ -19,14 +19,16 @@ export class RolesFormComponent extends FormPage{
    if(!on)this.data['permissions']=(this.data['permissions']??[]).filter((p:string)=>systemOf(p)!==code);
  }
  modulesFor(code:string){
-   const groups=new Map<string,{name:string;actions:typeof this.catalog}>();
+   const groups=new Map<string,{key:string;name:string;actions:typeof this.catalog}>();
    for(const action of this.catalog.filter(p=>systemOf(p.permission)===code)){
      const key=action.permission.split('.')[0];
-     if(!groups.has(key))groups.set(key,{name:action.module,actions:[]});
+     if(!groups.has(key))groups.set(key,{key,name:action.module,actions:[]});
      groups.get(key)!.actions.push(action);
    }
    return [...groups.values()];
  }
+ trackModule(_index:number,module:{key:string}){return module.key;}
+ trackAction(_index:number,action:{permission:string}){return action.permission;}
  override save(){
    if(this.selectedSystems.some(s=>!roleSystems(this.data['permissions']).includes(s))){
      this.error='Selecciona al menos una acción por cada sistema elegido.';return;

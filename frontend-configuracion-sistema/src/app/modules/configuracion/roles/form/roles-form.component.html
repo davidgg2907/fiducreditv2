@@ -6,22 +6,22 @@
  <div class="access-top">
   <section class="cfg-panel field"><label for="name">Nombre del rol *</label><input id="name" name="name" class="form-control" [(ngModel)]="data['name']" required maxlength="100"></section>
   <section class="cfg-panel"><h3>Sistemas</h3><div class="system-options">
-   <label class="check" *ngFor="let s of systems"><input type="checkbox" [checked]="selectedSystems.includes(s.code)" (change)="toggleSystem(s.code,$any($event.target).checked)"> {{s.name}}</label>
+   <button type="button" class="access-switch-row" role="switch" *ngFor="let s of systems" [attr.aria-checked]="selectedSystems.includes(s.code)" (click)="toggleSystem(s.code,!selectedSystems.includes(s.code))"><span class="access-switch-track" aria-hidden="true"></span><span>{{s.name}}</span></button>
   </div><small>Selecciona los sistemas y sus acciones. La selección se conserva mediante los permisos del rol.</small></section>
  </div>
  <section class="cfg-panel system-panel" *ngFor="let s of visibleSystems">
   <h3>{{s.name}}</h3>
   <div class="module-grid">
-   <section class="module-card" *ngFor="let m of modulesFor(s.code)">
+   <section class="module-card" *ngFor="let m of modulesFor(s.code); trackBy: trackModule">
     <h4>{{m.name}}</h4>
-    <label class="check" *ngFor="let p of m.actions"><input type="checkbox" [checked]="checked(p.permission)" (change)="check(p.permission,$any($event.target).checked)"> {{p.name}}</label>
+    <button type="button" class="access-switch-row" role="switch" *ngFor="let p of m.actions; trackBy: trackAction" [attr.aria-checked]="checked(p.permission)" (click)="check(p.permission,!checked(p.permission))"><span class="access-switch-track" aria-hidden="true"></span><span>{{p.name}}</span></button>
    </section>
   </div>
  </section>
  <section class="cfg-panel" *ngIf="modulesFor('').length">
   <h3>Permisos generales y heredados</h3><div class="module-grid">
-   <section class="module-card" *ngFor="let m of modulesFor('')"><h4>{{m.name}}</h4>
-    <label class="check" *ngFor="let p of m.actions"><input type="checkbox" [checked]="checked(p.permission)" (change)="check(p.permission,$any($event.target).checked)"> {{p.name}}</label>
+   <section class="module-card" *ngFor="let m of modulesFor(''); trackBy: trackModule"><h4>{{m.name}}</h4>
+    <button type="button" class="access-switch-row" role="switch" *ngFor="let p of m.actions; trackBy: trackAction" [attr.aria-checked]="checked(p.permission)" (click)="check(p.permission,!checked(p.permission))"><span class="access-switch-track" aria-hidden="true"></span><span>{{p.name}}</span></button>
    </section>
   </div>
  </section>
