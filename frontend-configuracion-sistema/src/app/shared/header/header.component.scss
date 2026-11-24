@@ -375,3 +375,12 @@
 .header-copy h1{color:#f1f8fa}
 .top-header .menu-toggle{background:rgba(255,255,255,.15);border-color:rgba(255,255,255,.35)}
 .top-header .menu-toggle mat-icon{color:#fff}
+
+/* Colores del sidebar. Literal en componente para no depender del orden de los tokens globales. */
+:host .top-header,
+:host .top-header.test {
+  background: linear-gradient(100deg, #0b2031 0%, #173c50 52%, #4a7584 100%) !important;
+  background-image: linear-gradient(100deg, #0b2031 0%, #173c50 52%, #4a7584 100%) !important;
+  border-bottom: 1px solid #244b5c !important;
+}
+:host .top-header .header-copy h1 { color:#ffffff !important; text-shadow:0 1px 2px rgba(0,0,0,.15); }
