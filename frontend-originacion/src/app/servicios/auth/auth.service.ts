@@ -12,10 +12,16 @@ export class AuthService {
   private accessToken: string | null = null;
   private accessExpiresAt = 0;
   private refreshRequest$?: Observable<boolean>;
+  private lastUserActivity = Date.now();
   // Indicador de UX, nunca prueba de autenticación. El servidor valida la cookie HttpOnly.
   private readonly sessionHintKey = 'nahuicredit.auth.session-established';
 
   constructor(private readonly http: HttpClient) {
+    for(const eventName of ['click','keydown','pointerdown','touchstart']) document.addEventListener(eventName,()=>this.lastUserActivity=Date.now(),{passive:true});
+    window.setInterval(()=>{
+      if(this.accessToken && this.accessExpiresAt-Date.now()<120_000 && Date.now()-this.lastUserActivity<600_000 && document.visibilityState==='visible')
+        this.refresh().pipe(catchError(()=>of(false))).subscribe();
+    },60_000);
     for (const key of ['auth.user', 'auth.access_token', 'auth.access_token_expires_at', 'auth.refresh_token', 'auth.remember', 'auth.last_activity_at']) {
       sessionStorage.removeItem(key);
       localStorage.removeItem(key);
@@ -65,9 +71,6 @@ export class AuthService {
       return of(true);
     }
 
-    // No enviar POST /login/refresh en una visita anónima sin sesión previa.
-    if (!sessionStorage.getItem(this.sessionHintKey)) return of(false);
-
     return this.refresh().pipe(catchError(() => {
       this.clear();
       return of(false);
@@ -75,7 +78,6 @@ export class AuthService {
   }
 
   refresh(): Observable<boolean> {
-    if (!sessionStorage.getItem(this.sessionHintKey)) return of(false);
     this.refreshRequest$ ??= this.serializeCookieRequest(() =>
       this.http.post<LoginResponse>(this.apiUrl + 'login/refresh', {}, this.options),
     ).pipe(
@@ -98,6 +100,7 @@ export class AuthService {
     const { user, tokens } = response.data;
     this.accessToken = tokens.accessToken;
     this.accessExpiresAt = Date.parse(tokens.accessTokenExpiresAt);
+    this.lastUserActivity = Date.now();
     this.updateSessionUser(user);
     sessionStorage.setItem(this.sessionHintKey, '1');
   }
