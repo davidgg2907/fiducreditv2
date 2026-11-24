@@ -43,6 +43,10 @@ export class ListPage extends PageBase implements OnInit{
 export class FormPage extends PageBase implements OnInit{
  id:string|null=null;data:Record<string,any>={};refs:Record<string,Item[]>={};saving=false;
  newUser={name:'',email:'',password:'',password_confirmation:'',role_id:''};
+ private readonly addressKeys=['street','neighborhood','city','state','municipality','postal_code'];
+ get addressFields():Field[]{return this.config.fields.filter(f=>this.isInstitutional()&&this.addressKeys.includes(f.key));}
+ get generalFields():Field[]{return this.config.fields.filter(f=>!this.isInstitutional()||!this.addressKeys.includes(f.key));}
+ private isInstitutional(){return ['empresas','sucursales','asesores'].includes(this.config.key);}
  catalog:{permission:string;name:string;module:string}[]=[];
  ngOnInit(){
  this.id=this.route.snapshot.paramMap.get('id');
@@ -50,6 +54,9 @@ export class FormPage extends PageBase implements OnInit{
  for(const f of this.config.fields){
  this.data[f.key]=f.type==='bool'?false:f.type==='json'?'{}':f.type==='permissions'?[]:'';
  if(f.type==='ref'&&f.reference)this.api.list(setting(f.reference).api).subscribe({next:r=>this.refs[f.key]=r.data,error:()=>this.refs[f.key]=[]});
+ }
+ if(this.config.key==='asesores'){
+   this.api.list(setting('roles').api).subscribe({next:r=>this.refs['role_id']=r.data,error:()=>this.refs['role_id']=[]});
  }
  if(this.config.key==='roles')this.api.catalog().subscribe({next:r=>this.catalog=r.flatMap(m=>(m.actions??[]).map((a:any)=>({...a,module:m.name}))),error:(e:HttpErrorResponse)=>this.error=errorText(e)});
  if(this.id){this.busy=true;this.api.detail(this.config.api,this.id).subscribe({next:r=>{for(const f of this.config.fields){const v=r[f.key];if(v!==undefined&&v!==null)this.data[f.key]=f.type==='json'?JSON.stringify(v,null,2):v;}this.busy=false;},error:(e:HttpErrorResponse)=>{this.error=errorText(e);this.busy=false;}});}

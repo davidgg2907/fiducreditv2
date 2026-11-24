@@ -1,6 +1,6 @@
 <section class="cfg"><header class="cfg-panel cfg-heading"><div><h2>{{id?'Editar':'Crear'}} · {{config.title}}</h2><p>Captura y edición de información</p></div><button class="btn btn-primary" form="config-form" type="submit" [disabled]="saving||busy">{{saving?'Guardando...':'Guardar'}}</button></header><p *ngIf="error" class="alert alert-danger">{{error}}</p>
 <form id="config-form" *ngIf="can(id?'editar':'crear')&&!busy" (ngSubmit)="save()" class="formgrid">
-<div class="field" *ngFor="let f of config.fields">
+<div class="field" *ngFor="let f of generalFields">
 <ng-container *ngIf="f.key!=='is_active'&&f.key!=='user_id'&&f.key!=='has_system_access'&&(!id||f.type!=='password')">
 <label [for]="f.key">{{f.label}}{{f.required?' *':''}}</label>
 <select *ngIf="f.type==='ref';else other" [id]="f.key" [name]="f.key" class="form-select" [(ngModel)]="data[f.key]" [required]="f.required"><option value="">Selecciona...</option><option *ngFor="let r of refs[f.key]||[]" [value]="r.id">{{refLabel(r)}}</option></select>
@@ -28,5 +28,13 @@
 </ng-container>
 </div>
 </section>
+<section class="cfg-address-section">
+<h3><span class="material-icons-outlined" aria-hidden="true">location_on</span> Domicilio</h3>
+<div class="cfg-address-grid"><div class="field" *ngFor="let f of addressFields">
+  <label [for]="'address-'+f.key">{{f.label}}{{f.required?' *':''}}</label>
+  <input class="form-control" [id]="'address-'+f.key" [name]="f.key" [(ngModel)]="data[f.key]" [required]="f.required"
+  [maxlength]="f.key==='postal_code'?5:255" [attr.inputmode]="f.key==='postal_code'?'numeric':null"
+  [pattern]="f.key==='postal_code'?'[0-9]{5}':null">
+</div></div></section>
 <div class="buttons"><a class="btn btn-outline-secondary" [routerLink]="home">Cancelar</a></div>
 </form></section>

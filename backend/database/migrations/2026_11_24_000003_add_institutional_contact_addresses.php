@@ -8,12 +8,12 @@ return new class extends Migration {
     public function up(): void
     {
         foreach (['credit_companies', 'credit_branches', 'credit_advisors'] as $table) {
-            Schema::table($table, function (Blueprint $blueprint): void {
+            Schema::table($table, function (Blueprint $blueprint) use ($table): void {
                 $blueprint->string('street', 255)->nullable();
                 $blueprint->string('neighborhood', 180)->nullable();
                 $blueprint->string('city', 180)->nullable();
                 $blueprint->string('postal_code', 5)->nullable();
-                if ($blueprint->getTable() !== 'credit_branches') {
+                if ($table !== 'credit_branches') {
                     $blueprint->string('state', 180)->nullable();
                     $blueprint->string('municipality', 180)->nullable();
                 }
