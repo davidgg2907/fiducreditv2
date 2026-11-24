@@ -216,3 +216,7 @@ button:focus-visible, a:focus-visible, input:focus-visible, [tabindex]:focus-vis
 .main-content .profile-page .profile-grid .cfg-panel{margin:0}
 .main-content .profile-page .profile-actions .btn{display:inline-flex;align-items:center;gap:8px;border-radius:9px}
 @media(max-width:700px){.main-content .cfg .detail{grid-template-columns:1fr}.main-content .cfg:not(.cfg-list)>.formgrid{padding:12px}}
+
+/* Los identificadores internos permanecen en API, no en la vista de detalle. */
+.main-content .cfg:not(.cfg-list) .detail > dt:last-of-type,
+.main-content .cfg:not(.cfg-list) .detail > dd:last-of-type {display:none}
