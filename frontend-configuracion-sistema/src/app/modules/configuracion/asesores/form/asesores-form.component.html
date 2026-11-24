@@ -1,7 +1,7 @@
 <section class="cfg"><header class="cfg-panel cfg-heading"><div><h2>{{id?'Editar':'Crear'}} · {{config.title}}</h2><p>Captura y edición de información</p></div><button class="btn btn-primary" form="config-form" type="submit" [disabled]="saving||busy">{{saving?'Guardando...':'Guardar'}}</button></header><p *ngIf="error" class="alert alert-danger">{{error}}</p>
 <form id="config-form" *ngIf="can(id?'editar':'crear')&&!busy" (ngSubmit)="save()" class="formgrid">
 <div class="field" *ngFor="let f of config.fields">
-<ng-container *ngIf="f.key!=='is_active'&&(!id||f.type!=='password')">
+<ng-container *ngIf="f.key!=='is_active'&&f.key!=='user_id'&&f.key!=='has_system_access'&&(!id||f.type!=='password')">
 <label [for]="f.key">{{f.label}}{{f.required?' *':''}}</label>
 <select *ngIf="f.type==='ref';else other" [id]="f.key" [name]="f.key" class="form-select" [(ngModel)]="data[f.key]" [required]="f.required"><option value="">Selecciona...</option><option *ngFor="let r of refs[f.key]||[]" [value]="r.id">{{refLabel(r)}}</option></select>
 <ng-template #other><ng-container *ngIf="f.type==='permissions';else standard"><label class="check" *ngFor="let p of catalog"><input type="checkbox" [checked]="checked(p.permission)" (change)="check(p.permission,$any($event.target).checked)"> {{p.module}} · {{p.permission}}</label></ng-container>
@@ -9,5 +9,24 @@
 <ng-template #textfield><textarea *ngIf="f.type==='json';else inputfield" [id]="f.key" [name]="f.key" class="form-control" rows="5" [(ngModel)]="data[f.key]" [required]="f.required"></textarea>
 <ng-template #inputfield><input [type]="f.type==='number'?'number':f.type==='date'?'date':f.type==='password'?'password':'text'" [step]="f.type==='number'?'any':undefined" [id]="f.key" [name]="f.key" class="form-control" [(ngModel)]="data[f.key]" [required]="f.required"></ng-template></ng-template></ng-template></ng-template>
 </ng-container></div>
+<section class="advisor-access-panel">
+<h3>Acceso al sistema</h3>
+<label class="check advisor-access-switch"><input type="checkbox" name="has_system_access" [(ngModel)]="data['has_system_access']">
+<span>{{data['has_system_access']?'Habilitado':'Sin acceso al sistema'}}</span></label>
+<div *ngIf="data['has_system_access']" class="advisor-access-fields">
+<div class="field"><label for="advisor-user">Usuario existente (opcional)</label>
+<select id="advisor-user" class="form-select" name="advisor-user" [(ngModel)]="data['user_id']">
+<option value="">Crear usuario nuevo</option><option *ngFor="let u of refs['user_id']||[]" [value]="u.id">{{refLabel(u)}}</option>
+</select></div>
+<ng-container *ngIf="!data['user_id']">
+<div class="field"><label for="advisor-login-name">Nombre del usuario *</label><input id="advisor-login-name" class="form-control" name="advisor-login-name" [(ngModel)]="newUser.name" required></div>
+<div class="field"><label for="advisor-login-email">Correo del usuario *</label><input id="advisor-login-email" type="email" class="form-control" name="advisor-login-email" [(ngModel)]="newUser.email" required></div>
+<div class="field"><label for="advisor-login-role">Rol *</label><select id="advisor-login-role" class="form-select" name="advisor-login-role" [(ngModel)]="newUser.role_id" required><option value="">Selecciona rol</option><option *ngFor="let rol of refs['role_id']||[]" [value]="rol.id">{{refLabel(rol)}}</option></select></div>
+<div class="field"><label for="advisor-login-password">Contraseña *</label><input id="advisor-login-password" type="password" autocomplete="new-password" minlength="12" class="form-control" name="advisor-login-password" [(ngModel)]="newUser.password" required></div>
+<div class="field"><label for="advisor-login-confirm">Confirmar contraseña *</label><input id="advisor-login-confirm" type="password" autocomplete="new-password" minlength="12" class="form-control" name="advisor-login-confirm" [(ngModel)]="newUser.password_confirmation" required></div>
+<p *ngIf="newUser.password_confirmation && newUser.password!==newUser.password_confirmation" class="alert alert-warning">Las contraseñas no coinciden.</p>
+</ng-container>
+</div>
+</section>
 <div class="buttons"><a class="btn btn-outline-secondary" [routerLink]="home">Cancelar</a></div>
 </form></section>

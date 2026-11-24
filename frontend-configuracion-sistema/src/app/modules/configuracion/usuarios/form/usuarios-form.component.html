@@ -8,6 +8,6 @@
 <ng-template #standard><label class="check" *ngIf="f.type==='bool';else textfield"><input type="checkbox" [name]="f.key" [(ngModel)]="data[f.key]"> Habilitado</label>
 <ng-template #textfield><textarea *ngIf="f.type==='json';else inputfield" [id]="f.key" [name]="f.key" class="form-control" rows="5" [(ngModel)]="data[f.key]" [required]="f.required"></textarea>
 <ng-template #inputfield><input [type]="f.type==='number'?'number':f.type==='date'?'date':f.type==='password'?'password':'text'" [step]="f.type==='number'?'any':undefined" [id]="f.key" [name]="f.key" class="form-control" [(ngModel)]="data[f.key]" [required]="f.required"></ng-template></ng-template></ng-template></ng-template>
-</ng-container></div>
+</ng-container><small *ngIf="f.key==='password_confirmation'&&data['password_confirmation']&&data['password']!==data['password_confirmation']" class="text-danger">Las contraseñas no coinciden.</small></div>
 <div class="buttons"><a class="btn btn-outline-secondary" [routerLink]="home">Cancelar</a></div>
 </form></section>

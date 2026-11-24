@@ -40,6 +40,7 @@ final class StoreCreditAdvisorRequest extends FormRequest
             'new_user.name' => ['required_if:has_system_access,true', 'string', 'max:255'],
             'new_user.email' => ['required_if:has_system_access,true', 'nullable', 'email', 'max:255', Rule::unique('users','email')],
             'new_user.password' => ['required_if:has_system_access,true', 'nullable', 'string', 'min:12', 'confirmed'],
+            'new_user.password_confirmation' => ['sometimes', 'string', 'min:12'],
             'new_user.role_id' => ['required_if:has_system_access,true', 'nullable', 'integer', 'exists:roles,id'],
         ];
     }

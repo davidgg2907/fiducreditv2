@@ -41,7 +41,9 @@ export class ListPage extends PageBase implements OnInit{
 }
 @Directive()
 export class FormPage extends PageBase implements OnInit{
- id:string|null=null;data:Record<string,any>={};refs:Record<string,Item[]>={};saving=false;catalog:{permission:string;name:string;module:string}[]=[];
+ id:string|null=null;data:Record<string,any>={};refs:Record<string,Item[]>={};saving=false;
+ newUser={name:'',email:'',password:'',password_confirmation:'',role_id:''};
+ catalog:{permission:string;name:string;module:string}[]=[];
  ngOnInit(){
  this.id=this.route.snapshot.paramMap.get('id');
  if(!this.can(this.id?'editar':'crear')){this.error='Sin permiso para esta operación.';return;}
@@ -59,7 +61,8 @@ export class FormPage extends PageBase implements OnInit{
  if(this.saving||!this.can(this.id?'editar':'crear'))return;
  const payload:Record<string,unknown>={};
  try{for(const f of this.config.fields){
- if(f.key==='is_active'||(this.id&&f.type==='password'))continue;
+ if(f.key==='is_active'||f.key==='password_confirmation'||(this.id&&f.type==='password'))continue;
+ if(this.config.key==='asesores'&&f.key==='user_id'&&!this.data['has_system_access'])continue;
  let val=this.data[f.key];
  if(f.type==='json')val=val?JSON.parse(val):null;
  if(f.type==='number')val=val===''?null:Number(val);
@@ -67,7 +70,22 @@ export class FormPage extends PageBase implements OnInit{
  if(f.type==='text'&&val==='')val=null;
  if(val!==null||f.required||f.type==='permissions')payload[f.key]=val;
  }}catch{this.error='Revisa la sintaxis de los campos JSON.';return;}
- if(this.config.key==='usuarios'&&!this.id){payload['password_confirmation']=this.data['password'];if(!payload['role_id'])payload['role_id']=null;}
+ if(this.config.key==='usuarios'&&!this.id){
+   if(this.data['password']!==this.data['password_confirmation']){this.error='Las contraseñas no coinciden.';return;}
+   if(String(this.data['password']??'').length<12){this.error='La contraseña debe contener al menos 12 caracteres.';return;}
+   payload['password_confirmation']=this.data['password_confirmation'];
+   if(!payload['role_id'])payload['role_id']=null;
+ }
+ if(this.config.key==='asesores'){
+   payload['has_system_access']=!!this.data['has_system_access'];
+   if(!this.data['has_system_access']){delete payload['user_id'];}
+   else if(!this.data['user_id']){
+     if(this.newUser.password!==this.newUser.password_confirmation){this.error='Las contraseñas del asesor no coinciden.';return;}
+     if(this.newUser.password.length<12){this.error='La contraseña del asesor requiere al menos 12 caracteres.';return;}
+     if(!this.newUser.name||!this.newUser.email||!this.newUser.role_id){this.error='Captura nombre, correo y rol para el acceso del asesor.';return;}
+     payload['new_user']={...this.newUser,role_id:Number(this.newUser.role_id)};
+   }
+ }
  this.saving=true;this.error='';
  this.api.save(this.config.api,payload,this.id??undefined).subscribe({next:()=>void this.router.navigate([this.home]),error:(e:HttpErrorResponse)=>{this.error=errorText(e);this.saving=false;}});
  }

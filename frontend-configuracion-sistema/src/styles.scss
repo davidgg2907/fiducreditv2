@@ -220,3 +220,25 @@ button:focus-visible, a:focus-visible, input:focus-visible, [tabindex]:focus-vis
 /* Los identificadores internos permanecen en API, no en la vista de detalle. */
 .main-content .cfg:not(.cfg-list) .detail > dt:last-of-type,
 .main-content .cfg:not(.cfg-list) .detail > dd:last-of-type {display:none}
+
+/* Switch de estado para la configuración, sin afectar los checkboxes de permisos. */
+.main-content .cfg .field>.check input[type=checkbox],
+.main-content .cfg .advisor-access-switch input[type=checkbox] {
+ appearance:none;-webkit-appearance:none;position:relative;display:inline-block;vertical-align:middle;
+ width:44px;height:24px;border-radius:999px;background:#a6b2b0;border:1px solid #899994;
+ cursor:pointer;margin-right:10px;transition:background .18s ease;
+}
+.main-content .cfg .field>.check input[type=checkbox]:before,
+.main-content .cfg .advisor-access-switch input[type=checkbox]:before {
+ content:'';position:absolute;width:18px;height:18px;left:2px;top:2px;
+ border-radius:50%;background:white;box-shadow:0 1px 3px #0002;transition:transform .18s ease;
+}
+.main-content .cfg .field>.check input[type=checkbox]:checked,
+.main-content .cfg .advisor-access-switch input[type=checkbox]:checked {background:var(--app-primary);border-color:var(--app-primary)}
+.main-content .cfg .field>.check input[type=checkbox]:checked:before,
+.main-content .cfg .advisor-access-switch input[type=checkbox]:checked:before {transform:translateX(20px)}
+.main-content .cfg .field>.check input[type=checkbox]:focus-visible,
+.main-content .cfg .advisor-access-switch input[type=checkbox]:focus-visible {outline:3px solid #68b3aa;outline-offset:3px}
+.main-content .cfg .advisor-access-panel{grid-column:1/-1;border:1px solid var(--app-border);padding:1rem;border-radius:12px;background:#f6faf9}
+.main-content .cfg .advisor-access-fields{display:grid;grid-template-columns:repeat(auto-fit,minmax(235px,1fr));gap:1rem;margin-top:1rem}
+.main-content .cfg .advisor-access-panel h3{font-size:1.1rem;font-weight:700;margin:0 0 .8rem}

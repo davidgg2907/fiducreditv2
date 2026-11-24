@@ -40,6 +40,7 @@ final class UpdateCreditAdvisorRequest extends FormRequest
             'new_user.name' => ['sometimes', 'string', 'max:255'],
             'new_user.email' => ['sometimes', 'nullable', 'email', 'max:255', Rule::unique('users','email')],
             'new_user.password' => ['sometimes', 'nullable', 'string', 'min:12', 'confirmed'],
+            'new_user.password_confirmation' => ['sometimes', 'string', 'min:12'],
             'new_user.role_id' => ['sometimes', 'nullable', 'integer', 'exists:roles,id'],
         ];
     }

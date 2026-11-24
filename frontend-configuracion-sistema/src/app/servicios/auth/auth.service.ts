@@ -12,10 +12,23 @@ export class AuthService {
   private accessToken: string | null = null;
   private accessExpiresAt = 0;
   private refreshRequest$?: Observable<boolean>;
+  private lastUserActivity = Date.now();
   // Indicador de UX, nunca prueba de autenticación. El servidor valida la cookie HttpOnly.
   private readonly sessionHintKey = 'nahuicredit.auth.session-established';
 
   constructor(private readonly http: HttpClient) {
+    // Nunca persistir tokens; la cookie HttpOnly del servidor permite restaurarlos después de F5.
+    for (const eventName of ['click','keydown','pointerdown','touchstart']) {
+      document.addEventListener(eventName, () => { this.lastUserActivity = Date.now(); }, { passive: true });
+    }
+    // Renovar de forma anticipada mientras el usuario realmente está utilizando el sistema.
+    window.setInterval(() => {
+      if (this.accessToken && this.accessExpiresAt - Date.now() < 120_000
+          && Date.now() - this.lastUserActivity < 10 * 60_000
+          && document.visibilityState === 'visible') {
+        this.refresh().pipe(catchError(() => of(false))).subscribe();
+      }
+    }, 60_000);
     for (const key of ['auth.user', 'auth.access_token', 'auth.access_token_expires_at', 'auth.refresh_token', 'auth.remember', 'auth.last_activity_at']) {
       sessionStorage.removeItem(key);
       localStorage.removeItem(key);
@@ -65,9 +78,8 @@ export class AuthService {
       return of(true);
     }
 
-    // No enviar POST /login/refresh en una visita anónima sin sesión previa.
-    if (!sessionStorage.getItem(this.sessionHintKey)) return of(false);
-
+    // Recuperar también si se perdió el indicador local por F5 o por una pestaña nueva.
+    // La cookie HttpOnly, no el indicador de UX, es la autoridad de sesión.
     return this.refresh().pipe(catchError(() => {
       this.clear();
       return of(false);
@@ -75,7 +87,6 @@ export class AuthService {
   }
 
   refresh(): Observable<boolean> {
-    if (!sessionStorage.getItem(this.sessionHintKey)) return of(false);
     this.refreshRequest$ ??= this.serializeCookieRequest(() =>
       this.http.post<LoginResponse>(this.apiUrl + 'login/refresh', {}, this.options),
     ).pipe(
@@ -98,6 +109,7 @@ export class AuthService {
     const { user, tokens } = response.data;
     this.accessToken = tokens.accessToken;
     this.accessExpiresAt = Date.parse(tokens.accessTokenExpiresAt);
+    this.lastUserActivity = Date.now();
     this.updateSessionUser(user);
     sessionStorage.setItem(this.sessionHintKey, '1');
   }

@@ -10,7 +10,11 @@ export class NavigationStateService {
   constructor(private readonly auth: AuthService) {}
 
   getMenuItems(): Observable<MenuItem[]> {
-    return this.auth.sessionUserChanges().pipe(map(user => user?.menu ?? []));
+    return this.auth.sessionUserChanges().pipe(map(user => {
+      const hidden = new Set(['credit_configuracion-sistema_permisos', 'credit_configuracion-sistema_menus', 'credit_configuracion-sistema_versiones_productos']);
+      return (user?.menu ?? []).map(item => ({...item, children: item.children?.filter(child => !hidden.has(child.code))}))
+        .filter(item => !hidden.has(item.code) && (!item.children || item.children.length > 0));
+    }));
   }
 
   getHeaderState(url: string): Observable<HeaderState> {

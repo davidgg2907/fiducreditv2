@@ -1,4 +1,5 @@
 import { Component } from '@angular/core';
+import { catchError, of } from 'rxjs';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
@@ -21,6 +22,15 @@ export class LoginComponent {
     this.auth.login(this.email, this.password, this.remember).subscribe({
       next: (response) => { this.loading = false; if (!this.auth.isAuthenticated()) { this.error = response.message ?? 'La respuesta no incluyó un token de acceso.'; return; } void this.router.navigateByUrl(this.route.snapshot.queryParamMap.get('returnUrl') || '/home'); },
       error: (error) => {
+        if (error?.status === 409) {
+          // El servidor tiene una sesión única activa: probar primero la cookie existente.
+          this.auth.refresh().pipe(catchError(() => of(false))).subscribe(restored => {
+            this.loading = false;
+            if (restored) void this.router.navigateByUrl('/home');
+            else this.error = 'Existe una sesión activa en el servidor. Cierra la otra sesión o espera su vencimiento; no se ha creado una sesión nueva.';
+          });
+          return;
+        }
         this.loading = false;
         this.error = error?.error?.message
           ?? (error?.status === 401 ? 'Usuario o contraseña incorrectos.' : 'No fue posible iniciar sesión.');
