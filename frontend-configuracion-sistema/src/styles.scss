@@ -1,8 +1,8 @@
 :root {
-  --app-primary: #526d87;
-  --app-primary-strong: #3e5871;
+  --app-primary: #176c63;
+  --app-primary-strong: #104c46;
   --app-accent-strong: #b9d8d0;
-  --app-accent-deep: #536f83;
+  --app-accent-deep: #24665f;
   --app-accent-soft: rgba(126, 154, 188, 0.14);
   --app-success: #18794e;
   --app-warning: #a85b00;
@@ -19,7 +19,7 @@
   --app-radius-sm: 9px;
   --app-shadow: 0 8px 24px rgba(21, 54, 65, 0.08);
   --app-shadow-hover: 0 14px 30px rgba(21, 54, 65, 0.13);
-  --app-header-gradient: linear-gradient(95deg, #e6edf8 0%, #f1ecf7 58%, #ffffff 100%);
+  --app-header-gradient: linear-gradient(95deg, #e3f3ef 0%, #fff7e7 63%, #ffffff 100%);
 }
 
 html,
@@ -184,3 +184,39 @@ button:focus-visible, a:focus-visible, input:focus-visible, [tabindex]:focus-vis
 .main-content .cfg-pagination-controls{display:flex;align-items:center;justify-content:center;gap:5px;flex-wrap:wrap}
 .main-content .cfg-pagination-controls .btn{min-width:34px;min-height:34px;display:inline-flex;align-items:center;justify-content:center;padding:4px}
 @media(max-width:700px){.main-content .cfg-panel{padding:12px}.main-content .cfg-search-controls{flex-wrap:wrap}.main-content .cfg-search-controls input{flex-basis:100%}.main-content .cfg-pagination{flex-direction:column;gap:10px}.main-content .cfg-result-count{position:static}}
+
+/* NahuiCloud — vistas de configuración y perfil */
+.main-content .cfg:not(.cfg-list){width:100%;max-width:none;margin:0;padding:0;background:transparent;box-shadow:none}
+.main-content .cfg:not(.cfg-list)>.cfg-heading,.main-content .cfg-detail>.cfg-heading{margin:0 0 12px}
+.main-content .cfg:not(.cfg-list)>.detail,.main-content .cfg:not(.cfg-list)>.relation,.main-content .cfg:not(.cfg-list)>.formgrid{
+ background:#fff;border:1px solid var(--app-border);padding:18px;border-radius:12px;box-shadow:var(--app-shadow);margin:0 0 12px;
+}
+.main-content .cfg .btn-primary,.main-content .profile-page .btn-primary,.main-content .cfg .btn.btn-primary{
+ background:var(--app-primary)!important;border-color:var(--app-primary)!important;color:white!important;box-shadow:none!important;
+}
+.main-content .cfg .btn-primary:hover,.main-content .profile-page .btn-primary:hover{background:var(--app-primary-strong)!important;border-color:var(--app-primary-strong)!important}
+.main-content .cfg .btn-outline-secondary,.main-content .profile-page .btn-outline-secondary{color:var(--app-primary-strong)!important;border-color:var(--app-primary)!important;background:#fff!important}
+.main-content .cfg .btn-outline-secondary:hover{background:#ecf6f1!important}
+.main-content .cfg .btn{display:inline-flex;align-items:center;justify-content:center;gap:6px;border-radius:9px;min-height:36px}
+.main-content .cfg .cfg-heading>.actions a,.main-content .cfg-detail>.cfg-heading>.actions a{
+ display:inline-flex;gap:7px;align-items:center;padding:8px 14px;border:1px solid var(--app-primary);border-radius:9px;color:var(--app-primary-strong);text-decoration:none;font-weight:600;background:#fff;
+}
+.main-content .cfg-detail .cfg-heading>.actions a:first-child:before{content:'←';font-size:20px;line-height:1}
+.main-content .cfg-detail .cfg-heading>.actions a:hover{background:#ecf6f1}
+.main-content .cfg .buttons a:before{content:'✕';font-size:14px;margin-right:6px}
+.main-content .cfg:not(.cfg-list) .cfg-heading button[type=submit]:before{content:'✓';font-weight:800;font-size:17px}
+.main-content .cfg .cfg-pagination-controls .btn-primary{background:var(--app-primary)!important}
+.main-content .cfg .cfg-actions .cfg-icon-btn{color:var(--app-primary)}
+.main-content .cfg .cfg-actions .cfg-icon-btn--danger{color:var(--app-danger)}
+.main-content .cfg .cfg-actions .cfg-icon-btn:hover{background:#e9f5f0}
+.main-content .cfg .form-control:focus,.main-content .cfg .form-select:focus{border-color:var(--app-primary);box-shadow:0 0 0 .2rem rgba(23,108,99,.14)}
+.main-content .cfg .detail{grid-template-columns:minmax(160px,1fr) minmax(0,3fr)}
+.main-content .cfg .detail>dt:last-of-type,.main-content .cfg .detail>dd:last-of-type{overflow-wrap:anywhere}
+.main-content .cfg .cfg-search-controls .btn-primary{background:var(--app-primary);border-color:var(--app-primary)}
+.main-content .profile-page .profile-grid .cfg-panel{margin:0}
+.main-content .profile-page .profile-actions .btn{display:inline-flex;align-items:center;gap:8px;border-radius:9px}
+@media(max-width:700px){.main-content .cfg .detail{grid-template-columns:1fr}.main-content .cfg:not(.cfg-list)>.formgrid{padding:12px}}
+
+/* Los identificadores internos permanecen en API, no en la vista de detalle. */
+.main-content .cfg:not(.cfg-list) .detail > dt:last-of-type,
+.main-content .cfg:not(.cfg-list) .detail > dd:last-of-type {display:none}
