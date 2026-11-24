@@ -24,7 +24,10 @@ export class ListPage extends PageBase implements OnInit{
  records:Item[]=[];page=1;last=1;total=0;search='';
  ngOnInit(){if(this.can('ver'))this.load();else this.error='Sin permiso para consultar.';}
  load(){this.busy=true;this.error='';this.api.list(this.config.api,this.page,this.search).subscribe({next:r=>{this.records=r.data;this.total=r.total;this.last=r.last_page;this.busy=false;},error:(e:HttpErrorResponse)=>{this.error=errorText(e);this.busy=false;}});}
- move(page:number){if(page>=1&&page<=this.last){this.page=page;this.load();}}
+ get pageNumbers():number[]{const count=Math.min(this.last,7);const start=Math.max(1,Math.min(this.page-3,this.last-count+1));return Array.from({length:count},(_,i)=>start+i);}
+ searchRecords(){this.page=1;this.load();}
+ clearSearch(){this.search='';this.searchRecords();}
+ move(page:number){if(page>=1&&page<=this.last&&page!==this.page){this.page=page;this.load();}}
  remove(item:Item){if(!this.can('eliminar')||!confirm('¿Eliminar el registro?'))return;this.api.remove(this.config.api,String(item.id)).subscribe({next:()=>this.load(),error:(e:HttpErrorResponse)=>this.error=errorText(e)});}
  toggle(item:Item){if(this.config.key!=='usuarios'||!this.can('editar')||item['is_superadmin']||!confirm('¿Cambiar el estado de acceso?'))return;this.api.status(String(item.id),!item['is_active']).subscribe({next:()=>this.load(),error:(e:HttpErrorResponse)=>this.error=errorText(e)});}
 }

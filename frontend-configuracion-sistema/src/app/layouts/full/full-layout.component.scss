@@ -19,3 +19,6 @@
 /* Sidebar vertical de configuración: el contenido respeta su ancho. */
 .main-content{margin-left:260px;width:calc(100% - 260px);padding-top:100px}
 @media(max-width:900px){.main-content{margin-left:0;width:100%;padding-top:94px}}
+
+.main-content{padding-left:10px;padding-right:10px;padding-top:82px}
+@media(max-width:900px){.main-content{padding:88px 8px 1rem}}
