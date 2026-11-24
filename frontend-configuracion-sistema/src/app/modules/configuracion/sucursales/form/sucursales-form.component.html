@@ -1,21 +1,53 @@
-<section class="cfg"><header class="cfg-panel cfg-heading"><div><h2>{{id?'Editar':'Crear'}} · {{config.title}}</h2><p>Captura y edición de información</p></div><button class="btn btn-primary" form="config-form" type="submit" [disabled]="saving||busy">{{saving?'Guardando...':'Guardar'}}</button></header><p *ngIf="error" class="alert alert-danger">{{error}}</p>
-<form id="config-form" *ngIf="can(id?'editar':'crear')&&!busy" (ngSubmit)="save()" class="formgrid">
-<div class="field" *ngFor="let f of generalFields">
-<ng-container *ngIf="f.key!=='is_active'&&(!id||f.type!=='password')">
-<label [for]="f.key">{{f.label}}{{f.required?' *':''}}</label>
-<select *ngIf="f.type==='ref';else other" [id]="f.key" [name]="f.key" class="form-select" [(ngModel)]="data[f.key]" [required]="f.required"><option value="">Selecciona...</option><option *ngFor="let r of refs[f.key]||[]" [value]="r.id">{{refLabel(r)}}</option></select>
-<ng-template #other><ng-container *ngIf="f.type==='permissions';else standard"><label class="check" *ngFor="let p of catalog"><input type="checkbox" [checked]="checked(p.permission)" (change)="check(p.permission,$any($event.target).checked)"> {{p.module}} · {{p.permission}}</label></ng-container>
-<ng-template #standard><label class="check" *ngIf="f.type==='bool';else textfield"><input type="checkbox" [name]="f.key" [(ngModel)]="data[f.key]"> Habilitado</label>
-<ng-template #textfield><textarea *ngIf="f.type==='json';else inputfield" [id]="f.key" [name]="f.key" class="form-control" rows="5" [(ngModel)]="data[f.key]" [required]="f.required"></textarea>
-<ng-template #inputfield><input [type]="f.type==='number'?'number':f.type==='date'?'date':f.type==='password'?'password':'text'" [step]="f.type==='number'?'any':undefined" [id]="f.key" [name]="f.key" class="form-control" [(ngModel)]="data[f.key]" [required]="f.required"></ng-template></ng-template></ng-template></ng-template>
-</ng-container></div>
-<section class="cfg-address-section">
-<h3><span class="material-icons-outlined" aria-hidden="true">location_on</span> Domicilio</h3>
-<div class="cfg-address-grid"><div class="field" *ngFor="let f of addressFields">
-  <label [for]="'address-'+f.key">{{f.label}}{{f.required?' *':''}}</label>
-  <input class="form-control" [id]="'address-'+f.key" [name]="f.key" [(ngModel)]="data[f.key]" [required]="f.required"
-  [maxlength]="f.key==='postal_code'?5:255" [attr.inputmode]="f.key==='postal_code'?'numeric':null"
-  [pattern]="f.key==='postal_code'?'[0-9]{5}':null">
-</div></div></section>
-<div class="buttons"><a class="btn btn-outline-secondary" [routerLink]="home">Cancelar</a></div>
-</form></section>
+<section class="cfg cfg-institutional">
+ <header class="cfg-panel cfg-heading">
+   <div><h2>{{id?'Editar':'Crear'}} · {{config.title}}</h2><p>Captura y edición de información</p></div>
+   <button class="btn btn-primary" form="config-form" type="submit" [disabled]="saving||busy">{{saving?'Guardando...':'Guardar'}}</button>
+ </header>
+ <p *ngIf="error" class="alert alert-danger" role="alert">{{error}}</p>
+ <form id="config-form" *ngIf="can(id?'editar':'crear')&&!busy" (ngSubmit)="save()" class="cfg-institutional-form">
+ <section class="cfg-panel cfg-form-card cfg-form-card--general" aria-labelledby="datos-generales-title">
+   <div class="cfg-form-card__heading"><span class="material-icons-outlined" aria-hidden="true">store</span>
+     <h3 id="datos-generales-title">Datos generales de la sucursal</h3>
+   </div>
+   <div class="row g-3"><div class="col-12 col-md-6 col-xl-3" *ngFor="let f of generalFields">
+  <div class="field" *ngIf="f.key!=='is_active'&&f.key!=='user_id'&&f.key!=='has_system_access'&&(!id||f.type!=='password')">
+    <label [for]="f.key">{{f.label}}{{f.required?' *':''}}</label>
+    <select *ngIf="f.type==='ref';else notRef" [id]="f.key" [name]="f.key" class="form-select" [(ngModel)]="data[f.key]" [required]="f.required">
+      <option value="">Selecciona...</option>
+      <option *ngFor="let r of refs[f.key]||[]" [value]="r.id">{{refLabel(r)}}</option>
+    </select>
+    <ng-template #notRef>
+      <label *ngIf="f.type==='bool';else notBool" class="check">
+        <input type="checkbox" [name]="f.key" [(ngModel)]="data[f.key]">
+        {{data[f.key]?'Habilitado':'Deshabilitado'}}
+      </label>
+      <ng-template #notBool>
+        <textarea *ngIf="f.type==='json';else plainInput" class="form-control" [id]="f.key" [name]="f.key" rows="4" [(ngModel)]="data[f.key]" [required]="f.required"></textarea>
+        <ng-template #plainInput><input class="form-control" [id]="f.key" [name]="f.key" [type]="f.type==='number'?'number':f.type==='date'?'date':'text'"
+          [step]="f.type==='number'?'any':undefined" [(ngModel)]="data[f.key]" [required]="f.required"></ng-template>
+      </ng-template>
+    </ng-template>
+  </div>
+</div></div>
+ </section>
+<section class="cfg-panel cfg-form-card cfg-form-card--address" aria-labelledby="domicilio-title">
+  <div class="cfg-form-card__heading">
+    <span class="material-icons-outlined" aria-hidden="true">location_on</span>
+    <h3 id="domicilio-title">Domicilio</h3>
+  </div>
+  <div class="row g-3">
+    <div class="col-12 col-md-6 col-xl-2" *ngFor="let f of addressFields">
+      <div class="field">
+        <label [for]="'address-'+f.key">{{f.label}}{{f.required?' *':''}}</label>
+        <input class="form-control" [id]="'address-'+f.key" [name]="f.key" [(ngModel)]="data[f.key]" [required]="f.required"
+          [maxlength]="f.key==='postal_code'?5:255" [attr.inputmode]="f.key==='postal_code'?'numeric':null"
+          [pattern]="f.key==='postal_code'?'[0-9]{5}':null">
+      </div>
+    </div>
+  </div>
+</section>
+ <div class="cfg-form-actions">
+   <a class="btn btn-outline-secondary" [routerLink]="home">Cancelar</a>
+ </div>
+ </form>
+</section>
