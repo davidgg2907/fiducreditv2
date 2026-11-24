@@ -1,0 +1,46 @@
+name: Validar recuperación de sesión FiduCredit
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'backend/config/auth_tokens.php'
+      - 'backend/app/Http/Controllers/AuthController.php'
+      - 'backend/app/Repositories/AuthTokenRepository.php'
+      - 'backend/tests/Feature/ArquetipoTest.php'
+      - '.github/workflows/auth-session.yml'
+  pull_request:
+    paths:
+      - 'backend/config/auth_tokens.php'
+      - 'backend/app/Http/Controllers/AuthController.php'
+      - 'backend/app/Repositories/AuthTokenRepository.php'
+      - 'backend/tests/Feature/ArquetipoTest.php'
+      - '.github/workflows/auth-session.yml'
+
+permissions:
+  contents: read
+
+jobs:
+  restore-session:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: backend
+    steps:
+      - uses: actions/checkout@v4
+      - uses: shivammathur/setup-php@v2
+        with:
+          php-version: '8.4'
+          extensions: mbstring, dom, xml, pdo_sqlite
+          coverage: none
+          tools: composer:v2
+      - run: composer install --prefer-dist --no-interaction --no-progress
+      - name: Verificar restauración de sesión con cookie HttpOnly después de recarga
+        env:
+          APP_ENV: testing
+          APP_KEY: base64:AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=
+          DB_CONNECTION: sqlite
+          DB_DATABASE: ':memory:'
+          CACHE_STORE: array
+          SESSION_DRIVER: array
+        run: php artisan test --filter=test_recarga_con_cookie_http_only_recupera_sesion_y_rota_token
