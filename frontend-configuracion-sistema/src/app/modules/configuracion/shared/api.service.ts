@@ -8,7 +8,7 @@ import {Item} from './schema';
  constructor(private http:HttpClient){}
  list(path:string,page=1,search='',filters:Record<string,string>={}){
  let params=new HttpParams().set('page',String(page)).set('per_page','25');
- if(path==='access/users'&&search)params=params.set('search',search);
+ if(search.trim())params=params.set('search',search.trim());
  for(const [k,v] of Object.entries(filters))params=params.set(path.startsWith('access/')?k:'filter['+k+']',v);
  return this.http.get<{data:any}>(this.root+path,{params}).pipe(map(r=>{
  const data=r.data;

@@ -19,6 +19,7 @@ final class CreditWorkflowStepRoleController extends Controller
     {
         $this->authorizeAction($request, 'view');
         $query = $request->validate([
+            'search' => ['sometimes', 'string', 'max:150'],
             'per_page' => ['sometimes', 'integer', 'between:1,100'],
             'sort' => ['sometimes', 'string', 'max:80'],
             'direction' => ['sometimes', 'in:asc,desc'],

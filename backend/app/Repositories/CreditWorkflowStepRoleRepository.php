@@ -8,10 +8,13 @@ use Illuminate\Database\Eloquent\Relations\Relation;
 use Illuminate\Pagination\LengthAwarePaginator;
 use Illuminate\Support\Facades\Schema;
 use Illuminate\Validation\ValidationException;
+use App\Repositories\Concerns\SearchAcrossRelations;
 
 class CreditWorkflowStepRoleRepository
 {
-    public function paginate(array $options = []): LengthAwarePaginator
+    
+    use SearchAcrossRelations;
+public function paginate(array $options = []): LengthAwarePaginator
     {
         $query = CreditWorkflowStepRole::query();
         $columns = Schema::getColumnListing('credit_workflow_step_roles');
@@ -27,6 +30,8 @@ class CreditWorkflowStepRoleRepository
                 $query->where($field, $value);
             }
         }
+
+        if (isset($options['search'])) $this->applyGlobalSearch($query, $options['search']);
 
         $sort = $options['sort'] ?? 'created_at';
 

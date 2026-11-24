@@ -10,9 +10,18 @@ use Illuminate\Validation\ValidationException;
 
 final class AccessCatalogController extends Controller
 {
-    public function modules(): JsonResponse
+    public function modules(Request $request): JsonResponse
     {
-        return response()->json(['isSuccess' => true, 'data' => DB::table('access_modules')->orderBy('code')->get()]);
+        $data = $request->validate(['search' => ['sometimes','string','max:150'], 'per_page' => ['sometimes','integer','between:1,100']]);
+        $query = DB::table('access_modules');
+        if (!empty($data['search'])) {
+            $value = '%'.addcslashes(trim($data['search']), '%_\\').'%';
+            $query->where(function ($q) use ($value) {
+                $q->where('name','like',$value)->orWhere('code','like',$value)
+                  ->orWhereExists(fn ($r) => $r->selectRaw('1')->from('module_actions')->whereColumn('module_actions.module_id','access_modules.id')->where('module_actions.name','like',$value));
+            });
+        }
+        return response()->json(['isSuccess' => true, 'data' => $query->orderBy('code')->paginate($data['per_page'] ?? 25)]);
     }
 
     public function storeModule(Request $request): JsonResponse
@@ -44,9 +53,18 @@ final class AccessCatalogController extends Controller
         return response()->json(['isSuccess' => true]);
     }
 
-    public function actions(): JsonResponse
+    public function actions(Request $request): JsonResponse
     {
-        return response()->json(['isSuccess' => true, 'data' => DB::table('module_actions')->orderBy('permission')->get()]);
+        $data = $request->validate(['search' => ['sometimes','string','max:150'], 'per_page' => ['sometimes','integer','between:1,100']]);
+        $query = DB::table('module_actions');
+        if (!empty($data['search'])) {
+            $value = '%'.addcslashes(trim($data['search']), '%_\\').'%';
+            $query->where(function ($q) use ($value) {
+                $q->where('name','like',$value)->orWhere('permission','like',$value)
+                  ->orWhereExists(fn ($r) => $r->selectRaw('1')->from('access_modules')->whereColumn('access_modules.id','module_actions.module_id')->where('access_modules.name','like',$value));
+            });
+        }
+        return response()->json(['isSuccess' => true, 'data' => $query->orderBy('permission')->paginate($data['per_page'] ?? 25)]);
     }
 
     public function storeAction(Request $request): JsonResponse
@@ -88,9 +106,19 @@ final class AccessCatalogController extends Controller
         return response()->json(['isSuccess' => true]);
     }
 
-    public function menus(): JsonResponse
+    public function menus(Request $request): JsonResponse
     {
-        return response()->json(['isSuccess' => true, 'data' => DB::table('menu_items')->orderBy('position')->orderBy('id')->get()]);
+        $data = $request->validate(['search' => ['sometimes','string','max:150'], 'per_page' => ['sometimes','integer','between:1,100']]);
+        $query = DB::table('menu_items');
+        if (!empty($data['search'])) {
+            $value = '%'.addcslashes(trim($data['search']), '%_\\').'%';
+            $query->where(function ($q) use ($value) {
+                $q->where('code','like',$value)->orWhere('label','like',$value)->orWhere('route','like',$value)
+                  ->orWhere('app_code','like',$value)
+                  ->orWhereExists(fn ($r) => $r->selectRaw('1')->from('module_actions')->whereColumn('module_actions.id','menu_items.module_action_id')->where('module_actions.name','like',$value));
+            });
+        }
+        return response()->json(['isSuccess' => true, 'data' => $query->orderBy('position')->orderBy('id')->paginate($data['per_page'] ?? 25)]);
     }
 
     public function storeMenu(Request $request): JsonResponse
