@@ -22,6 +22,7 @@ export class PageBase{
  value(row:Item,field:Field){
   const value=row[field.key];
   if(field.type==='ref'&&field.reference){return this.referenceLabels.display(field.reference,value);}
+  if(this.config.key==='empresas'&&field.key==='status')return value==='active'||value===true?'Activo':'Inactivo';
   return value==null?'—':typeof value==='object'?JSON.stringify(value):typeof value==='boolean'?(value?'Sí':'No'):String(value);
  }
 }
@@ -52,14 +53,14 @@ export class FormPage extends PageBase implements OnInit{
  this.id=this.route.snapshot.paramMap.get('id');
  if(!this.can(this.id?'editar':'crear')){this.error='Sin permiso para esta operación.';return;}
  for(const f of this.config.fields){
- this.data[f.key]=f.type==='bool'?false:f.type==='json'?'{}':f.type==='permissions'?[]:'';
+ this.data[f.key]=f.type==='bool'?(f.key==='active'||f.key==='status'):f.type==='json'?'{}':f.type==='permissions'?[]:'';
  if(f.type==='ref'&&f.reference)this.api.list(setting(f.reference).api).subscribe({next:r=>this.refs[f.key]=r.data,error:()=>this.refs[f.key]=[]});
  }
  if(this.config.key==='asesores'){
    this.api.list(setting('roles').api).subscribe({next:r=>this.refs['role_id']=r.data,error:()=>this.refs['role_id']=[]});
  }
  if(this.config.key==='roles')this.api.catalog().subscribe({next:r=>this.catalog=r.flatMap(m=>(m.actions??[]).map((a:any)=>({...a,module:m.name}))),error:(e:HttpErrorResponse)=>this.error=errorText(e)});
- if(this.id){this.busy=true;this.api.detail(this.config.api,this.id).subscribe({next:r=>{for(const f of this.config.fields){const v=r[f.key];if(v!==undefined&&v!==null)this.data[f.key]=f.type==='json'?JSON.stringify(v,null,2):v;}this.busy=false;},error:(e:HttpErrorResponse)=>{this.error=errorText(e);this.busy=false;}});}
+ if(this.id){this.busy=true;this.api.detail(this.config.api,this.id).subscribe({next:r=>{for(const f of this.config.fields){const v=r[f.key];if(v!==undefined&&v!==null)this.data[f.key]=f.type==='json'?JSON.stringify(v,null,2):this.config.key==='empresas'&&f.key==='status'?v==='active':v;}this.busy=false;},error:(e:HttpErrorResponse)=>{this.error=errorText(e);this.busy=false;}});}
  }
  checked(k:string){return (this.data['permissions']??[]).includes(k);}
  check(k:string,v:boolean){const curr:string[]=this.data['permissions']??[];this.data['permissions']=v?Array.from(new Set([...curr,k])):curr.filter(s=>s!==k);}
@@ -72,6 +73,7 @@ export class FormPage extends PageBase implements OnInit{
  if(this.config.key==='asesores'&&f.key==='user_id'&&!this.data['has_system_access'])continue;
  let val=this.data[f.key];
  if(f.type==='json')val=val?JSON.parse(val):null;
+ if(this.config.key==='empresas'&&f.key==='status')val=val?'active':'inactive';
  if(f.type==='number')val=val===''?null:Number(val);
  if(f.type==='ref'&&val==='')val=null;
  if(f.type==='text'&&val==='')val=null;
