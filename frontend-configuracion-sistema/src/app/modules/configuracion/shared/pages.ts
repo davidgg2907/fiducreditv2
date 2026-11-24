@@ -1,9 +1,10 @@
-import {Directive, OnInit} from '@angular/core';
+import {Directive, OnInit, inject} from '@angular/core';
 import {Router,ActivatedRoute} from '@angular/router';
 import {HttpErrorResponse} from '@angular/common/http';
 import {ConfigApi} from './api.service';
 import {ConfigPermissions} from './permissions.service';
 import {ModuleConfig,Item,Field,MODULES,setting} from './schema';
+import {ReferenceLabelService} from './reference-label.service';
 function errorText(e:HttpErrorResponse):string{
  if(e.status===403)return 'Acceso denegado: no cuentas con los permisos requeridos.';
  if(e.status===405)return 'Esta operación no está permitida por el backend.';
@@ -13,17 +14,24 @@ function errorText(e:HttpErrorResponse):string{
 @Directive()
 export class PageBase{
  error='';busy=false;
+ protected readonly referenceLabels=inject(ReferenceLabelService);
  constructor(public config:ModuleConfig,public api:ConfigApi,public permissions:ConfigPermissions,public router:Router,public route:ActivatedRoute){}
  can(action:'ver'|'detalle'|'crear'|'editar'|'eliminar'):boolean{return this.permissions.can(this.config,action)&&(action!=='eliminar'||this.config.allowDelete);}
  get home(){return '/'+this.config.key;}
  get columns(){return this.config.fields.filter(x=>x.type!=='password').slice(0,5);}
- value(row:Item,field:Field){const v=row[field.key];return v==null?'—':typeof v==='object'?JSON.stringify(v):typeof v==='boolean'?(v?'Sí':'No'):String(v);}
+ value(row:Item,field:Field){
+  const value=row[field.key];
+  if(field.type==='ref'&&field.reference){return this.referenceLabels.display(field.reference,value);}
+  return value==null?'—':typeof value==='object'?JSON.stringify(value):typeof value==='boolean'?(value?'Sí':'No'):String(value);
+ }
 }
 @Directive()
 export class ListPage extends PageBase implements OnInit{
  records:Item[]=[];page=1;last=1;total=0;search='';
  ngOnInit(){if(this.can('ver'))this.load();else this.error='Sin permiso para consultar.';}
- load(){this.busy=true;this.error='';this.api.list(this.config.api,this.page,this.search).subscribe({next:r=>{this.records=r.data;this.total=r.total;this.last=r.last_page;this.busy=false;},error:(e:HttpErrorResponse)=>{this.error=errorText(e);this.busy=false;}});}
+ load(){this.busy=true;this.error='';this.api.list(this.config.api,this.page,this.search).subscribe({next:r=>{this.records=r.data;
+  for(const item of r.data){for(const f of this.config.fields){if(f.type==='ref'&&f.reference)this.referenceLabels.resolve(f.reference,item[f.key]);}}
+  this.total=r.total;this.last=r.last_page;this.busy=false;},error:(e:HttpErrorResponse)=>{this.error=errorText(e);this.busy=false;}});}
  get pageNumbers():number[]{const count=Math.min(this.last,7);const start=Math.max(1,Math.min(this.page-3,this.last-count+1));return Array.from({length:count},(_,i)=>start+i);}
  searchRecords(){this.page=1;this.load();}
  clearSearch(){this.search='';this.searchRecords();}
@@ -70,7 +78,9 @@ export class DetailPage extends PageBase implements OnInit{
  ngOnInit(){
  if(!this.can('detalle')){this.error='Sin permiso para ver el detalle.';return;}
  const id=this.route.snapshot.paramMap.get('id');if(!id)return;this.busy=true;
- this.api.detail(this.config.api,id).subscribe({next:r=>{this.item=r;this.busy=false;this.loadRelated();},error:(e:HttpErrorResponse)=>{this.error=errorText(e);this.busy=false;}});
+ this.api.detail(this.config.api,id).subscribe({next:r=>{this.item=r;this.busy=false;
+  for(const f of this.config.fields){if(f.type==='ref'&&f.reference)this.referenceLabels.resolve(f.reference,r[f.key]);}
+  this.loadRelated();},error:(e:HttpErrorResponse)=>{this.error=errorText(e);this.busy=false;}});
  }
  loadRelated(){
  if(!this.item)return;

@@ -33,14 +33,17 @@ Route::middleware(AuthenticateAccessToken::class)->group(function (): void {
         Route::patch('users/{user}', [AccessUserController::class, 'update'])->whereNumber('user');
         Route::patch('users/{user}/status', [AccessUserController::class, 'setStatus'])->whereNumber('user');
         Route::get('modules', [AccessCatalogController::class, 'modules']);
+        Route::get('modules/{module}', [AccessCatalogController::class, 'module'])->whereNumber('module');
         Route::post('modules', [AccessCatalogController::class, 'storeModule']);
         Route::put('modules/{module}', [AccessCatalogController::class, 'updateModule'])->whereNumber('module');
         Route::delete('modules/{module}', [AccessCatalogController::class, 'deleteModule'])->whereNumber('module');
         Route::get('actions', [AccessCatalogController::class, 'actions']);
+        Route::get('actions/{action}', [AccessCatalogController::class, 'action'])->whereNumber('action');
         Route::post('actions', [AccessCatalogController::class, 'storeAction']);
         Route::put('actions/{action}', [AccessCatalogController::class, 'updateAction'])->whereNumber('action');
         Route::delete('actions/{action}', [AccessCatalogController::class, 'deleteAction'])->whereNumber('action');
         Route::get('menus', [AccessCatalogController::class, 'menus']);
+        Route::get('menus/{menu}', [AccessCatalogController::class, 'menu'])->whereNumber('menu');
         Route::post('menus', [AccessCatalogController::class, 'storeMenu']);
         Route::put('menus/{menu}', [AccessCatalogController::class, 'updateMenu'])->whereNumber('menu');
         Route::delete('menus/{menu}', [AccessCatalogController::class, 'deleteMenu'])->whereNumber('menu');

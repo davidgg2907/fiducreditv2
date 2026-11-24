@@ -10,6 +10,13 @@ use Illuminate\Validation\ValidationException;
 
 final class AccessCatalogController extends Controller
 {
+    public function module(int $module): JsonResponse
+    {
+        $record = DB::table('access_modules')->where('id', $module)->first();
+        abort_if($record === null, 404);
+        return response()->json(['isSuccess' => true, 'data' => $record]);
+    }
+
     public function modules(Request $request): JsonResponse
     {
         $data = $request->validate(['search' => ['sometimes','string','max:150'], 'per_page' => ['sometimes','integer','between:1,100']]);
@@ -53,10 +60,18 @@ final class AccessCatalogController extends Controller
         return response()->json(['isSuccess' => true]);
     }
 
+    public function action(int $action): JsonResponse
+    {
+        $record = DB::table('module_actions')->where('id', $action)->first();
+        abort_if($record === null, 404);
+        return response()->json(['isSuccess' => true, 'data' => $record]);
+    }
+
     public function actions(Request $request): JsonResponse
     {
-        $data = $request->validate(['search' => ['sometimes','string','max:150'], 'per_page' => ['sometimes','integer','between:1,100']]);
+        $data = $request->validate(['search' => ['sometimes','string','max:150'], 'per_page' => ['sometimes','integer','between:1,100'], 'module_id' => ['sometimes','integer','exists:access_modules,id']]);
         $query = DB::table('module_actions');
+        if (isset($data['module_id'])) $query->where('module_id', $data['module_id']);
         if (!empty($data['search'])) {
             $value = '%'.addcslashes(trim($data['search']), '%_\\').'%';
             $query->where(function ($q) use ($value) {
@@ -104,6 +119,13 @@ final class AccessCatalogController extends Controller
         }
         DB::table('module_actions')->where('id', $action)->delete();
         return response()->json(['isSuccess' => true]);
+    }
+
+    public function menu(int $menu): JsonResponse
+    {
+        $record = DB::table('menu_items')->where('id', $menu)->first();
+        abort_if($record === null, 404);
+        return response()->json(['isSuccess' => true, 'data' => $record]);
     }
 
     public function menus(Request $request): JsonResponse
