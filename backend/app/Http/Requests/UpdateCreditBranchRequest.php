@@ -27,6 +27,10 @@ final class UpdateCreditBranchRequest extends FormRequest
             'municipality' => ['sometimes', 'string', 'max:255'],
             'state' => ['sometimes', 'string', 'max:255'],
             'active' => ['sometimes', 'boolean'],
+            'street' => ['sometimes', 'nullable', 'string', 'max:255'],
+            'neighborhood' => ['sometimes', 'nullable', 'string', 'max:255'],
+            'city' => ['sometimes', 'nullable', 'string', 'max:255'],
+            'postal_code' => ['sometimes', 'nullable', 'regex:/^\d{5}$/'],
         ];
     }
 }

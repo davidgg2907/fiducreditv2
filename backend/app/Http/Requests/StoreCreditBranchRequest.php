@@ -27,6 +27,10 @@ final class StoreCreditBranchRequest extends FormRequest
             'municipality' => ['required', 'string', 'max:255'],
             'state' => ['required', 'string', 'max:255'],
             'active' => ['sometimes', 'boolean'],
+            'street' => ['sometimes', 'nullable', 'string', 'max:255'],
+            'neighborhood' => ['sometimes', 'nullable', 'string', 'max:255'],
+            'city' => ['sometimes', 'nullable', 'string', 'max:255'],
+            'postal_code' => ['sometimes', 'nullable', 'regex:/^\d{5}$/'],
         ];
     }
 }

@@ -25,6 +25,12 @@ final class StoreCreditCompanyRequest extends FormRequest
             'trade_name' => ['required', 'string', 'max:255'],
             'rfc' => ['required', 'string', 'max:13', Rule::unique('credit_companies', 'rfc')],
             'status' => ['sometimes', 'string', 'max:255'],
+            'street' => ['sometimes', 'nullable', 'string', 'max:255'],
+            'neighborhood' => ['sometimes', 'nullable', 'string', 'max:255'],
+            'city' => ['sometimes', 'nullable', 'string', 'max:255'],
+            'state' => ['sometimes', 'nullable', 'string', 'max:255'],
+            'municipality' => ['sometimes', 'nullable', 'string', 'max:255'],
+            'postal_code' => ['sometimes', 'nullable', 'regex:/^\d{5}$/'],
         ];
     }
 }
