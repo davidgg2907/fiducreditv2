@@ -15,7 +15,7 @@ use Symfony\Component\HttpFoundation\Cookie;
 
 class AuthTokenRepository
 {
-    public function attemptLogin(string $email, string $password, bool $remember, ?string $code, Totp $totp): ?array
+    public function attemptLogin(string $email, string $password, bool $remember, ?string $code, Totp $totp, bool $replaceSession = false): ?array
     {
         $candidate = User::where('email', $email)->first();
 
@@ -23,7 +23,7 @@ class AuthTokenRepository
             return null;
         }
 
-        return DB::transaction(function () use ($candidate, $password, $remember, $code, $totp) {
+        return DB::transaction(function () use ($candidate, $password, $remember, $code, $totp, $replaceSession) {
             $user = User::lockForUpdate()->find($candidate->id);
             if (!$user || !$user->is_active || $user->password !== $candidate->password || $user->email !== $candidate->email) {
                 return null;
@@ -40,7 +40,7 @@ class AuthTokenRepository
             }
 
             $session = $this->session($user->id);
-            if ($session && $this->isActive($session)) {
+            if ($session && $this->isActive($session) && !$replaceSession) {
                 throw new ActiveSessionExistsException('El usuario ya cuenta con una sesión activa.');
             }
 

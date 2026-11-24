@@ -32,6 +32,7 @@ class AuthController extends Controller
                 $request->boolean('remember'),
                 $request->validated('mfa_code'),
                 $totp,
+                $request->boolean('replace_session'),
             );
         } catch (ActiveSessionExistsException $exception) {
             return $this->failure($exception->getMessage(), 409);

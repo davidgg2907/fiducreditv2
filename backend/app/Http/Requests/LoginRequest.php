@@ -12,6 +12,7 @@ class LoginRequest extends FormRequest
             'email' => ['required', 'string', 'email', 'max:255'],
             'password' => ['required', 'string', PasswordRules::maximumBytes()],
             'remember' => ['sometimes', 'boolean'],
+            'replace_session' => ['sometimes', 'boolean'],
             'mfa_code' => ['nullable', 'string', 'digits:6'],
         ];
     }

@@ -27,7 +27,14 @@ export class LoginComponent {
           this.auth.refresh().pipe(catchError(() => of(false))).subscribe(restored => {
             this.loading = false;
             if (restored) void this.router.navigateByUrl('/home');
-            else this.error = 'Existe una sesión activa en el servidor. Cierra la otra sesión o espera su vencimiento; no se ha creado una sesión nueva.';
+            else if (window.confirm('Existe una sesión activa. ¿Deseas cerrar la sesión anterior e ingresar en este dispositivo?')) {
+              this.loading = true;
+              this.auth.login(this.email, this.password, this.remember, undefined, true).subscribe({
+                next: () => {this.loading = false; void this.router.navigateByUrl('/home');},
+                error: (takeoverError) => {this.loading = false; this.error = takeoverError?.error?.message ?? 'No se pudo sustituir la sesión anterior.';}
+              });
+            } else this.error = 'La sesión anterior permanece activa.';
+
           });
           return;
         }

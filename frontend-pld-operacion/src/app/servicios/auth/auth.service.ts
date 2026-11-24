@@ -28,9 +28,9 @@ export class AuthService {
     }
   }
 
-  login(email: string, password: string, remember: boolean, mfaCode?: string): Observable<LoginResponse> {
+  login(email: string, password: string, remember: boolean, mfaCode?: string, replaceSession = false): Observable<LoginResponse> {
     return this.serializeCookieRequest(() => this.http.post<LoginResponse>(
-      this.apiUrl + 'login', { email, password, remember, mfa_code: mfaCode }, this.options,
+      this.apiUrl + 'login', { email, password, remember, mfa_code: mfaCode, replace_session: replaceSession }, this.options,
     )).pipe(tap(response => this.persist(response)));
   }
 
