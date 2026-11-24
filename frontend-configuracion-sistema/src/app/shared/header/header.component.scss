@@ -369,3 +369,9 @@
 .top-header .menu-toggle{display:none}
 .searchbar,.searchbar.full-search{left:260px!important;right:0!important}
 @media(max-width:900px){.top-header,.top-header.test{left:0!important;width:100%!important}.top-header .menu-toggle{display:grid}.searchbar,.searchbar.full-search{left:0!important}}
+
+/* Cabecera institucional: tonos del sidebar, de azul marino a azul petróleo. */
+.top-header{background:var(--app-header-gradient);border-bottom-color:#244b5c;box-shadow:0 4px 18px rgba(7,26,40,.15)}
+.header-copy h1{color:#f1f8fa}
+.top-header .menu-toggle{background:rgba(255,255,255,.15);border-color:rgba(255,255,255,.35)}
+.top-header .menu-toggle mat-icon{color:#fff}

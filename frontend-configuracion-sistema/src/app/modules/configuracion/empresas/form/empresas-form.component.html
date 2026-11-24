@@ -1,7 +1,10 @@
 <section class="cfg cfg-institutional">
  <header class="cfg-panel cfg-heading">
    <div><h2>{{id?'Editar':'Crear'}} · {{config.title}}</h2><p>Captura y edición de información</p></div>
-   <button class="btn btn-primary" form="config-form" type="submit" [disabled]="saving||busy">{{saving?'Guardando...':'Guardar'}}</button>
+   <div class="cfg-header-actions">
+  <button class="btn btn-primary" form="config-form" type="submit" [disabled]="saving||busy">{{saving?'Guardando...':'Guardar'}}</button>
+  <a class="btn btn-outline-secondary cfg-header-cancel" [routerLink]="home"><span class="material-icons-outlined" aria-hidden="true">close</span> Cancelar</a>
+</div>
  </header>
  <p *ngIf="error" class="alert alert-danger" role="alert">{{error}}</p>
  <form id="config-form" *ngIf="can(id?'editar':'crear')&&!busy" (ngSubmit)="save()" class="cfg-institutional-form">
@@ -46,8 +49,6 @@
     </div>
   </div>
 </section>
- <div class="cfg-form-actions">
-   <a class="btn btn-outline-secondary" [routerLink]="home">Cancelar</a>
- </div>
+ 
  </form>
 </section>

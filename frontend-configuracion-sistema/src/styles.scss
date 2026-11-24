@@ -19,7 +19,7 @@
   --app-radius-sm: 9px;
   --app-shadow: 0 8px 24px rgba(21, 54, 65, 0.08);
   --app-shadow-hover: 0 14px 30px rgba(21, 54, 65, 0.13);
-  --app-header-gradient: linear-gradient(95deg, #e3f3ef 0%, #fff7e7 63%, #ffffff 100%);
+  --app-header-gradient: linear-gradient(100deg, #0b2031 0%, #173c50 52%, #4a7584 100%);
 }
 
 html,
@@ -281,4 +281,19 @@ button:focus-visible, a:focus-visible, input:focus-visible, [tabindex]:focus-vis
 @media(max-width:767px){
  .main-content .cfg-institutional .cfg-form-card {padding:16px 14px;}
  .main-content .cfg-institutional .cfg-heading {align-items:flex-start;}
+}
+
+/* Acciones de formularios en la cabecera: guardar primero, cancelar a la derecha. */
+.main-content .cfg .cfg-header-actions{
+ display:flex;align-items:center;justify-content:flex-end;gap:10px;flex-wrap:wrap;
+}
+.main-content .cfg .cfg-header-actions .cfg-header-cancel{
+ color:var(--app-primary-strong)!important;background:#fff!important;
+ border:1px solid var(--app-primary)!important;text-decoration:none;
+}
+.main-content .cfg .cfg-header-actions .cfg-header-cancel:hover{background:#eaf5f3!important}
+.main-content .cfg .cfg-header-actions .cfg-header-cancel .material-icons-outlined{font-size:18px}
+@media(max-width:575px){
+ .main-content .cfg .cfg-header-actions{width:100%;justify-content:flex-end}
+ .main-content .cfg .cfg-header-actions .btn{flex:0 1 auto}
 }
