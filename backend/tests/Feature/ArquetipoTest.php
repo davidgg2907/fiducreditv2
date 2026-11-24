@@ -88,6 +88,40 @@ class ArquetipoTest extends TestCase
         $this->assertDatabaseCount('auth_sessions', 0);
     }
 
+    public function test_recarga_con_cookie_http_only_recupera_sesion_y_rota_token(): void
+    {
+        $user = $this->ordinaryUser();
+        $login = $this->postJson('/api/login', [
+            'email' => $user->email, 'password' => self::PASSWORD,
+            'remember' => false,
+        ])->assertOk();
+
+        $cookie = $login->getCookie(config('auth_tokens.refresh_cookie_name'), false);
+        $this->assertNotNull($cookie);
+        $this->assertSame('/api', $cookie->getPath());
+        $this->assertTrue($cookie->isHttpOnly());
+        $this->assertSame('lax', $cookie->getSameSite());
+
+        // La recarga de una SPA pierde el access token en memoria. El navegador conserva
+        // la cookie de sesión y hace POST /api/login/refresh antes de renderizar.
+        $oldAccess = $login->json('data.tokens.accessToken');
+        $restore = $this->withHeaders(['X-Auth-Request' => '1', 'X-Frontend-App' => 'configuracion-sistema'])
+            ->withCredentials()->withUnencryptedCookie($cookie->getName(), $cookie->getValue())
+            ->postJson('/api/login/refresh')->assertOk();
+        $newAccess = $restore->json('data.tokens.accessToken');
+        $this->assertNotSame($oldAccess, $newAccess);
+        $this->withToken($newAccess)->getJson('/api/me')->assertOk()
+            ->assertJsonPath('data.user.userId', $user->id);
+
+        // También debe funcionar después de otra recarga; en cada refresh la cookie rota.
+        $rotated = $restore->getCookie($cookie->getName(), false);
+        $this->assertNotSame($cookie->getValue(), $rotated->getValue());
+        $again = $this->withHeaders(['X-Auth-Request' => '1', 'X-Frontend-App' => 'configuracion-sistema'])
+            ->withCredentials()->withUnencryptedCookie($rotated->getName(), $rotated->getValue())
+            ->postJson('/api/login/refresh')->assertOk();
+        $this->withToken($again->json('data.tokens.accessToken'))->getJson('/api/me')->assertOk();
+    }
+
     public function test_la_inactividad_expira_una_sesion_recordada(): void
     {
         $user = $this->ordinaryUser();
