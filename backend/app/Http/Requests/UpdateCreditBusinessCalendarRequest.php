@@ -28,6 +28,12 @@ final class UpdateCreditBusinessCalendarRequest extends FormRequest
             'non_business_weekdays' => ['sometimes', 'array', 'max:6'],
             'non_business_weekdays.*' => ['integer', 'between:0,6', 'distinct'],
             'due_date_adjustment' => ['sometimes', 'string', 'max:40'],
+            'holidays' => ['sometimes', 'array', 'max:500'],
+            'holidays.*' => ['required', 'array:id,holiday_date,description,recurring'],
+            'holidays.*.id' => ['sometimes', 'uuid', 'distinct'],
+            'holidays.*.holiday_date' => ['required', 'date_format:Y-m-d', 'distinct'],
+            'holidays.*.description' => ['required', 'string', 'max:150'],
+            'holidays.*.recurring' => ['required', 'boolean'],
             'enabled' => ['sometimes', 'boolean'],
         ];
     }
