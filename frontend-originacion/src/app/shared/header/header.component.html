@@ -1,8 +1,6 @@
 <header class="top-header mat-elevation-z5" [class.hidden]="toggleSearch" [ngClass]="{'test' : getSideBarSate()}">
   <div class="header-main">
-    <button mat-icon-button class="menu-toggle" (click)="toggleSidebar()">
-      <mat-icon class="material-icons-outlined">menu</mat-icon>
-    </button>
+    <a class="header-company-logo" routerLink="/home" aria-label="Inicio de Originación"><img src="assets/branding/logo-nahuicredit.webp" alt="NAHUICREDIT"></a>
 
     <div class="header-copy">
       <h1>{{ headerTitle }}</h1>
