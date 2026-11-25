@@ -29,11 +29,11 @@ export class AnalisisCrediticioFormComponent implements OnInit {
   readonly id = this.route.snapshot.paramMap.get('id');
   readonly form = this.fb.group({
     application_id: ['', [Validators.required, Validators.pattern(/^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i)]],
-    analyst_id: [null, [Validators.required, Validators.pattern(/^\d+$/)]],
-    status: [null, [Validators.maxLength(255)]],
-    findings: [null, []],
-    recommendation: [null, []],
-    completed_at: [null, []]
+    analyst_id: this.fb.control<number | null>(null, [Validators.required, Validators.pattern(/^\d+$/)]),
+    status: this.fb.control<string | null>(null, [Validators.maxLength(255)]),
+    findings: this.fb.control<string | null>(null, []),
+    recommendation: this.fb.control<string | null>(null, []),
+    completed_at: this.fb.control<string | null>(null, [])
   });
   error = '';
   saving = false;

@@ -29,12 +29,12 @@ export class CuentasBancariasFormComponent implements OnInit {
   readonly id = this.route.snapshot.paramMap.get('id');
   readonly form = this.fb.group({
     client_id: ['', [Validators.required, Validators.pattern(/^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i)]],
-    bank_code: [null, [Validators.maxLength(5)]],
+    bank_code: this.fb.control<string | null>(null, [Validators.maxLength(5)]),
     bank_name: ['', [Validators.required, Validators.maxLength(255)]],
     holder_name: ['', [Validators.required, Validators.maxLength(255)]],
-    clabe: [null, [Validators.maxLength(18), Validators.pattern(/^\d{18}$/)]],
-    account_last4: [null, [Validators.maxLength(4), Validators.pattern(/^\d{4}$/)]],
-    account_type: [null, [Validators.maxLength(255)]],
+    clabe: this.fb.control<string | null>(null, [Validators.maxLength(18), Validators.pattern(/^\d{18}$/)]),
+    account_last4: this.fb.control<string | null>(null, [Validators.maxLength(4), Validators.pattern(/^\d{4}$/)]),
+    account_type: this.fb.control<string | null>(null, [Validators.maxLength(255)]),
     primary: [false, []],
     active: [true, []]
   });

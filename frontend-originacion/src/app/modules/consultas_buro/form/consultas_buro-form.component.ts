@@ -30,10 +30,10 @@ export class ConsultasBuroFormComponent implements OnInit {
   readonly form = this.fb.group({
     application_id: ['', [Validators.required, Validators.pattern(/^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i)]],
     provider: ['', [Validators.required, Validators.maxLength(255)]],
-    score: [null, [Validators.pattern(/^\d+$/)]],
-    external_reference: [null, [Validators.maxLength(255)]],
-    result: [null, [Validators.maxLength(255)]],
-    consulted_at: [null, []]
+    score: this.fb.control<number | null>(null, [Validators.pattern(/^\d+$/)]),
+    external_reference: this.fb.control<string | null>(null, [Validators.maxLength(255)]),
+    result: this.fb.control<string | null>(null, [Validators.maxLength(255)]),
+    consulted_at: this.fb.control<string | null>(null, [])
   });
   error = '';
   saving = false;
