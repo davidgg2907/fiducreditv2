@@ -1,4 +1,5 @@
-import { Component, OnInit, inject } from '@angular/core';
+import { ClientesRelacionesComponent } from '../relaciones/clientes-relaciones.component';
+import { Component, OnInit, ViewChild, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterModule, ActivatedRoute, Router } from '@angular/router';
 import { ClientesService } from '../../../servicios/originacion/clientes.service';
@@ -14,7 +15,7 @@ import { LookupOption } from '../../../interfaces/originacion/api-response.inter
 @Component({
   selector: 'app-clientes-form',
   standalone: true,
-  imports: [CommonModule, RouterModule, ReactiveFormsModule],
+  imports: [ClientesRelacionesComponent, CommonModule, RouterModule, ReactiveFormsModule],
   templateUrl: './clientes-form.component.html',
   styleUrls: ['./clientes-form.component.scss']
 })
@@ -44,6 +45,7 @@ export class ClientesFormComponent implements OnInit {
     phone: this.fb.control<string | null>(null, [Validators.maxLength(20)]),
     status: this.fb.control<string | null>(null, [Validators.maxLength(255)])
   });
+  @ViewChild(ClientesRelacionesComponent) relations?: ClientesRelacionesComponent;
   error = '';
   saving = false;
   loading = false;
@@ -120,13 +122,15 @@ export class ClientesFormComponent implements OnInit {
       health_provider: values.health_provider || null,
       email: values.email || null,
       phone: values.phone || null,
-      status: values.status || null
+      status: values.status || 'active'
     };
+    const relations = this.relations?.payload();
+    if (!relations) { this.error = 'Revise la captura de domicilios y cuentas bancarias.'; return; }
     this.saving = true;
     this.error = '';
     const request = this.id
-      ? this.service.update(this.id, payload)
-      : this.service.create(payload);
+      ? this.service.update(this.id, {...payload, ...relations})
+      : this.service.create({...payload, ...relations});
     request.pipe(finalize(() => this.saving = false)).subscribe({
       next: record => void this.router.navigate(
         this.permissions.can('clientes', 'detalle') ? ['/clientes', record.id] : ['/clientes']

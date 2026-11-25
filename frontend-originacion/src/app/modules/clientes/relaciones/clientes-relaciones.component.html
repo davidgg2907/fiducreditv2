@@ -1,0 +1,89 @@
+<ng-container *ngIf="compact; else sections">
+  <button type="button" class="icon-btn" title="Domicilios" aria-label="Domicilios" *ngIf="canView('addresses')" (click)="open('addresses')"><span class="material-icons-outlined">location_on</span></button>
+  <button type="button" class="icon-btn" title="Cuentas bancarias" aria-label="Cuentas bancarias" *ngIf="canView('bank_accounts')" (click)="open('bank_accounts')"><span class="material-icons-outlined">account_balance</span></button>
+</ng-container>
+<ng-template #sections>
+  <p class="error" *ngIf="error && !dialog.open" role="alert">{{ error }}</p>
+  <p *ngIf="loading">Cargando datos asociados…</p>
+  <section class="panel" *ngIf="canView('addresses')">
+    <div class="heading"><h3>Domicilios</h3><div class="header-actions">
+      <button type="button" class="btn btn-outline" *ngIf="staged && canWrite('addresses', false) && !showAddress" (click)="editAddress(-1)">Agregar domicilio</button>
+      <button type="button" class="btn btn-outline" (click)="open('addresses')" [disabled]="loading || !loaded">Ver domicilios ({{ addresses.length }})</button>
+    </div></div>
+    <ng-container *ngIf="!dialog.open && staged && showAddress"><ng-container *ngTemplateOutlet="addressFields"></ng-container></ng-container>
+    <p *ngIf="!addresses.length && !showAddress">Sin domicilios registrados.</p>
+    <div *ngIf="!staged"><p *ngFor="let a of addresses">{{ a.street }} {{ a.exterior_number }}, {{ a.neighborhood }}, {{ a.municipality }}, {{ a.state }} · CP {{ a.postal_code }}</p></div>
+  </section>
+  <section class="panel" *ngIf="canView('bank_accounts')">
+    <div class="heading"><h3>Cuentas bancarias</h3><div class="header-actions">
+      <button type="button" class="btn btn-outline" *ngIf="staged && canWrite('bank_accounts', false) && !showAccount" (click)="editAccount(-1)">Agregar cuenta</button>
+      <button type="button" class="btn btn-outline" (click)="open('bank_accounts')" [disabled]="loading || !loaded">Ver cuentas ({{ accounts.length }})</button>
+    </div></div>
+    <ng-container *ngIf="!dialog.open && staged && showAccount"><ng-container *ngTemplateOutlet="accountFields"></ng-container></ng-container>
+    <p *ngIf="!accounts.length && !showAccount">Sin cuentas registradas.</p>
+    <div *ngIf="!staged"><p *ngFor="let a of accounts">{{ a.bank_name }} · {{ a.holder_name }} · •••• {{ a.account_last4 || a.clabe?.slice(-4) || '—' }}</p></div>
+  </section>
+</ng-template>
+
+<dialog #dialog (cancel)="$event.preventDefault(); dialog.close()" aria-labelledby="relations-title">
+  <div class="heading"><h2 id="relations-title">{{ mode === 'addresses' ? 'Domicilios del cliente' : 'Cuentas bancarias del cliente' }}</h2>
+    <button type="button" class="icon-btn" aria-label="Cerrar" (click)="dialog.close()" [disabled]="saving"><span class="material-icons-outlined">close</span></button></div>
+  <p class="error" *ngIf="error" role="alert">{{ error }}</p>
+  <p *ngIf="loading">Cargando…</p>
+  <ng-container *ngIf="!loading && loaded">
+    <ng-container *ngIf="mode === 'addresses'; else bankModal">
+      <button type="button" class="btn btn-primary" *ngIf="canWrite('addresses', false)" (click)="editAddress(-1)">Nuevo domicilio</button>
+      <p *ngIf="!addresses.length">Sin domicilios registrados.</p>
+      <div class="table-scroll" *ngIf="addresses.length"><table><thead><tr><th>Domicilio</th><th>Tipo</th><th>Acciones</th></tr></thead><tbody>
+        <tr *ngFor="let a of addresses; let i = index"><td>{{ a.street }} {{ a.exterior_number }}, {{ a.neighborhood }}, {{ a.municipality }}, {{ a.state }} · {{ a.postal_code }} <strong *ngIf="a.primary">Principal</strong></td><td>{{ a.address_type }}</td><td><button type="button" class="icon-btn" title="Editar domicilio" aria-label="Editar domicilio" *ngIf="canWrite('addresses', !!a.id)" (click)="editAddress(i)"><span class="material-icons-outlined">edit</span></button></td></tr>
+      </tbody></table></div>
+      <details *ngFor="let a of histories"><summary>Historial de domicilio: {{ a.credit_client_address_versions[0]?.street || 'Sin versión' }}</summary><p *ngFor="let v of a.credit_client_address_versions">Versión {{ v.version }} · {{ v.street }} {{ v.exterior_number }}, {{ v.neighborhood }}, {{ v.municipality }} · {{ v.valid_from || '—' }} – {{ v.valid_to || 'Vigente' }}</p></details>
+      <ng-container *ngIf="showAddress"><ng-container *ngTemplateOutlet="addressFields"></ng-container></ng-container>
+    </ng-container>
+    <ng-template #bankModal>
+      <button type="button" class="btn btn-primary" *ngIf="canWrite('bank_accounts', false)" (click)="editAccount(-1)">Nueva cuenta</button>
+      <p *ngIf="!accounts.length">Sin cuentas registradas.</p>
+      <div class="table-scroll" *ngIf="accounts.length"><table><thead><tr><th>Banco</th><th>Titular</th><th>Cuenta</th><th>Acciones</th></tr></thead><tbody>
+        <tr *ngFor="let a of accounts; let i = index"><td>{{ a.bank_name }}</td><td>{{ a.holder_name }}</td><td>•••• {{ a.account_last4 || a.clabe?.slice(-4) || '—' }} <strong *ngIf="a.primary">Principal</strong></td><td><button type="button" class="icon-btn" title="Editar cuenta" aria-label="Editar cuenta" *ngIf="canWrite('bank_accounts', !!a.id)" (click)="editAccount(i)"><span class="material-icons-outlined">edit</span></button></td></tr>
+      </tbody></table></div>
+      <ng-container *ngIf="showAccount"><ng-container *ngTemplateOutlet="accountFields"></ng-container></ng-container>
+    </ng-template>
+    <div class="header-actions modal-actions" *ngIf="mode === 'addresses' ? showAddress : showAccount">
+      <button type="button" class="btn btn-primary" (click)="saveCurrent()" [disabled]="saving">{{ staged ? 'Aplicar al formulario' : 'Guardar' }}</button>
+      <button type="button" class="btn btn-outline" (click)="mode === 'addresses' ? cancelAddress() : cancelAccount()" [disabled]="saving">Cancelar captura</button>
+    </div>
+  </ng-container>
+</dialog>
+
+<ng-template #addressFields>
+  <div class="fields relation-fields" [formGroup]="addressForm">
+    <label>Tipo de domicilio *<select formControlName="address_type"><option value="home">Particular</option><option value="work">Laboral</option><option value="other">Otro</option></select></label>
+    <label>Calle *<input formControlName="street" maxlength="255"></label>
+    <label>Número exterior<input formControlName="exterior_number"></label>
+    <label>Número interior<input formControlName="interior_number"></label>
+    <label>Colonia *<input formControlName="neighborhood"></label>
+    <label>Ciudad *<input formControlName="city"></label>
+    <label>Municipio / alcaldía *<input formControlName="municipality"></label>
+    <label>Estado *<input formControlName="state"></label>
+    <label>Código postal *<input formControlName="postal_code" maxlength="10"></label>
+    <label>País (ISO) *<input formControlName="country" maxlength="2"></label>
+    <label>Principal<span class="switch-line"><input type="checkbox" role="switch" formControlName="primary"></span></label>
+    <label>Activo<span class="switch-line"><input type="checkbox" role="switch" formControlName="active"></span></label>
+  </div>
+  <p class="error" *ngIf="addressForm.invalid && addressForm.touched">Complete los campos obligatorios del domicilio.</p>
+  <button type="button" class="btn btn-outline" *ngIf="staged && !dialog.open && selectedAddress < 0" (click)="cancelAddress()">Omitir domicilio</button>
+</ng-template>
+<ng-template #accountFields>
+  <div class="fields relation-fields" [formGroup]="accountForm">
+    <label>Banco *<input formControlName="bank_name"></label>
+    <label>Clave bancaria<input formControlName="bank_code" maxlength="5"></label>
+    <label>Titular *<input formControlName="holder_name"></label>
+    <label>CLABE<input formControlName="clabe" maxlength="18" inputmode="numeric" autocomplete="off"></label>
+    <label>Últimos 4 dígitos<input formControlName="account_last4" maxlength="4" inputmode="numeric"></label>
+    <label>Tipo de cuenta *<select formControlName="account_type"><option value="checking">Cheques</option><option value="savings">Ahorro</option><option value="payroll">Nómina</option><option value="other">Otra</option></select></label>
+    <label>Principal<span class="switch-line"><input type="checkbox" role="switch" formControlName="primary"></span></label>
+    <label>Activa<span class="switch-line"><input type="checkbox" role="switch" formControlName="active"></span></label>
+  </div>
+  <p class="error" *ngIf="accountForm.invalid && accountForm.touched">Revise los campos obligatorios, la CLABE (18 dígitos) y la terminación (4 dígitos).</p>
+  <button type="button" class="btn btn-outline" *ngIf="staged && !dialog.open && selectedAccount < 0" (click)="cancelAccount()">Omitir cuenta</button>
+</ng-template>

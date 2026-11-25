@@ -1,0 +1,203 @@
+import { CommonModule } from '@angular/common';
+import { Component, ElementRef, Input, OnInit, ViewChild, inject } from '@angular/core';
+import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
+import { finalize } from 'rxjs';
+import { ClienteCuenta, ClienteDomicilio, ClienteDomicilioRegistro, ClienteRelaciones } from '../../../interfaces/originacion/clientes.interface';
+import { ClientesService } from '../../../servicios/originacion/clientes.service';
+import { OriginacionPermissionsService } from '../../../servicios/originacion/originacion-permissions.service';
+import { originacionError } from '../../../servicios/originacion/originacion-errors';
+
+@Component({
+  selector: 'app-clientes-relaciones',
+  standalone: true,
+  imports: [CommonModule, ReactiveFormsModule],
+  templateUrl: './clientes-relaciones.component.html',
+  styleUrls: ['./clientes-relaciones.component.scss']
+})
+export class ClientesRelacionesComponent implements OnInit {
+  @Input() clientId: string | null = null;
+  @Input() staged = false;
+  @Input() compact = false;
+  @ViewChild('dialog', { static: true }) dialog!: ElementRef<HTMLDialogElement>;
+  private readonly fb = inject(FormBuilder).nonNullable;
+  private readonly service = inject(ClientesService);
+  readonly permissions = inject(OriginacionPermissionsService);
+  loading = false;
+  saving = false;
+  loaded = false;
+  error = '';
+  mode: 'addresses' | 'bank_accounts' = 'addresses';
+  addresses: ClienteDomicilio[] = [];
+  accounts: ClienteCuenta[] = [];
+  histories: ClienteDomicilioRegistro[] = [];
+  private pendingAddresses = new Map<number, ClienteDomicilio>();
+  private pendingAccounts = new Map<number, ClienteCuenta>();
+  selectedAddress = -1;
+  selectedAccount = -1;
+  showAddress = false;
+  showAccount = false;
+
+  readonly addressForm = this.fb.group({
+    address_type: ['home', Validators.required], primary: false, active: true,
+    street: ['', [Validators.required, Validators.maxLength(255)]],
+    exterior_number: ['', Validators.maxLength(255)], interior_number: ['', Validators.maxLength(255)],
+    neighborhood: ['', [Validators.required, Validators.maxLength(255)]],
+    city: ['', [Validators.required, Validators.maxLength(255)]],
+    municipality: ['', [Validators.required, Validators.maxLength(255)]],
+    state: ['', [Validators.required, Validators.maxLength(255)]],
+    postal_code: ['', [Validators.required, Validators.maxLength(10)]],
+    country: ['MX', [Validators.required, Validators.pattern(/^[A-Za-z]{2}$/)]]
+  });
+  readonly accountForm = this.fb.group({
+    bank_code: ['', Validators.maxLength(5)],
+    bank_name: ['', [Validators.required, Validators.maxLength(255)]],
+    holder_name: ['', [Validators.required, Validators.maxLength(255)]],
+    clabe: ['', Validators.pattern(/^\d{18}$/)],
+    account_last4: ['', Validators.pattern(/^\d{4}$/)],
+    account_type: ['checking', Validators.required], primary: false, active: true
+  });
+
+  ngOnInit(): void {
+    if (this.staged || !this.compact) this.load();
+  }
+
+  canView(kind: 'addresses' | 'bank_accounts'): boolean {
+    return this.permissions.can(kind === 'addresses' ? 'domicilios' : 'cuentas_bancarias', 'ver');
+  }
+  canWrite(kind: 'addresses' | 'bank_accounts', existing: boolean): boolean {
+    return this.canView(kind) &&
+      this.permissions.can(kind === 'addresses' ? 'domicilios' : 'cuentas_bancarias', existing ? 'editar' : 'crear') &&
+      this.permissions.can('clientes', this.clientId ? 'editar' : 'crear');
+  }
+
+  load(): void {
+    if (!this.clientId) { this.loaded = true; return; }
+    if (!this.canView('addresses') && !this.canView('bank_accounts')) { this.loaded = true; return; }
+    this.loading = true;
+    this.error = '';
+    this.service.relations(this.clientId).pipe(finalize(() => this.loading = false)).subscribe({
+      next: record => {
+        this.histories = this.canView('addresses') ? record.credit_client_addresses : [];
+        this.addresses = [...this.histories].sort((a, b) => b.created_at.localeCompare(a.created_at)).map(a => {
+          const v = a.credit_client_address_versions[0];
+          return {id: a.id, address_type: a.address_type, primary: !!a.primary, active: !!a.active,
+            street: v?.street ?? '', exterior_number: v?.exterior_number ?? null, interior_number: v?.interior_number ?? null,
+            neighborhood: v?.neighborhood ?? '', city: v?.city ?? '', municipality: v?.municipality ?? '',
+            state: v?.state ?? '', postal_code: v?.postal_code ?? '', country: v?.country ?? 'MX',
+            latitude: v?.latitude ?? null, longitude: v?.longitude ?? null};
+        });
+        this.accounts = this.canView('bank_accounts') ? [...record.credit_client_bank_accounts]
+          .sort((a,b) => b.created_at.localeCompare(a.created_at)).map(a => ({
+            id: a.id, bank_code: a.bank_code, bank_name: a.bank_name, holder_name: a.holder_name,
+            clabe: a.clabe, account_last4: a.account_last4, account_type: a.account_type,
+            primary: !!a.primary, active: !!a.active
+          })) : [];
+        this.loaded = true;
+        if (this.staged && this.addresses.length && this.canWrite('addresses', true)) this.editAddress(0);
+        if (this.staged && this.accounts.length && this.canWrite('bank_accounts', true)) this.editAccount(0);
+      },
+      error: e => { this.error = originacionError(e); this.loaded = false; }
+    });
+  }
+
+  open(kind: 'addresses' | 'bank_accounts'): void {
+    if (!this.canView(kind)) return;
+    this.mode = kind;
+    if (!this.staged) {
+      this.showAddress = false; this.showAccount = false;
+      this.load();
+    }
+    this.dialog.nativeElement.showModal();
+  }
+
+  editAddress(index: number): void {
+    if (!this.canWrite('addresses', index >= 0 && !!this.addresses[index]?.id)) return;
+    if (this.staged && !this.captureAddress()) return;
+    this.selectedAddress = index;
+    const a = this.addresses[index];
+    this.addressForm.reset({
+      address_type: a?.address_type ?? 'home', primary: a?.primary ?? !this.addresses.length, active: a?.active ?? true,
+      street: a?.street ?? '', exterior_number: a?.exterior_number ?? '', interior_number: a?.interior_number ?? '',
+      neighborhood: a?.neighborhood ?? '', city: a?.city ?? '', municipality: a?.municipality ?? '',
+      state: a?.state ?? '', postal_code: a?.postal_code ?? '', country: a?.country ?? 'MX'
+    });
+    this.showAddress = true;
+  }
+
+  editAccount(index: number): void {
+    if (!this.canWrite('bank_accounts', index >= 0 && !!this.accounts[index]?.id)) return;
+    if (this.staged && !this.captureAccount()) return;
+    this.selectedAccount = index;
+    const a = this.accounts[index];
+    this.accountForm.reset({
+      bank_code: a?.bank_code ?? '', bank_name: a?.bank_name ?? '', holder_name: a?.holder_name ?? '',
+      clabe: a?.clabe ?? '', account_last4: a?.account_last4 ?? '', account_type: a?.account_type ?? 'checking',
+      primary: a?.primary ?? !this.accounts.length, active: a?.active ?? true
+    });
+    this.showAccount = true;
+  }
+
+  private addressValue(): ClienteDomicilio {
+    const v = this.addressForm.getRawValue();
+    const old = this.addresses[this.selectedAddress];
+    return {...v, ...(old?.id ? {id: old.id} : {}), country: v.country.toUpperCase(),
+      exterior_number: v.exterior_number || null, interior_number: v.interior_number || null,
+      latitude: old?.latitude ?? null, longitude: old?.longitude ?? null};
+  }
+  private accountValue(): ClienteCuenta {
+    const v = this.accountForm.getRawValue();
+    const old = this.accounts[this.selectedAccount];
+    return {...v, ...(old?.id ? {id: old.id} : {}), bank_code: v.bank_code || null,
+      clabe: v.clabe || null, account_last4: v.account_last4 || null};
+  }
+
+  private captureAddress(): boolean {
+    if (!this.showAddress || (!this.addressForm.dirty && this.selectedAddress >= 0)) return true;
+    if (this.addressForm.invalid) { this.addressForm.markAllAsTouched(); this.error = 'Complete los campos obligatorios del domicilio.'; return false; }
+    const v = this.addressValue();
+    const index = this.selectedAddress < 0 ? this.addresses.length : this.selectedAddress;
+    this.addresses[index] = v;
+    this.pendingAddresses.set(index, v);
+    this.selectedAddress = index;
+    this.addressForm.markAsPristine();
+    return true;
+  }
+  private captureAccount(): boolean {
+    if (!this.showAccount || (!this.accountForm.dirty && this.selectedAccount >= 0)) return true;
+    if (this.accountForm.invalid) { this.accountForm.markAllAsTouched(); this.error = 'Revise los campos de la cuenta bancaria.'; return false; }
+    const v = this.accountValue();
+    const index = this.selectedAccount < 0 ? this.accounts.length : this.selectedAccount;
+    this.accounts[index] = v;
+    this.pendingAccounts.set(index, v);
+    this.selectedAccount = index;
+    this.accountForm.markAsPristine();
+    return true;
+  }
+
+  payload(): ClienteRelaciones | null {
+    if (this.loading || !this.loaded || !this.captureAddress() || !this.captureAccount()) return null;
+    return {addresses: [...this.pendingAddresses.values()], bank_accounts: [...this.pendingAccounts.values()]};
+  }
+
+  saveCurrent(): void {
+    this.error = '';
+    if (this.staged) {
+      if (this.mode === 'addresses' ? this.captureAddress() : this.captureAccount()) this.dialog.nativeElement.close();
+      return;
+    }
+    if (!this.clientId || this.saving || this.loading || !this.loaded) return;
+    const form = this.mode === 'addresses' ? this.addressForm : this.accountForm;
+    if (form.invalid) { form.markAllAsTouched(); return; }
+    const value = this.mode === 'addresses' ? this.addressValue() : this.accountValue();
+    if (!this.canWrite(this.mode, !!value.id)) return;
+    const payload = this.mode === 'addresses' ? {addresses: [this.addressValue()]} : {bank_accounts: [this.accountValue()]};
+    this.saving = true;
+    this.service.saveRelations(this.clientId, payload).pipe(finalize(() => this.saving = false)).subscribe({
+      next: () => { this.showAddress = false; this.showAccount = false; this.load(); },
+      error: e => this.error = originacionError(e)
+    });
+  }
+
+  cancelAddress(): void { this.showAddress = false; this.selectedAddress = -1; this.error = ''; }
+  cancelAccount(): void { this.showAccount = false; this.selectedAccount = -1; this.error = ''; }
+}

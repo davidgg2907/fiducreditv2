@@ -3,7 +3,7 @@ import { HttpClient, HttpParams } from '@angular/common/http';
 import { Observable, map } from 'rxjs';
 import { runtimeConfig } from '../../config/runtime-config';
 import { ApiResponse, Paginated } from '../../interfaces/originacion/api-response.interface';
-import { ClientesRecord, ClientesPayload } from '../../interfaces/originacion/clientes.interface';
+import { ClientesRecord, ClientesPayload, ClienteConRelaciones, ClienteRelaciones } from '../../interfaces/originacion/clientes.interface';
 
 @Injectable({ providedIn: 'root' })
 export class ClientesService {
@@ -24,12 +24,22 @@ export class ClientesService {
       .pipe(map(response => response.data));
   }
 
-  create(payload: ClientesPayload): Observable<ClientesRecord> {
+  relations(id: string): Observable<ClienteConRelaciones> {
+    return this.http.get<ApiResponse<ClienteConRelaciones>>(this.url + '/' + encodeURIComponent(id), { params: { client_relations: '1' } })
+      .pipe(map(response => response.data));
+  }
+
+  saveRelations(id: string, payload: ClienteRelaciones): Observable<ClientesRecord> {
+    return this.http.put<ApiResponse<ClientesRecord>>(this.url + '/' + encodeURIComponent(id), payload)
+      .pipe(map(response => response.data));
+  }
+
+  create(payload: ClientesPayload & ClienteRelaciones): Observable<ClientesRecord> {
     return this.http.post<ApiResponse<ClientesRecord>>(this.url, payload)
       .pipe(map(response => response.data));
   }
 
-  update(id: string, payload: Partial<ClientesPayload>): Observable<ClientesRecord> {
+  update(id: string, payload: Partial<ClientesPayload> & ClienteRelaciones): Observable<ClientesRecord> {
     return this.http.put<ApiResponse<ClientesRecord>>(this.url + '/' + encodeURIComponent(id), payload)
       .pipe(map(response => response.data));
   }
