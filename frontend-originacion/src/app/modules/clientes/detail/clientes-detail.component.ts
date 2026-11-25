@@ -1,3 +1,4 @@
+import { ClientesRelacionesComponent } from '../relaciones/clientes-relaciones.component';
 import { Component, OnInit, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterModule, ActivatedRoute, Router } from '@angular/router';
@@ -8,7 +9,7 @@ import { originacionError } from '../../../servicios/originacion/originacion-err
 @Component({
   selector: 'app-clientes-detail',
   standalone: true,
-  imports: [CommonModule, RouterModule],
+  imports: [ClientesRelacionesComponent, CommonModule, RouterModule],
   templateUrl: './clientes-detail.component.html',
   styleUrls: ['./clientes-detail.component.scss']
 })

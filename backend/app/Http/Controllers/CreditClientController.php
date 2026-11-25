@@ -38,6 +38,11 @@ final class CreditClientController extends Controller
     public function show(Request $request, string $id): JsonResponse
     {
         $this->authorizeAction($request, 'view');
+        if ($request->boolean('client_relations')) {
+            $client = $this->service->find($id);
+            $client->load(['creditClientAddresses.creditClientAddressVersions' => fn ($query) => $query->orderByDesc('version'), 'creditClientBankAccounts']);
+            return response()->json(['isSuccess' => true, 'data' => (new CreditClientResource($client))->resolve()]);
+        }
         $query = $request->validate([
             'include' => ['sometimes', 'string', 'max:500'],
         ]);

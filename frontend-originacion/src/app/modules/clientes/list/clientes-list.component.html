@@ -40,6 +40,7 @@
             <div class="row-actions">
             <a class="icon-btn" title="Detalle" aria-label="Detalle" *ngIf="permissions.can('clientes', 'detalle')" [routerLink]="[row.id]"><span class="material-icons-outlined" aria-hidden="true">visibility</span></a>
             <a class="icon-btn" title="Editar" aria-label="Editar" *ngIf="permissions.can('clientes', 'editar')" [routerLink]="[row.id, 'editar']"><span class="material-icons-outlined" aria-hidden="true">edit</span></a>
+            <app-clientes-relaciones [clientId]="row.id" [compact]="true"></app-clientes-relaciones>
             </div>
           </td>
         </tr>

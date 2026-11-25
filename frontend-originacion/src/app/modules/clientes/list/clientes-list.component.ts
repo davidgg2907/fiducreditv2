@@ -1,3 +1,4 @@
+import { ClientesRelacionesComponent } from '../relaciones/clientes-relaciones.component';
 import { Component, OnInit, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterModule, ActivatedRoute, Router } from '@angular/router';
@@ -11,7 +12,7 @@ import { finalize } from 'rxjs';
 @Component({
   selector: 'app-clientes-list',
   standalone: true,
-  imports: [CommonModule, RouterModule, FormsModule],
+  imports: [ClientesRelacionesComponent, CommonModule, RouterModule, FormsModule],
   templateUrl: './clientes-list.component.html',
   styleUrls: ['./clientes-list.component.scss']
 })
