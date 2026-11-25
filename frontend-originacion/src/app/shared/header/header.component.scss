@@ -300,7 +300,7 @@
 
 /* Logotipo junto al nombre del módulo en la franja superior. */
 .header-company-logo{height:62px;width:86px;display:flex;align-items:center;justify-content:center;flex:none;padding:0;background:transparent;border:0;border-radius:0;box-shadow:none;box-sizing:border-box}
-.header-company-logo img{display:block;max-width:100%;max-height:100%;object-fit:contain;filter:url('assets/branding/logo-transparent-filter.svg#remove-white')}
+.header-company-logo img{display:block;max-width:100%;max-height:100%;object-fit:contain;filter:url('/assets/branding/logo-transparent-filter.svg#remove-white')}
 @media(max-width:600px){.header-company-logo{height:48px;width:70px;padding:4px 6px}.header-main{gap:.55rem}}
 
 /* Menú de sesión: ancho estable, columnas consistentes y texto sin desbordar. */
