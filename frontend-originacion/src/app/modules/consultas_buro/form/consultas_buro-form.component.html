@@ -1,12 +1,21 @@
-<section class="panel heading">
-  <h2>Consultas de buró</h2>
-  <a routerLink="/consultas_buro">Cancelar</a>
-</section>
-<section class="panel">
-  <h3>{{ id ? 'Editar registro' : 'Nuevo registro' }}</h3>
-  <p class="error" role="alert" *ngIf="error">{{ error }}</p>
-  <p *ngIf="loading || !ready">Cargando información…</p>
-  <form [formGroup]="form" (ngSubmit)="save()">
+<header class="panel heading">
+  <div>
+    <h2>{{ id ? 'Editar' : 'Crear' }} · Consultas de buró</h2>
+    <p>Captura y edición de información</p>
+  </div>
+  <div class="header-actions">
+    <button class="btn btn-primary" type="submit" form="originacion-form" [disabled]="saving || loading || !ready || form.disabled || !permissions.can('consultas_buro', id ? 'editar' : 'crear')"><span class="material-icons-outlined" aria-hidden="true">check</span> {{ saving ? 'Guardando…' : 'Guardar' }}</button>
+    <a class="btn btn-outline" routerLink="/consultas_buro"><span class="material-icons-outlined" aria-hidden="true">close</span> Cancelar</a>
+  </div>
+</header>
+<p class="error" role="alert" *ngIf="error">{{ error }}</p>
+<p class="panel muted" *ngIf="loading || !ready">Cargando información…</p>
+<form id="originacion-form" [formGroup]="form" (ngSubmit)="save()">
+  <section class="panel">
+    <div class="section-heading">
+      <span class="material-icons-outlined" aria-hidden="true">manage_search</span>
+      <h3>Datos de la consulta</h3>
+    </div>
     <div class="fields">
       <label>
         Solicitud *
@@ -22,19 +31,9 @@
         <small *ngIf="form.controls.provider.invalid && form.controls.provider.touched">Revise este campo.</small>
       </label>
       <label>
-        Puntuación
-        <input formControlName="score" type="number" step="1">
-        <small *ngIf="form.controls.score.invalid && form.controls.score.touched">Revise este campo.</small>
-      </label>
-      <label>
         Referencia externa
         <input formControlName="external_reference" type="text">
         <small *ngIf="form.controls.external_reference.invalid && form.controls.external_reference.touched">Revise este campo.</small>
-      </label>
-      <label>
-        Resultado
-        <input formControlName="result" type="text">
-        <small *ngIf="form.controls.result.invalid && form.controls.result.touched">Revise este campo.</small>
       </label>
       <label>
         Fecha de consulta
@@ -42,9 +41,23 @@
         <small *ngIf="form.controls.consulted_at.invalid && form.controls.consulted_at.touched">Revise este campo.</small>
       </label>
     </div>
-    <div class="actions">
-      <button type="submit" [disabled]="saving || loading || !ready || form.disabled || !permissions.can('consultas_buro', id ? 'editar' : 'crear')">{{ saving ? 'Guardando…' : 'Guardar' }}</button>
-      <a routerLink="/consultas_buro">Volver</a>
+  </section>
+  <section class="panel">
+    <div class="section-heading">
+      <span class="material-icons-outlined" aria-hidden="true">analytics</span>
+      <h3>Resultado</h3>
     </div>
-  </form>
-</section>
+    <div class="fields">
+      <label>
+        Puntuación
+        <input formControlName="score" type="number" step="1">
+        <small *ngIf="form.controls.score.invalid && form.controls.score.touched">Revise este campo.</small>
+      </label>
+      <label>
+        Resultado
+        <input formControlName="result" type="text">
+        <small *ngIf="form.controls.result.invalid && form.controls.result.touched">Revise este campo.</small>
+      </label>
+    </div>
+  </section>
+</form>

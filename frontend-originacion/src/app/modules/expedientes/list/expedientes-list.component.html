@@ -1,19 +1,24 @@
 <section class="panel heading">
-  <h2>Expedientes</h2>
+  <div>
+    <h2>Expedientes</h2>
+    <p>Administración de registros</p>
+  </div>
   
 </section>
 <section class="panel">
-  <form class="actions" (ngSubmit)="load()">
-    <label>Folio (coincidencia exacta)
-      <input name="search" [(ngModel)]="search" placeholder="Buscar">
-    </label>
-    <button type="submit" [disabled]="loading">Buscar</button>
-    <button type="button" (click)="clearSearch()" [disabled]="loading">Limpiar</button>
+  <form (ngSubmit)="load()">
+    <label class="search-label" for="expedientes-search">Folio (coincidencia exacta)</label>
+    <div class="search-controls">
+      <input id="expedientes-search" name="search" [(ngModel)]="search" placeholder="Buscar por texto">
+      <button class="btn btn-primary" type="submit" [disabled]="loading">Buscar</button>
+      <button class="btn btn-outline" type="button" (click)="clearSearch()" [disabled]="loading || !search">Limpiar</button>
+    </div>
   </form>
 </section>
 <section class="panel">
   <p class="error" role="alert" *ngIf="error">{{ error }}</p>
   <p *ngIf="loading">Cargando registros…</p>
+  <h3>Listado de Expedientes</h3>
   <div class="table-scroll">
     <table>
       <thead>
@@ -32,7 +37,7 @@
           <td>{{ row.requested_amount ?? '—' }}</td>
           <td>{{ row.status ?? '—' }}</td>
           <td>
-            <a *ngIf="permissions.can('expedientes', 'detalle')" [routerLink]="[row.id]">Detalle</a>
+            <a class="icon-btn" title="Detalle" aria-label="Detalle" *ngIf="permissions.can('expedientes', 'detalle')" [routerLink]="[row.id]"><span class="material-icons-outlined" aria-hidden="true">visibility</span></a>
 
           </td>
         </tr>

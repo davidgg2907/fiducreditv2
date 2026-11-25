@@ -1,19 +1,24 @@
 <section class="panel heading">
-  <h2>Consentimientos</h2>
-  <a *ngIf="permissions.can('consentimientos', 'crear')" routerLink="nuevo">Nuevo registro</a>
+  <div>
+    <h2>Consentimientos</h2>
+    <p>Administración de registros</p>
+  </div>
+  <a class="btn btn-primary" *ngIf="permissions.can('consentimientos', 'crear')" routerLink="nuevo"><span class="material-icons-outlined" aria-hidden="true">add</span> Crear registro</a>
 </section>
 <section class="panel">
-  <form class="actions" (ngSubmit)="load()">
-    <label>Tipo de consentimiento (coincidencia exacta)
-      <input name="search" [(ngModel)]="search" placeholder="Buscar">
-    </label>
-    <button type="submit" [disabled]="loading">Buscar</button>
-    <button type="button" (click)="clearSearch()" [disabled]="loading">Limpiar</button>
+  <form (ngSubmit)="load()">
+    <label class="search-label" for="consentimientos-search">Tipo de consentimiento (coincidencia exacta)</label>
+    <div class="search-controls">
+      <input id="consentimientos-search" name="search" [(ngModel)]="search" placeholder="Buscar por texto">
+      <button class="btn btn-primary" type="submit" [disabled]="loading">Buscar</button>
+      <button class="btn btn-outline" type="button" (click)="clearSearch()" [disabled]="loading || !search">Limpiar</button>
+    </div>
   </form>
 </section>
 <section class="panel">
   <p class="error" role="alert" *ngIf="error">{{ error }}</p>
   <p *ngIf="loading">Cargando registros…</p>
+  <h3>Listado de Consentimientos</h3>
   <div class="table-scroll">
     <table>
       <thead>
@@ -32,7 +37,7 @@
           <td>{{ row.version ?? '—' }}</td>
           <td>{{ row.accepted ?? '—' }}</td>
           <td>
-            <a *ngIf="permissions.can('consentimientos', 'detalle')" [routerLink]="[row.id]">Detalle</a>
+            <a class="icon-btn" title="Detalle" aria-label="Detalle" *ngIf="permissions.can('consentimientos', 'detalle')" [routerLink]="[row.id]"><span class="material-icons-outlined" aria-hidden="true">visibility</span></a>
 
           </td>
         </tr>

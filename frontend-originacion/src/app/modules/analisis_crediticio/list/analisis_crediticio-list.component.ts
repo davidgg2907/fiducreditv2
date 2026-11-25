@@ -26,6 +26,13 @@ export class AnalisisCrediticioListComponent implements OnInit {
   loading = false;
   error = '';
 
+  get pageNumbers(): number[] {
+    const last = Math.max(1, this.lastPage);
+    const start = Math.max(1, Math.min(this.page - 2, last - 4));
+    const end = Math.min(last, start + 4);
+    return Array.from({ length: end - start + 1 }, (_, index) => start + index);
+  }
+
   ngOnInit(): void {
     this.load();
   }

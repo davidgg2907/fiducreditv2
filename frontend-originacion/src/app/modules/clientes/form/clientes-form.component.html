@@ -1,12 +1,21 @@
-<section class="panel heading">
-  <h2>Clientes</h2>
-  <a routerLink="/clientes">Cancelar</a>
-</section>
-<section class="panel">
-  <h3>{{ id ? 'Editar registro' : 'Nuevo registro' }}</h3>
-  <p class="error" role="alert" *ngIf="error">{{ error }}</p>
-  <p *ngIf="loading || !ready">Cargando información…</p>
-  <form [formGroup]="form" (ngSubmit)="save()">
+<header class="panel heading">
+  <div>
+    <h2>{{ id ? 'Editar' : 'Crear' }} · Clientes</h2>
+    <p>Captura y edición de información</p>
+  </div>
+  <div class="header-actions">
+    <button class="btn btn-primary" type="submit" form="originacion-form" [disabled]="saving || loading || !ready || form.disabled || !permissions.can('clientes', id ? 'editar' : 'crear')"><span class="material-icons-outlined" aria-hidden="true">check</span> {{ saving ? 'Guardando…' : 'Guardar' }}</button>
+    <a class="btn btn-outline" routerLink="/clientes"><span class="material-icons-outlined" aria-hidden="true">close</span> Cancelar</a>
+  </div>
+</header>
+<p class="error" role="alert" *ngIf="error">{{ error }}</p>
+<p class="panel muted" *ngIf="loading || !ready">Cargando información…</p>
+<form id="originacion-form" [formGroup]="form" (ngSubmit)="save()">
+  <section class="panel">
+    <div class="section-heading">
+      <span class="material-icons-outlined" aria-hidden="true">person</span>
+      <h3>Datos generales del cliente</h3>
+    </div>
     <div class="fields">
       <label>
         Empresa *
@@ -41,6 +50,14 @@
         <input formControlName="birth_date" type="date">
         <small *ngIf="form.controls.birth_date.invalid && form.controls.birth_date.touched">Revise este campo.</small>
       </label>
+    </div>
+  </section>
+  <section class="panel">
+    <div class="section-heading">
+      <span class="material-icons-outlined" aria-hidden="true">badge</span>
+      <h3>Identificación y seguridad social</h3>
+    </div>
+    <div class="fields">
       <label>
         RFC
         <input formControlName="rfc" type="text">
@@ -71,6 +88,14 @@
         <input formControlName="health_provider" type="text">
         <small *ngIf="form.controls.health_provider.invalid && form.controls.health_provider.touched">Revise este campo.</small>
       </label>
+    </div>
+  </section>
+  <section class="panel">
+    <div class="section-heading">
+      <span class="material-icons-outlined" aria-hidden="true">contact_phone</span>
+      <h3>Contacto y estado</h3>
+    </div>
+    <div class="fields">
       <label>
         Correo
         <input formControlName="email" type="email">
@@ -87,9 +112,5 @@
         <small *ngIf="form.controls.status.invalid && form.controls.status.touched">Revise este campo.</small>
       </label>
     </div>
-    <div class="actions">
-      <button type="submit" [disabled]="saving || loading || !ready || form.disabled || !permissions.can('clientes', id ? 'editar' : 'crear')">{{ saving ? 'Guardando…' : 'Guardar' }}</button>
-      <a routerLink="/clientes">Volver</a>
-    </div>
-  </form>
-</section>
+  </section>
+</form>

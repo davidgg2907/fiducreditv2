@@ -1,11 +1,16 @@
-<section class="panel heading">
-  <h2>Bandeja de tareas</h2>
-  <a routerLink="/tareas_originacion">Volver</a>
-</section>
+<header class="panel heading">
+  <div>
+    <h2>Bandeja de tareas</h2>
+    <p>Consulta de información</p>
+  </div>
+  <div class="header-actions">
+    <a class="btn btn-outline" routerLink="/tareas_originacion"><span class="material-icons-outlined" aria-hidden="true">arrow_back</span> Volver</a>
+  </div>
+</header>
 <section class="panel">
   <p>Captura y edición directa no habilitadas. Este proceso requiere su operación de negocio autorizada.</p>
   <p class="error" role="alert" *ngIf="error">{{ error }}</p>
-  <dl class="fields" *ngIf="record as item">
+  <dl class="fields detail-fields" *ngIf="record as item">
     <div>
       <dt>Instancia de flujo</dt>
       <dd>{{ item.instance_id ?? '—' }}</dd>
