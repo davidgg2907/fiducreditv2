@@ -19,6 +19,11 @@ class CreditProductVersion extends Model
         'updated_at',
     ];
 
+    protected function casts(): array
+    {
+        return ['product_snapshot' => 'array'];
+    }
+
     public function product(): BelongsTo
     {
         return $this->belongsTo(CreditProduct::class, 'product_id');

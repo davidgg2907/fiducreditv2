@@ -54,27 +54,13 @@ final class CreditProductRuleController extends Controller
     public function store(StoreCreditProductRuleRequest $request): JsonResponse
     {
         $this->authorizeAction($request, 'write');
-        
-
-        $record = $this->service->create($request->validated());
-
-        return response()->json([
-            'isSuccess' => true,
-            'data' => (new CreditProductRuleResource($record))->resolve(),
-        ], 201);
+        abort(405, 'La configuración se modifica desde el producto crediticio.');
     }
 
     public function update(UpdateCreditProductRuleRequest $request, string $id): JsonResponse
     {
         $this->authorizeAction($request, 'write');
-        
-
-        $record = $this->service->update($id, $request->validated());
-
-        return response()->json([
-            'isSuccess' => true,
-            'data' => (new CreditProductRuleResource($record))->resolve(),
-        ]);
+        abort(405, 'La configuración se modifica desde el producto crediticio.');
     }
 
     public function destroy(Request $request, string $id): JsonResponse
