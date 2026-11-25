@@ -2,7 +2,6 @@ import {Component,inject,OnInit} from '@angular/core';
 import {CommonModule} from '@angular/common';
 import {FormsModule} from '@angular/forms';
 import {RouterModule,Router,ActivatedRoute} from '@angular/router';
-import {forkJoin} from 'rxjs';
 import {ConfigApi} from '../../shared/api.service';
 import {ConfigPermissions} from '../../shared/permissions.service';
 import {setting,Field,Item} from '../../shared/schema';
@@ -11,7 +10,23 @@ import {setting,Field,Item} from '../../shared/schema';
 export class ProductosFormComponent implements OnInit {
  private api=inject(ConfigApi); private permissions=inject(ConfigPermissions); private router=inject(Router); private route=inject(ActivatedRoute);
  config=setting('productos'); home='/productos'; id=this.route.snapshot.paramMap.get('id'); readonlyMode=this.route.snapshot.data['readonly']===true;
- tabs=['Datos generales','Reglas del producto','Campos configurables','Requisitos documentales','Comisiones','Historial de versiones']; tab=0;
+ tabs=['Información general','Condiciones financieras','Costos y comisiones','Documentación','Reglas de negocio','Campos configurables','Versionamiento'];
+ tabIcons=['info','tune','payments','description','verified_user','dynamic_form','history'];
+ sectionTabs:Record<string,number>={fees:2,documents:3,rules:4,fields:5};
+ sectionTitles:Record<string,string>={fees:'Comisiones y cargos',documents:'Requisitos documentales',rules:'Reglas y validaciones',fields:'Campos configurables'};
+ sectionIcons:Record<string,string>={fees:'payments',documents:'description',rules:'verified_user',fields:'dynamic_form'};
+ tab=0;
+ get generalFields(){return this.config.fields.filter(f=>f.key!=='status');}
+ get mainFinancial(){return this.financial.filter(f=>['min_amount','max_amount','min_term','max_term','min_annual_rate','max_annual_rate','currency'].includes(f.key));}
+ get financialGroups(){return [
+ {title:'Plazos y frecuencia de pago',icon:'calendar_month',keys:['term_unit','payment_frequency']},
+ {title:'Intereses y amortización',icon:'calculate',keys:['rate_type','interest_method','amortization_method']},
+ {title:'Capacidad de pago y buró de crédito',icon:'analytics',keys:['min_dti','max_dti','min_bureau_score','requires_bureau']}
+ ].map(g=>({...g,fields:this.financial.filter(f=>g.keys.includes(f.key))}));}
+ fieldLabels:Record<string,string>={company_id:'Empresa',parent_product_id:'Producto padre',code:'Clave',name:'Nombre del producto',description:'Descripción',status:'Producto activo',min_amount:'Monto mínimo',max_amount:'Monto máximo',min_term:'Plazo mínimo',max_term:'Plazo máximo',min_annual_rate:'Tasa anual mínima',max_annual_rate:'Tasa anual máxima',currency:'Moneda',term_unit:'Unidad de plazo',payment_frequency:'Frecuencia de pago',rate_type:'Tipo de tasa',interest_method:'Método de interés',amortization_method:'Método de amortización',min_dti:'DTI mínimo',max_dti:'DTI máximo',min_bureau_score:'Puntaje mínimo de buró',requires_bureau:'Requiere consulta de buró',calculation_type:'Tipo de cálculo',amount:'Importe o tasa',taxable:'Aplica impuesto',active:'Activo',document_type_id:'Tipo de documento',required:'Obligatorio',min_files:'Mínimo de archivos',max_files:'Máximo de archivos',display_order:'Orden de presentación',rule_code:'Clave de regla',operator:'Operador',rule_value:'Valor de regla',rejection_reason:'Motivo de rechazo',mandatory:'Obligatoria',custom_field_id:'Campo configurable',scope:'Ámbito',visible:'Visible'};
+ fieldLabel(f:Field){return this.fieldLabels[f.key]??f.label;}
+ recordLabel(s:typeof this.sections[number],row:Record<string,any>,i:number){const key=s.fields.find(f=>f.reference);const ref=key?.reference?this.refs[key.reference]?.find(r=>r.id===row[key.key]):undefined;return row['name']||row['rule_code']||(ref?this.label(ref):'')||'Registro '+(i+1);}
+ 
  data:Record<string,any>={status:'active'}; configuration:Record<string,any>={term_unit:'month',rate_type:'fixed',interest_method:'outstanding_balance',min_dti:0,max_dti:0.4,amortization_method:'french',payment_frequency:'monthly',currency:'MXN',requires_bureau:true};
  financial=setting('versiones_productos').fields.filter(f=>!['product_id','version','active','effective_from','effective_to'].includes(f.key));
  sections=[{key:'rules',relation:'credit_product_rules',fields:setting('reglas_productos').fields},{key:'fields',relation:'credit_product_fields',fields:setting('campos_productos').fields},{key:'documents',relation:'credit_product_documents',fields:setting('requisitos_documentales').fields},{key:'fees',relation:'credit_product_fees',fields:setting('comisiones_productos').fields}].map(s=>({...s,fields:s.fields.filter(f=>f.key!=='product_version_id')}));
@@ -27,7 +42,7 @@ export class ProductosFormComponent implements OnInit {
  loadRefs(key:string,page:number){this.api.list(setting(key).api,page).subscribe({next:r=>{this.refs[key].push(...r.data);if(page<r.last_page)this.loadRefs(key,page+1);},error:e=>this.fail(e)});}
  label(r:Item){return r['name']??r['legal_name']??r['label']??r['code']??r.id;}
  add(s:typeof this.sections[number]){const row:Record<string,any>={};for(const f of s.fields)if(f.type==='bool')row[f.key]=true;this.rows[s.key].push(row);}
- selectVersion(v:Item){this.historical=v;this.tab=5;}
+ selectVersion(v:Item){this.historical=v;this.tab=6;}
  jsonValue(value:any){return typeof value==='string'?value:JSON.stringify(value??{},null,2);}
  payload(fields:Field[],data:Record<string,any>){const out:Record<string,any>={};for(const f of fields){let v=data[f.key];if(v===undefined||v===''){if(f.required)throw Error('Completa '+f.label);if(f.key==='parent_product_id'||f.key==='description'||f.key==='min_bureau_score'||f.key==='rejection_reason')out[f.key]=null;continue;}if(v===null){if(f.required)throw Error('Completa '+f.label);out[f.key]=null;continue;}if(f.type==='json'&&typeof v==='string')v=JSON.parse(v);if(f.type==='bool')v=v===true||v===1||v==='1';out[f.key]=v;}return out;}
  save(){if(!this.editable||!this.allowed||this.busy||this.saving)return;try{const p=this.payload(this.config.fields,this.data);p['configuration']=this.payload(this.financial,this.configuration);for(const s of this.sections)p[s.key]=this.rows[s.key].map(r=>this.payload(s.fields,r));this.saving=true;this.error='';this.api.save(this.config.api,p,this.id??undefined).subscribe({next:()=>void this.router.navigate([this.home]),error:e=>{this.fail(e);this.saving=false;}});}catch(e){this.error=e instanceof Error?e.message:'Revisa los datos.';}}
