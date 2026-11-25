@@ -1,16 +1,20 @@
-<section class="cfg"><header class="cfg-panel cfg-heading"><div><h2>{{id?'Editar':'Crear'}} · {{config.title}}</h2><p>Captura y edición de información</p></div><div class="cfg-header-actions">
-  <button class="btn btn-primary" form="config-form" type="submit" [disabled]="saving||busy">{{saving?'Guardando...':'Guardar'}}</button>
-  <a class="btn btn-outline-secondary cfg-header-cancel" [routerLink]="home"><span class="material-icons-outlined" aria-hidden="true">close</span> Cancelar</a>
-</div></header><p *ngIf="error" class="alert alert-danger">{{error}}</p>
-<form id="config-form" *ngIf="can(id?'editar':'crear')&&!busy" (ngSubmit)="save()" class="formgrid">
-<div class="field" *ngFor="let f of config.fields">
-<ng-container *ngIf="f.key!=='is_active'&&(!id||f.type!=='password')">
-<label [for]="f.key">{{f.label}}{{f.required?' *':''}}</label>
-<select *ngIf="f.type==='ref';else other" [id]="f.key" [name]="f.key" class="form-select" [(ngModel)]="data[f.key]" [required]="f.required"><option value="">Selecciona...</option><option *ngFor="let r of refs[f.key]||[]" [value]="r.id">{{refLabel(r)}}</option></select>
-<ng-template #other><ng-container *ngIf="f.type==='permissions';else standard"><label class="check" *ngFor="let p of catalog"><input type="checkbox" [checked]="checked(p.permission)" (change)="check(p.permission,$any($event.target).checked)"> {{p.module}} · {{p.permission}}</label></ng-container>
-<ng-template #standard><label class="check" *ngIf="f.type==='bool';else textfield"><input type="checkbox" [name]="f.key" [(ngModel)]="data[f.key]"> Habilitado</label>
-<ng-template #textfield><textarea *ngIf="f.type==='json';else inputfield" [id]="f.key" [name]="f.key" class="form-control" rows="5" [(ngModel)]="data[f.key]" [required]="f.required"></textarea>
-<ng-template #inputfield><input [type]="f.type==='number'?'number':f.type==='date'?'date':f.type==='password'?'password':'text'" [step]="f.type==='number'?'any':undefined" [id]="f.key" [name]="f.key" class="form-control" [(ngModel)]="data[f.key]" [required]="f.required"></ng-template></ng-template></ng-template></ng-template>
-</ng-container></div>
-
-</form></section>
+<section class="cfg">
+<header class="cfg-panel cfg-heading"><h2>{{readonlyMode?'Detalle':id?'Editar':'Crear'}} · Productos crediticios</h2><div class="cfg-header-actions"><button *ngIf="!readonlyMode" class="btn btn-primary" type="button" (click)="save()" [disabled]="busy||saving||!allowed||!!historical">Guardar</button> <a class="btn btn-outline-secondary" [routerLink]="home">{{readonlyMode?'Volver':'Cancelar'}}</a></div></header>
+<p *ngIf="error" class="alert alert-danger">{{error}}</p>
+<p *ngIf="busy">Cargando...</p>
+<ng-container *ngIf="allowed&&!busy">
+<nav class="product-tabs" aria-label="Configuración del producto"><button type="button" *ngFor="let t of tabs;let i=index" [class.selected]="tab===i" (click)="tab=i;historical=null">{{t}}</button></nav>
+<ng-container *ngIf="tab===0">
+<section class="cfg-panel product-panel"><h3>Datos generales</h3><div class="formgrid"><ng-container *ngFor="let f of config.fields"><ng-container *ngTemplateOutlet="editor;context:{f:f,row:data}"></ng-container></ng-container></div></section>
+<section class="cfg-panel product-panel"><h3>Condiciones financieras (tasas en decimal: 0.24 = 24%)</h3><div class="formgrid"><ng-container *ngFor="let f of financial"><ng-container *ngTemplateOutlet="editor;context:{f:f,row:configuration}"></ng-container></ng-container></div></section>
+</ng-container>
+<ng-container *ngFor="let s of sections;let i=index"><section *ngIf="tab===i+1" class="cfg-panel product-panel"><header><h3>{{tabs[i+1]}}</h3><button *ngIf="editable" type="button" class="btn btn-outline-primary" (click)="add(s)">Agregar</button></header><p *ngIf="!rows[s.key].length">Sin registros</p><div *ngFor="let row of rows[s.key];let j=index" class="product-row"><header><strong>Registro {{j+1}}</strong><button *ngIf="editable" type="button" class="btn btn-outline-danger" (click)="rows[s.key].splice(j,1)">Quitar</button></header><div class="formgrid"><ng-container *ngFor="let f of s.fields"><ng-container *ngTemplateOutlet="editor;context:{f:f,row:row}"></ng-container></ng-container></div></div></section></ng-container>
+<section *ngIf="tab===5" class="cfg-panel product-panel"><h3>Historial de versiones · solo consulta</h3><p *ngIf="!history.length">Sin versiones registradas</p><table *ngIf="history.length" class="table"><thead><tr><th>Versión</th><th>Fecha</th><th>Usuario (ID)</th><th>Estado</th><th></th></tr></thead><tbody><tr *ngFor="let v of history"><td>{{v['version']}}</td><td>{{v['effective_from']||v['created_at']}}</td><td>{{v['changed_by']||'No registrado'}}</td><td>{{v['active']?'Vigente':'Histórica'}}</td><td><button class="btn btn-outline-secondary" (click)="selectVersion(v)">Consultar</button></td></tr></tbody></table>
+<div *ngIf="historical"><h3>Versión {{historical['version']}}</h3><p *ngIf="!historical['product_snapshot']">Datos generales históricos no disponibles para esta versión anterior a la auditoría.</p><div class="formgrid" *ngIf="historical['product_snapshot']"><ng-container *ngFor="let f of config.fields"><ng-container *ngTemplateOutlet="editor;context:{f:f,row:historical['product_snapshot']}"></ng-container></ng-container></div><h3>Condiciones financieras</h3><div class="formgrid"><ng-container *ngFor="let f of financial"><ng-container *ngTemplateOutlet="editor;context:{f:f,row:historical}"></ng-container></ng-container></div><section *ngFor="let s of sections;let i=index"><h3>{{tabs[i+1]}}</h3><div *ngFor="let row of historical[s.relation]||[]" class="product-row formgrid"><ng-container *ngFor="let f of s.fields"><ng-container *ngTemplateOutlet="editor;context:{f:f,row:row}"></ng-container></ng-container></div></section></div></section>
+</ng-container>
+<ng-template #editor let-f="f" let-row="row"><div class="field"><label>{{f.label}}{{f.required?' *':''}}</label><ng-container [ngSwitch]="f.type">
+<select *ngSwitchCase="'ref'" class="form-select" [(ngModel)]="row[f.key]" [disabled]="!editable"><option [ngValue]="null">Seleccionar...</option><option *ngFor="let r of refs[f.reference]||[]" [ngValue]="r.id">{{label(r)}}</option></select>
+<label *ngSwitchCase="'bool'" class="form-check form-switch"><input class="form-check-input" type="checkbox" role="switch" [ngModel]="row[f.key]===true||row[f.key]===1||row[f.key]==='1'" (ngModelChange)="row[f.key]=$event" [disabled]="!editable"> Habilitado</label>
+<textarea *ngSwitchCase="'json'" class="form-control" [ngModel]="jsonValue(row[f.key])" (ngModelChange)="row[f.key]=$event" [disabled]="!editable"></textarea>
+<ng-container *ngSwitchDefault><select *ngIf="f.key==='status';else standard" class="form-select" [(ngModel)]="row[f.key]" [disabled]="!editable"><option value="active">Activo</option><option value="inactive">Inactivo</option></select><ng-template #standard><input class="form-control" [type]="f.type==='number'?'number':'text'" step="any" [(ngModel)]="row[f.key]" [disabled]="!editable"></ng-template></ng-container>
+</ng-container></div></ng-template></section>

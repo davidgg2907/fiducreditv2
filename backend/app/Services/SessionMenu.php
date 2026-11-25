@@ -16,6 +16,7 @@ final class SessionMenu
                 'credit_configuracion-sistema_comisiones_productos',
                 'credit_configuracion-sistema_reglas_productos',
                 'credit_configuracion-sistema_requisitos_documentales',
+                'credit_configuracion-sistema_campos_dinamicos',
             ])
             ->leftJoin('module_actions', 'module_actions.id', '=', 'menu_items.module_action_id')
             ->orderBy('menu_items.position')

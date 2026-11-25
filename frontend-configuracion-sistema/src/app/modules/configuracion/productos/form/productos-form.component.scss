@@ -9,3 +9,5 @@ h2{font-size:1.35rem;margin:0;font-weight:700}h3{font-size:1.05rem}p{color:#6474
 .detail dd{border-bottom:1px solid #ddd;margin:0;padding-bottom:.6rem}.detail dt{color:#475569}
 .relation{border-top:1px solid #ddd;margin-top:1rem;padding-top:1rem}.relation-row{display:flex;justify-content:space-between;padding:.7rem;border-bottom:1px solid #eee}
 @media(max-width:600px){.detail{grid-template-columns:1fr}.cfg{padding:.8rem}}
+
+.cfg{max-width:none;width:100%;background:transparent;box-shadow:none;padding:.25rem}.product-tabs{display:flex;flex-wrap:wrap;gap:.35rem;margin:1rem 0}.product-tabs button{padding:.65rem 1rem;border:1px solid #cbd5e1;background:#fff;border-radius:6px}.product-tabs button.selected{background:#24567c;color:white}.product-panel{background:#fff;padding:1rem;margin-bottom:1rem;border-radius:8px}.product-row{padding:1rem;border:1px solid #e2e8f0;border-radius:6px;margin:.75rem 0}.cfg-header-actions{display:flex;gap:.5rem}.form-switch input{cursor:pointer}
