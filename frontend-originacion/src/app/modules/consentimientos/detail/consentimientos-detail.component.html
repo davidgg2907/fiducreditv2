@@ -1,0 +1,34 @@
+<section class="panel heading">
+  <h2>Consentimientos</h2>
+  <a routerLink="/consentimientos">Volver a lista</a>
+</section>
+<section class="panel">
+  <p class="error" role="alert" *ngIf="error">{{ error }}</p>
+  <p *ngIf="loading">Cargando detalle…</p>
+  <ng-container *ngIf="record as item">
+    <dl class="fields">
+      <div><dt>Identificador</dt><dd>{{ item.id }}</dd></div>
+      <div>
+        <dt>Solicitud</dt>
+        <dd>{{ item.application_id ?? '—' }}</dd>
+      </div>
+      <div>
+        <dt>Tipo de consentimiento</dt>
+        <dd>{{ item.consent_type ?? '—' }}</dd>
+      </div>
+      <div>
+        <dt>Versión</dt>
+        <dd>{{ item.version ?? '—' }}</dd>
+      </div>
+      <div>
+        <dt>Aceptado</dt>
+        <dd>{{ item.accepted ?? '—' }}</dd>
+      </div>
+      <div>
+        <dt>Fecha de aceptación</dt>
+        <dd>{{ item.accepted_at ?? '—' }}</dd>
+      </div>
+    </dl>
+
+  </ng-container>
+</section>

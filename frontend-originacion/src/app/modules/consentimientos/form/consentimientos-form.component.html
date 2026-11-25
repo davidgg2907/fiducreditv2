@@ -1,0 +1,45 @@
+<section class="panel heading">
+  <h2>Consentimientos</h2>
+  <a routerLink="/consentimientos">Cancelar</a>
+</section>
+<section class="panel">
+  <h3>{{ id ? 'Editar registro' : 'Nuevo registro' }}</h3>
+  <p class="error" role="alert" *ngIf="error">{{ error }}</p>
+  <p *ngIf="loading || !ready">Cargando información…</p>
+  <form [formGroup]="form" (ngSubmit)="save()">
+    <div class="fields">
+      <label>
+        Solicitud *
+        <select formControlName="application_id">
+          <option [ngValue]="null">Seleccione</option>
+          <option *ngFor="let option of application_idOptions" [value]="option.id">{{ option.label }}</option>
+        </select>
+        <small *ngIf="form.controls.application_id.invalid && form.controls.application_id.touched">Revise este campo.</small>
+      </label>
+      <label>
+        Tipo de consentimiento *
+        <input formControlName="consent_type" type="text">
+        <small *ngIf="form.controls.consent_type.invalid && form.controls.consent_type.touched">Revise este campo.</small>
+      </label>
+      <label>
+        Versión *
+        <input formControlName="version" type="text">
+        <small *ngIf="form.controls.version.invalid && form.controls.version.touched">Revise este campo.</small>
+      </label>
+      <label>
+        Aceptado
+        <input formControlName="accepted" type="checkbox">
+        <small *ngIf="form.controls.accepted.invalid && form.controls.accepted.touched">Revise este campo.</small>
+      </label>
+      <label>
+        Fecha de aceptación
+        <input formControlName="accepted_at" type="date">
+        <small *ngIf="form.controls.accepted_at.invalid && form.controls.accepted_at.touched">Revise este campo.</small>
+      </label>
+    </div>
+    <div class="actions">
+      <button type="submit" [disabled]="saving || loading || !ready || form.disabled || !permissions.can('consentimientos', id ? 'editar' : 'crear')">{{ saving ? 'Guardando…' : 'Guardar' }}</button>
+      <a routerLink="/consentimientos">Volver</a>
+    </div>
+  </form>
+</section>

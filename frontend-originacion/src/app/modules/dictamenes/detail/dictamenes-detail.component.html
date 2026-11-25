@@ -1,0 +1,38 @@
+<section class="panel heading">
+  <h2>Dictámenes y autorizaciones</h2>
+  <a routerLink="/dictamenes">Volver a lista</a>
+</section>
+<section class="panel">
+  <p class="error" role="alert" *ngIf="error">{{ error }}</p>
+  <p *ngIf="loading">Cargando detalle…</p>
+  <ng-container *ngIf="record as item">
+    <dl class="fields">
+      <div><dt>Identificador</dt><dd>{{ item.id }}</dd></div>
+      <div>
+        <dt>Solicitud</dt>
+        <dd>{{ item.application_id ?? '—' }}</dd>
+      </div>
+      <div>
+        <dt>Responsable</dt>
+        <dd>{{ item.decided_by ?? '—' }}</dd>
+      </div>
+      <div>
+        <dt>Decisión</dt>
+        <dd>{{ item.decision ?? '—' }}</dd>
+      </div>
+      <div>
+        <dt>Monto autorizado</dt>
+        <dd>{{ item.approved_amount ?? '—' }}</dd>
+      </div>
+      <div>
+        <dt>Motivo</dt>
+        <dd>{{ item.reason ?? '—' }}</dd>
+      </div>
+      <div>
+        <dt>Fecha de decisión</dt>
+        <dd>{{ item.decided_at ?? '—' }}</dd>
+      </div>
+    </dl>
+
+  </ng-container>
+</section>

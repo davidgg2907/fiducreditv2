@@ -1,0 +1,50 @@
+<section class="panel heading">
+  <h2>Consultas de buró</h2>
+  <a routerLink="/consultas_buro">Cancelar</a>
+</section>
+<section class="panel">
+  <h3>{{ id ? 'Editar registro' : 'Nuevo registro' }}</h3>
+  <p class="error" role="alert" *ngIf="error">{{ error }}</p>
+  <p *ngIf="loading || !ready">Cargando información…</p>
+  <form [formGroup]="form" (ngSubmit)="save()">
+    <div class="fields">
+      <label>
+        Solicitud *
+        <select formControlName="application_id">
+          <option [ngValue]="null">Seleccione</option>
+          <option *ngFor="let option of application_idOptions" [value]="option.id">{{ option.label }}</option>
+        </select>
+        <small *ngIf="form.controls.application_id.invalid && form.controls.application_id.touched">Revise este campo.</small>
+      </label>
+      <label>
+        Proveedor *
+        <input formControlName="provider" type="text">
+        <small *ngIf="form.controls.provider.invalid && form.controls.provider.touched">Revise este campo.</small>
+      </label>
+      <label>
+        Puntuación
+        <input formControlName="score" type="number" step="1">
+        <small *ngIf="form.controls.score.invalid && form.controls.score.touched">Revise este campo.</small>
+      </label>
+      <label>
+        Referencia externa
+        <input formControlName="external_reference" type="text">
+        <small *ngIf="form.controls.external_reference.invalid && form.controls.external_reference.touched">Revise este campo.</small>
+      </label>
+      <label>
+        Resultado
+        <input formControlName="result" type="text">
+        <small *ngIf="form.controls.result.invalid && form.controls.result.touched">Revise este campo.</small>
+      </label>
+      <label>
+        Fecha de consulta
+        <input formControlName="consulted_at" type="date">
+        <small *ngIf="form.controls.consulted_at.invalid && form.controls.consulted_at.touched">Revise este campo.</small>
+      </label>
+    </div>
+    <div class="actions">
+      <button type="submit" [disabled]="saving || loading || !ready || form.disabled || !permissions.can('consultas_buro', id ? 'editar' : 'crear')">{{ saving ? 'Guardando…' : 'Guardar' }}</button>
+      <a routerLink="/consultas_buro">Volver</a>
+    </div>
+  </form>
+</section>

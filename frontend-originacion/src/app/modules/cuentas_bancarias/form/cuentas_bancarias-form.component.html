@@ -1,0 +1,65 @@
+<section class="panel heading">
+  <h2>Cuentas bancarias</h2>
+  <a routerLink="/cuentas_bancarias">Cancelar</a>
+</section>
+<section class="panel">
+  <h3>{{ id ? 'Editar registro' : 'Nuevo registro' }}</h3>
+  <p class="error" role="alert" *ngIf="error">{{ error }}</p>
+  <p *ngIf="loading || !ready">Cargando información…</p>
+  <form [formGroup]="form" (ngSubmit)="save()">
+    <div class="fields">
+      <label>
+        Cliente *
+        <select formControlName="client_id">
+          <option [ngValue]="null">Seleccione</option>
+          <option *ngFor="let option of client_idOptions" [value]="option.id">{{ option.label }}</option>
+        </select>
+        <small *ngIf="form.controls.client_id.invalid && form.controls.client_id.touched">Revise este campo.</small>
+      </label>
+      <label>
+        Clave bancaria
+        <input formControlName="bank_code" type="text">
+        <small *ngIf="form.controls.bank_code.invalid && form.controls.bank_code.touched">Revise este campo.</small>
+      </label>
+      <label>
+        Banco *
+        <input formControlName="bank_name" type="text">
+        <small *ngIf="form.controls.bank_name.invalid && form.controls.bank_name.touched">Revise este campo.</small>
+      </label>
+      <label>
+        Titular *
+        <input formControlName="holder_name" type="text">
+        <small *ngIf="form.controls.holder_name.invalid && form.controls.holder_name.touched">Revise este campo.</small>
+      </label>
+      <label>
+        CLABE
+        <input formControlName="clabe" type="text">
+        <small *ngIf="form.controls.clabe.invalid && form.controls.clabe.touched">Revise este campo.</small>
+      </label>
+      <label>
+        Últimos cuatro dígitos
+        <input formControlName="account_last4" type="text">
+        <small *ngIf="form.controls.account_last4.invalid && form.controls.account_last4.touched">Revise este campo.</small>
+      </label>
+      <label>
+        Tipo de cuenta
+        <input formControlName="account_type" type="text">
+        <small *ngIf="form.controls.account_type.invalid && form.controls.account_type.touched">Revise este campo.</small>
+      </label>
+      <label>
+        Principal
+        <input formControlName="primary" type="checkbox">
+        <small *ngIf="form.controls.primary.invalid && form.controls.primary.touched">Revise este campo.</small>
+      </label>
+      <label>
+        Activa
+        <input formControlName="active" type="checkbox">
+        <small *ngIf="form.controls.active.invalid && form.controls.active.touched">Revise este campo.</small>
+      </label>
+    </div>
+    <div class="actions">
+      <button type="submit" [disabled]="saving || loading || !ready || form.disabled || !permissions.can('cuentas_bancarias', id ? 'editar' : 'crear')">{{ saving ? 'Guardando…' : 'Guardar' }}</button>
+      <a routerLink="/cuentas_bancarias">Volver</a>
+    </div>
+  </form>
+</section>

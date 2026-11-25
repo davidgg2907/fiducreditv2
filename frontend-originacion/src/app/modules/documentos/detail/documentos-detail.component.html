@@ -1,0 +1,50 @@
+<section class="panel heading">
+  <h2>Documentos y validaciones</h2>
+  <a routerLink="/documentos">Volver a lista</a>
+</section>
+<section class="panel">
+  <p class="error" role="alert" *ngIf="error">{{ error }}</p>
+  <p *ngIf="loading">Cargando detalle…</p>
+  <ng-container *ngIf="record as item">
+    <dl class="fields">
+      <div><dt>Identificador</dt><dd>{{ item.id }}</dd></div>
+      <div>
+        <dt>Solicitud</dt>
+        <dd>{{ item.application_id ?? '—' }}</dd>
+      </div>
+      <div>
+        <dt>Tipo de documento</dt>
+        <dd>{{ item.document_type_id ?? '—' }}</dd>
+      </div>
+      <div>
+        <dt>Versión</dt>
+        <dd>{{ item.version ?? '—' }}</dd>
+      </div>
+      <div>
+        <dt>Archivo</dt>
+        <dd>{{ item.original_filename ?? '—' }}</dd>
+      </div>
+      <div>
+        <dt>Formato</dt>
+        <dd>{{ item.mime_type ?? '—' }}</dd>
+      </div>
+      <div>
+        <dt>Tamaño</dt>
+        <dd>{{ item.size_bytes ?? '—' }}</dd>
+      </div>
+      <div>
+        <dt>Estado</dt>
+        <dd>{{ item.status ?? '—' }}</dd>
+      </div>
+      <div>
+        <dt>Motivo de rechazo</dt>
+        <dd>{{ item.rejection_reason ?? '—' }}</dd>
+      </div>
+      <div>
+        <dt>Validación</dt>
+        <dd>{{ item.validated_at ?? '—' }}</dd>
+      </div>
+    </dl>
+
+  </ng-container>
+</section>

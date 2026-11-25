@@ -1,0 +1,42 @@
+<section class="panel heading">
+  <h2>Mesa de control</h2>
+  <a routerLink="/mesa_control">Volver a lista</a>
+</section>
+<section class="panel">
+  <p class="error" role="alert" *ngIf="error">{{ error }}</p>
+  <p *ngIf="loading">Cargando detalle…</p>
+  <ng-container *ngIf="record as item">
+    <dl class="fields">
+      <div><dt>Identificador</dt><dd>{{ item.id }}</dd></div>
+      <div>
+        <dt>Solicitud</dt>
+        <dd>{{ item.application_id ?? '—' }}</dd>
+      </div>
+      <div>
+        <dt>Versión de flujo</dt>
+        <dd>{{ item.workflow_version_id ?? '—' }}</dd>
+      </div>
+      <div>
+        <dt>Etapa actual</dt>
+        <dd>{{ item.current_step_id ?? '—' }}</dd>
+      </div>
+      <div>
+        <dt>Estado</dt>
+        <dd>{{ item.status ?? '—' }}</dd>
+      </div>
+      <div>
+        <dt>Inicio</dt>
+        <dd>{{ item.started_at ?? '—' }}</dd>
+      </div>
+      <div>
+        <dt>Fin</dt>
+        <dd>{{ item.completed_at ?? '—' }}</dd>
+      </div>
+      <div>
+        <dt>Versión de bloqueo</dt>
+        <dd>{{ item.lock_version ?? '—' }}</dd>
+      </div>
+    </dl>
+
+  </ng-container>
+</section>

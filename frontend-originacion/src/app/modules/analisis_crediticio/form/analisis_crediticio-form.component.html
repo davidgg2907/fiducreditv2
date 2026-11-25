@@ -1,0 +1,50 @@
+<section class="panel heading">
+  <h2>Análisis crediticio</h2>
+  <a routerLink="/analisis_crediticio">Cancelar</a>
+</section>
+<section class="panel">
+  <h3>{{ id ? 'Editar registro' : 'Nuevo registro' }}</h3>
+  <p class="error" role="alert" *ngIf="error">{{ error }}</p>
+  <p *ngIf="loading || !ready">Cargando información…</p>
+  <form [formGroup]="form" (ngSubmit)="save()">
+    <div class="fields">
+      <label>
+        Solicitud *
+        <select formControlName="application_id">
+          <option [ngValue]="null">Seleccione</option>
+          <option *ngFor="let option of application_idOptions" [value]="option.id">{{ option.label }}</option>
+        </select>
+        <small *ngIf="form.controls.application_id.invalid && form.controls.application_id.touched">Revise este campo.</small>
+      </label>
+      <label>
+        Analista *
+        <input formControlName="analyst_id" type="number" step="1">
+        <small *ngIf="form.controls.analyst_id.invalid && form.controls.analyst_id.touched">Revise este campo.</small>
+      </label>
+      <label>
+        Estado
+        <input formControlName="status" type="text">
+        <small *ngIf="form.controls.status.invalid && form.controls.status.touched">Revise este campo.</small>
+      </label>
+      <label>
+        Hallazgos
+        <textarea formControlName="findings" rows="3"></textarea>
+        <small *ngIf="form.controls.findings.invalid && form.controls.findings.touched">Revise este campo.</small>
+      </label>
+      <label>
+        Recomendación
+        <textarea formControlName="recommendation" rows="3"></textarea>
+        <small *ngIf="form.controls.recommendation.invalid && form.controls.recommendation.touched">Revise este campo.</small>
+      </label>
+      <label>
+        Fecha de conclusión
+        <input formControlName="completed_at" type="date">
+        <small *ngIf="form.controls.completed_at.invalid && form.controls.completed_at.touched">Revise este campo.</small>
+      </label>
+    </div>
+    <div class="actions">
+      <button type="submit" [disabled]="saving || loading || !ready || form.disabled || !permissions.can('analisis_crediticio', id ? 'editar' : 'crear')">{{ saving ? 'Guardando…' : 'Guardar' }}</button>
+      <a routerLink="/analisis_crediticio">Volver</a>
+    </div>
+  </form>
+</section>

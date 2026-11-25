@@ -1,0 +1,34 @@
+<section class="panel heading">
+  <h2>Dictámenes y autorizaciones</h2>
+  <a routerLink="/dictamenes">Volver</a>
+</section>
+<section class="panel">
+  <p>Captura y edición directa no habilitadas. Este proceso requiere su operación de negocio autorizada.</p>
+  <p class="error" role="alert" *ngIf="error">{{ error }}</p>
+  <dl class="fields" *ngIf="record as item">
+    <div>
+      <dt>Solicitud</dt>
+      <dd>{{ item.application_id ?? '—' }}</dd>
+    </div>
+    <div>
+      <dt>Responsable</dt>
+      <dd>{{ item.decided_by ?? '—' }}</dd>
+    </div>
+    <div>
+      <dt>Decisión</dt>
+      <dd>{{ item.decision ?? '—' }}</dd>
+    </div>
+    <div>
+      <dt>Monto autorizado</dt>
+      <dd>{{ item.approved_amount ?? '—' }}</dd>
+    </div>
+    <div>
+      <dt>Motivo</dt>
+      <dd>{{ item.reason ?? '—' }}</dd>
+    </div>
+    <div>
+      <dt>Fecha de decisión</dt>
+      <dd>{{ item.decided_at ?? '—' }}</dd>
+    </div>
+  </dl>
+</section>

@@ -1,0 +1,38 @@
+<section class="panel heading">
+  <h2>Consultas de buró</h2>
+  <a routerLink="/consultas_buro">Volver a lista</a>
+</section>
+<section class="panel">
+  <p class="error" role="alert" *ngIf="error">{{ error }}</p>
+  <p *ngIf="loading">Cargando detalle…</p>
+  <ng-container *ngIf="record as item">
+    <dl class="fields">
+      <div><dt>Identificador</dt><dd>{{ item.id }}</dd></div>
+      <div>
+        <dt>Solicitud</dt>
+        <dd>{{ item.application_id ?? '—' }}</dd>
+      </div>
+      <div>
+        <dt>Proveedor</dt>
+        <dd>{{ item.provider ?? '—' }}</dd>
+      </div>
+      <div>
+        <dt>Puntuación</dt>
+        <dd>{{ item.score ?? '—' }}</dd>
+      </div>
+      <div>
+        <dt>Referencia externa</dt>
+        <dd>{{ item.external_reference ?? '—' }}</dd>
+      </div>
+      <div>
+        <dt>Resultado</dt>
+        <dd>{{ item.result ?? '—' }}</dd>
+      </div>
+      <div>
+        <dt>Fecha de consulta</dt>
+        <dd>{{ item.consulted_at ?? '—' }}</dd>
+      </div>
+    </dl>
+    <a *ngIf="permissions.can('consultas_buro', 'editar')" [routerLink]="['/consultas_buro', item.id, 'editar']">Editar</a>
+  </ng-container>
+</section>

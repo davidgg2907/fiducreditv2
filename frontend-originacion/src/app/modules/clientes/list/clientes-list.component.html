@@ -1,0 +1,48 @@
+<section class="panel heading">
+  <h2>Clientes</h2>
+  <a *ngIf="permissions.can('clientes', 'crear')" routerLink="nuevo">Nuevo registro</a>
+</section>
+<section class="panel">
+  <form class="actions" (ngSubmit)="load()">
+    <label>Nombre (coincidencia exacta)
+      <input name="search" [(ngModel)]="search" placeholder="Buscar">
+    </label>
+    <button type="submit" [disabled]="loading">Buscar</button>
+    <button type="button" (click)="clearSearch()" [disabled]="loading">Limpiar</button>
+  </form>
+</section>
+<section class="panel">
+  <p class="error" role="alert" *ngIf="error">{{ error }}</p>
+  <p *ngIf="loading">Cargando registros…</p>
+  <div class="table-scroll">
+    <table>
+      <thead>
+        <tr>
+          <th scope="col">Nombre</th>
+          <th scope="col">Apellido paterno</th>
+          <th scope="col">Correo</th>
+          <th scope="col">Estado</th>
+          <th scope="col">Acciones</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let row of rows">
+          <td>{{ row.first_name ?? '—' }}</td>
+          <td>{{ row.last_name ?? '—' }}</td>
+          <td>{{ row.email ?? '—' }}</td>
+          <td>{{ row.status ?? '—' }}</td>
+          <td>
+            <a *ngIf="permissions.can('clientes', 'detalle')" [routerLink]="[row.id]">Detalle</a>
+            <a *ngIf="permissions.can('clientes', 'editar')" [routerLink]="[row.id, 'editar']">Editar</a>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+  <p *ngIf="!loading && !error && !rows.length">No hay registros.</p>
+  <div class="pagination">
+    <button type="button" (click)="load(page - 1)" [disabled]="loading || page <= 1">Anterior</button>
+    <span>Página {{ page }} de {{ lastPage }} · {{ total }} registros</span>
+    <button type="button" (click)="load(page + 1)" [disabled]="loading || page >= lastPage">Siguiente</button>
+  </div>
+</section>

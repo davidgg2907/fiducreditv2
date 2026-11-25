@@ -1,0 +1,38 @@
+<section class="panel heading">
+  <h2>Obligados solidarios</h2>
+  <a routerLink="/obligados_solidarios">Volver a lista</a>
+</section>
+<section class="panel">
+  <p class="error" role="alert" *ngIf="error">{{ error }}</p>
+  <p *ngIf="loading">Cargando detalle…</p>
+  <ng-container *ngIf="record as item">
+    <dl class="fields">
+      <div><dt>Identificador</dt><dd>{{ item.id }}</dd></div>
+      <div>
+        <dt>Solicitud</dt>
+        <dd>{{ item.application_id ?? '—' }}</dd>
+      </div>
+      <div>
+        <dt>Nombre completo</dt>
+        <dd>{{ item.full_name ?? '—' }}</dd>
+      </div>
+      <div>
+        <dt>RFC</dt>
+        <dd>{{ item.rfc ?? '—' }}</dd>
+      </div>
+      <div>
+        <dt>Parentesco o relación</dt>
+        <dd>{{ item.relationship ?? '—' }}</dd>
+      </div>
+      <div>
+        <dt>Teléfono</dt>
+        <dd>{{ item.phone ?? '—' }}</dd>
+      </div>
+      <div>
+        <dt>Ingreso mensual</dt>
+        <dd>{{ item.monthly_income ?? '—' }}</dd>
+      </div>
+    </dl>
+    <a *ngIf="permissions.can('obligados_solidarios', 'editar')" [routerLink]="['/obligados_solidarios', item.id, 'editar']">Editar</a>
+  </ng-container>
+</section>

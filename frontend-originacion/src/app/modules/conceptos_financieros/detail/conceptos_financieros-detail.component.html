@@ -1,0 +1,42 @@
+<section class="panel heading">
+  <h2>Ingresos y egresos</h2>
+  <a routerLink="/conceptos_financieros">Volver a lista</a>
+</section>
+<section class="panel">
+  <p class="error" role="alert" *ngIf="error">{{ error }}</p>
+  <p *ngIf="loading">Cargando detalle…</p>
+  <ng-container *ngIf="record as item">
+    <dl class="fields">
+      <div><dt>Identificador</dt><dd>{{ item.id }}</dd></div>
+      <div>
+        <dt>Solicitud</dt>
+        <dd>{{ item.application_id ?? '—' }}</dd>
+      </div>
+      <div>
+        <dt>Tipo</dt>
+        <dd>{{ item.entry_type ?? '—' }}</dd>
+      </div>
+      <div>
+        <dt>Concepto</dt>
+        <dd>{{ item.concept ?? '—' }}</dd>
+      </div>
+      <div>
+        <dt>Contraparte</dt>
+        <dd>{{ item.counterparty ?? '—' }}</dd>
+      </div>
+      <div>
+        <dt>Importe</dt>
+        <dd>{{ item.amount ?? '—' }}</dd>
+      </div>
+      <div>
+        <dt>Periodicidad</dt>
+        <dd>{{ item.frequency ?? '—' }}</dd>
+      </div>
+      <div>
+        <dt>Observaciones</dt>
+        <dd>{{ item.observations ?? '—' }}</dd>
+      </div>
+    </dl>
+    <a *ngIf="permissions.can('conceptos_financieros', 'editar')" [routerLink]="['/conceptos_financieros', item.id, 'editar']">Editar</a>
+  </ng-container>
+</section>

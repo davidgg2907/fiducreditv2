@@ -1,0 +1,95 @@
+<section class="panel heading">
+  <h2>Clientes</h2>
+  <a routerLink="/clientes">Cancelar</a>
+</section>
+<section class="panel">
+  <h3>{{ id ? 'Editar registro' : 'Nuevo registro' }}</h3>
+  <p class="error" role="alert" *ngIf="error">{{ error }}</p>
+  <p *ngIf="loading || !ready">Cargando información…</p>
+  <form [formGroup]="form" (ngSubmit)="save()">
+    <div class="fields">
+      <label>
+        Empresa *
+        <select formControlName="company_id">
+          <option [ngValue]="null">Seleccione</option>
+          <option *ngFor="let option of company_idOptions" [value]="option.id">{{ option.label }}</option>
+        </select>
+        <small *ngIf="form.controls.company_id.invalid && form.controls.company_id.touched">Revise este campo.</small>
+      </label>
+      <label>
+        Nombre *
+        <input formControlName="first_name" type="text">
+        <small *ngIf="form.controls.first_name.invalid && form.controls.first_name.touched">Revise este campo.</small>
+      </label>
+      <label>
+        Segundo nombre
+        <input formControlName="middle_name" type="text">
+        <small *ngIf="form.controls.middle_name.invalid && form.controls.middle_name.touched">Revise este campo.</small>
+      </label>
+      <label>
+        Apellido paterno *
+        <input formControlName="last_name" type="text">
+        <small *ngIf="form.controls.last_name.invalid && form.controls.last_name.touched">Revise este campo.</small>
+      </label>
+      <label>
+        Apellido materno
+        <input formControlName="second_last_name" type="text">
+        <small *ngIf="form.controls.second_last_name.invalid && form.controls.second_last_name.touched">Revise este campo.</small>
+      </label>
+      <label>
+        Fecha de nacimiento
+        <input formControlName="birth_date" type="date">
+        <small *ngIf="form.controls.birth_date.invalid && form.controls.birth_date.touched">Revise este campo.</small>
+      </label>
+      <label>
+        RFC
+        <input formControlName="rfc" type="text">
+        <small *ngIf="form.controls.rfc.invalid && form.controls.rfc.touched">Revise este campo.</small>
+      </label>
+      <label>
+        CURP
+        <input formControlName="curp" type="text">
+        <small *ngIf="form.controls.curp.invalid && form.controls.curp.touched">Revise este campo.</small>
+      </label>
+      <label>
+        Folio INE
+        <input formControlName="ine_folio" type="text">
+        <small *ngIf="form.controls.ine_folio.invalid && form.controls.ine_folio.touched">Revise este campo.</small>
+      </label>
+      <label>
+        Pasaporte
+        <input formControlName="passport_number" type="text">
+        <small *ngIf="form.controls.passport_number.invalid && form.controls.passport_number.touched">Revise este campo.</small>
+      </label>
+      <label>
+        NSS
+        <input formControlName="nss" type="text">
+        <small *ngIf="form.controls.nss.invalid && form.controls.nss.touched">Revise este campo.</small>
+      </label>
+      <label>
+        Seguridad social
+        <input formControlName="health_provider" type="text">
+        <small *ngIf="form.controls.health_provider.invalid && form.controls.health_provider.touched">Revise este campo.</small>
+      </label>
+      <label>
+        Correo
+        <input formControlName="email" type="email">
+        <small *ngIf="form.controls.email.invalid && form.controls.email.touched">Revise este campo.</small>
+      </label>
+      <label>
+        Teléfono
+        <input formControlName="phone" type="text">
+        <small *ngIf="form.controls.phone.invalid && form.controls.phone.touched">Revise este campo.</small>
+      </label>
+      <label>
+        Estado
+        <input formControlName="status" type="text">
+        <small *ngIf="form.controls.status.invalid && form.controls.status.touched">Revise este campo.</small>
+      </label>
+    </div>
+    <div class="actions">
+      <button type="submit" [disabled]="saving || loading || !ready || form.disabled || !permissions.can('clientes', id ? 'editar' : 'crear')">{{ saving ? 'Guardando…' : 'Guardar' }}</button>
+      <a routerLink="/clientes">Volver</a>
+    </div>
+  </form>
+</section>
