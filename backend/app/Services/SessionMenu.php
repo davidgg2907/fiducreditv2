@@ -11,6 +11,12 @@ final class SessionMenu
         $items = DB::table('menu_items')
             ->where(fn ($query) => $query->whereNull('menu_items.app_code')
                 ->when($appCode !== null, fn ($q) => $q->orWhere('menu_items.app_code', $appCode)))
+            ->whereNotIn('menu_items.code', [
+                'credit_configuracion-sistema_versiones_productos',
+                'credit_configuracion-sistema_comisiones_productos',
+                'credit_configuracion-sistema_reglas_productos',
+                'credit_configuracion-sistema_requisitos_documentales',
+            ])
             ->leftJoin('module_actions', 'module_actions.id', '=', 'menu_items.module_action_id')
             ->orderBy('menu_items.position')
             ->orderBy('menu_items.code')

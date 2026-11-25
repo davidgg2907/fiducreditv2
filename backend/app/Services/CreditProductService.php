@@ -20,7 +20,7 @@ class CreditProductService
 
     public function find(string $id, string $include = ''): CreditProduct
     {
-        return $this->repository->findOrFail($id, $include);
+        return $this->repository->findOrFail($id, $include)->load(['currentVersion.creditProductRules', 'currentVersion.creditProductFields', 'currentVersion.creditProductDocuments', 'currentVersion.creditProductFees']);
     }
 
     public function create(array $attributes): CreditProduct
