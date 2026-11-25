@@ -31,6 +31,7 @@ class CreditProductService
         return $this->repository->findOrFail($id, $include)->load([
             'currentVersion.creditProductRules', 'currentVersion.creditProductFields',
             'currentVersion.creditProductDocuments', 'currentVersion.creditProductFees',
+            'creditProductVersions' => fn ($query) => $query->orderByDesc('version')->with(['creditProductRules','creditProductFields','creditProductDocuments','creditProductFees']),
         ]);
     }
 
