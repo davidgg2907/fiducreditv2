@@ -21,9 +21,9 @@ final class StoreCreditClientRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'addresses' => ['sometimes', 'array', 'max:50'],
+            'addresses' => ['sometimes', 'array', 'max:1'],
             'addresses.*' => ['array:id,address_type,primary,active,street,exterior_number,interior_number,neighborhood,city,municipality,state,postal_code,country,latitude,longitude'],
-            'addresses.*.id' => ['sometimes', 'uuid', 'distinct'],
+            'addresses.*.id' => ['prohibited'],
             'addresses.*.address_type' => ['required', 'string', 'max:255'],
             'addresses.*.primary' => ['required', 'boolean'],
             'addresses.*.active' => ['required', 'boolean'],
@@ -38,9 +38,9 @@ final class StoreCreditClientRequest extends FormRequest
             'addresses.*.country' => ['required', 'string', 'size:2'],
             'addresses.*.latitude' => ['nullable', 'numeric', 'between:-90,90'],
             'addresses.*.longitude' => ['nullable', 'numeric', 'between:-180,180'],
-            'bank_accounts' => ['sometimes', 'array', 'max:50'],
+            'bank_accounts' => ['sometimes', 'array', 'max:1'],
             'bank_accounts.*' => ['array:id,bank_code,bank_name,holder_name,clabe,account_last4,account_type,primary,active'],
-            'bank_accounts.*.id' => ['sometimes', 'uuid', 'distinct'],
+            'bank_accounts.*.id' => ['prohibited'],
             'bank_accounts.*.bank_code' => ['nullable', 'string', 'max:5'],
             'bank_accounts.*.bank_name' => ['required', 'string', 'max:255'],
             'bank_accounts.*.holder_name' => ['required', 'string', 'max:255'],

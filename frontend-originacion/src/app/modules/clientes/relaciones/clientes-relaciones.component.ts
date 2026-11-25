@@ -18,6 +18,9 @@ export class ClientesRelacionesComponent implements OnInit {
   @Input() clientId: string | null = null;
   @Input() staged = false;
   @Input() compact = false;
+  @Input() readOnly = false;
+  modalEditing = false;
+  get isNewClient(): boolean { return this.staged && !this.clientId; }
   @ViewChild('dialog', { static: true }) dialog!: ElementRef<HTMLDialogElement>;
   private readonly fb = inject(FormBuilder).nonNullable;
   private readonly service = inject(ClientesService);
@@ -59,13 +62,17 @@ export class ClientesRelacionesComponent implements OnInit {
 
   ngOnInit(): void {
     if (this.staged || !this.compact) this.load();
+    if (this.isNewClient) {
+      if (this.canWrite('addresses', false)) this.editAddress(-1);
+      if (this.canWrite('bank_accounts', false)) this.editAccount(-1);
+    }
   }
 
   canView(kind: 'addresses' | 'bank_accounts'): boolean {
     return this.permissions.can(kind === 'addresses' ? 'domicilios' : 'cuentas_bancarias', 'ver');
   }
   canWrite(kind: 'addresses' | 'bank_accounts', existing: boolean): boolean {
-    return this.canView(kind) &&
+    return !this.readOnly && this.canView(kind) &&
       this.permissions.can(kind === 'addresses' ? 'domicilios' : 'cuentas_bancarias', existing ? 'editar' : 'crear') &&
       this.permissions.can('clientes', this.clientId ? 'editar' : 'crear');
   }
@@ -101,7 +108,13 @@ export class ClientesRelacionesComponent implements OnInit {
   }
 
   open(kind: 'addresses' | 'bank_accounts'): void {
-    if (!this.canView(kind)) return;
+    if (this.isNewClient || !this.canView(kind) || this.saving) return;
+    if (this.staged) {
+      if (kind === 'addresses' && !this.captureAddress()) return;
+      if (kind === 'bank_accounts' && !this.captureAccount()) return;
+      if (kind === 'addresses') this.cancelAddress(); else this.cancelAccount();
+    }
+    this.modalEditing = false;
     this.mode = kind;
     if (!this.staged) {
       this.showAddress = false; this.showAccount = false;
@@ -110,21 +123,40 @@ export class ClientesRelacionesComponent implements OnInit {
     this.dialog.nativeElement.showModal();
   }
 
+  closeModal(): void {
+    if (this.saving) return;
+    this.backToList();
+    this.dialog.nativeElement.close();
+    if (this.staged) {
+      if (this.mode === 'addresses' && this.addresses.length && this.canWrite('addresses', !!this.addresses[0].id)) this.editAddress(0);
+      if (this.mode === 'bank_accounts' && this.accounts.length && this.canWrite('bank_accounts', !!this.accounts[0].id)) this.editAccount(0);
+    }
+  }
+
+  backToList(): void {
+    if (this.saving) return;
+    if (this.mode === 'addresses') this.cancelAddress(); else this.cancelAccount();
+    this.modalEditing = false;
+  }
+
   editAddress(index: number): void {
+    if (this.isNewClient && index < 0 && this.showAddress) return;
     if (!this.canWrite('addresses', index >= 0 && !!this.addresses[index]?.id)) return;
     if (this.staged && !this.captureAddress()) return;
     this.selectedAddress = index;
     const a = this.addresses[index];
     this.addressForm.reset({
-      address_type: a?.address_type ?? 'home', primary: a?.primary ?? !this.addresses.length, active: a?.active ?? true,
+      address_type: a?.address_type ?? 'home', primary: a?.primary ?? this.isNewClient, active: a?.active ?? this.isNewClient,
       street: a?.street ?? '', exterior_number: a?.exterior_number ?? '', interior_number: a?.interior_number ?? '',
       neighborhood: a?.neighborhood ?? '', city: a?.city ?? '', municipality: a?.municipality ?? '',
       state: a?.state ?? '', postal_code: a?.postal_code ?? '', country: a?.country ?? 'MX'
     });
     this.showAddress = true;
+    if (this.dialog?.nativeElement.open) this.modalEditing = true;
   }
 
   editAccount(index: number): void {
+    if (this.isNewClient && index < 0 && this.showAccount) return;
     if (!this.canWrite('bank_accounts', index >= 0 && !!this.accounts[index]?.id)) return;
     if (this.staged && !this.captureAccount()) return;
     this.selectedAccount = index;
@@ -132,9 +164,10 @@ export class ClientesRelacionesComponent implements OnInit {
     this.accountForm.reset({
       bank_code: a?.bank_code ?? '', bank_name: a?.bank_name ?? '', holder_name: a?.holder_name ?? '',
       clabe: a?.clabe ?? '', account_last4: a?.account_last4 ?? '', account_type: a?.account_type ?? 'checking',
-      primary: a?.primary ?? !this.accounts.length, active: a?.active ?? true
+      primary: a?.primary ?? this.isNewClient, active: a?.active ?? this.isNewClient
     });
     this.showAccount = true;
+    if (this.dialog?.nativeElement.open) this.modalEditing = true;
   }
 
   private addressValue(): ClienteDomicilio {
@@ -152,7 +185,7 @@ export class ClientesRelacionesComponent implements OnInit {
   }
 
   private captureAddress(): boolean {
-    if (!this.showAddress || (!this.addressForm.dirty && this.selectedAddress >= 0)) return true;
+    if (!this.showAddress || (!this.addressForm.dirty && (this.selectedAddress >= 0 || this.isNewClient))) return true;
     if (this.addressForm.invalid) { this.addressForm.markAllAsTouched(); this.error = 'Complete los campos obligatorios del domicilio.'; return false; }
     const v = this.addressValue();
     const index = this.selectedAddress < 0 ? this.addresses.length : this.selectedAddress;
@@ -163,7 +196,7 @@ export class ClientesRelacionesComponent implements OnInit {
     return true;
   }
   private captureAccount(): boolean {
-    if (!this.showAccount || (!this.accountForm.dirty && this.selectedAccount >= 0)) return true;
+    if (!this.showAccount || (!this.accountForm.dirty && (this.selectedAccount >= 0 || this.isNewClient))) return true;
     if (this.accountForm.invalid) { this.accountForm.markAllAsTouched(); this.error = 'Revise los campos de la cuenta bancaria.'; return false; }
     const v = this.accountValue();
     const index = this.selectedAccount < 0 ? this.accounts.length : this.selectedAccount;
@@ -175,14 +208,15 @@ export class ClientesRelacionesComponent implements OnInit {
   }
 
   payload(): ClienteRelaciones | null {
-    if (this.loading || !this.loaded || !this.captureAddress() || !this.captureAccount()) return null;
+    if (this.loading || !this.loaded || this.dialog.nativeElement.open || !this.captureAddress() || !this.captureAccount()) return null;
     return {addresses: [...this.pendingAddresses.values()], bank_accounts: [...this.pendingAccounts.values()]};
   }
 
   saveCurrent(): void {
     this.error = '';
+    if (this.readOnly || !this.modalEditing) return;
     if (this.staged) {
-      if (this.mode === 'addresses' ? this.captureAddress() : this.captureAccount()) this.dialog.nativeElement.close();
+      if (this.mode === 'addresses' ? this.captureAddress() : this.captureAccount()) this.backToList();
       return;
     }
     if (!this.clientId || this.saving || this.loading || !this.loaded) return;
@@ -193,7 +227,7 @@ export class ClientesRelacionesComponent implements OnInit {
     const payload = this.mode === 'addresses' ? {addresses: [this.addressValue()]} : {bank_accounts: [this.accountValue()]};
     this.saving = true;
     this.service.saveRelations(this.clientId, payload).pipe(finalize(() => this.saving = false)).subscribe({
-      next: () => { this.showAddress = false; this.showAccount = false; this.load(); },
+      next: () => { this.showAddress = false; this.showAccount = false; this.modalEditing = false; this.load(); },
       error: e => this.error = originacionError(e)
     });
   }
