@@ -2,15 +2,18 @@
   <button class="btn btn-primary" form="config-form" type="submit" [disabled]="saving||busy">{{saving?'Guardando...':'Guardar'}}</button>
   <a class="btn btn-outline-secondary cfg-header-cancel" [routerLink]="home"><span class="material-icons-outlined" aria-hidden="true">close</span> Cancelar</a>
 </div></header><p *ngIf="error" class="alert alert-danger">{{error}}</p>
-<form id="config-form" *ngIf="can(id?'editar':'crear')&&!busy" (ngSubmit)="save()" class="formgrid">
-<div class="field" *ngFor="let f of config.fields">
-<ng-container *ngIf="f.key!=='is_active'&&(!id||f.type!=='password')">
-<label [for]="f.key">{{f.label}}{{f.required?' *':''}}</label>
-<select *ngIf="f.type==='ref';else other" [id]="f.key" [name]="f.key" class="form-select" [(ngModel)]="data[f.key]" [required]="f.required"><option value="">Selecciona...</option><option *ngFor="let r of refs[f.key]||[]" [value]="r.id">{{refLabel(r)}}</option></select>
-<ng-template #other><ng-container *ngIf="f.type==='permissions';else standard"><label class="check" *ngFor="let p of catalog"><input type="checkbox" [checked]="checked(p.permission)" (change)="check(p.permission,$any($event.target).checked)"> {{p.module}} · {{p.permission}}</label></ng-container>
-<ng-template #standard><label class="check" *ngIf="f.type==='bool';else textfield"><input type="checkbox" [name]="f.key" [(ngModel)]="data[f.key]"> Habilitado</label>
-<ng-template #textfield><textarea *ngIf="f.type==='json';else inputfield" [id]="f.key" [name]="f.key" class="form-control" rows="5" [(ngModel)]="data[f.key]" [required]="f.required"></textarea>
-<ng-template #inputfield><input [type]="f.type==='number'?'number':f.type==='date'?'date':f.type==='password'?'password':'text'" [step]="f.type==='number'?'any':undefined" [id]="f.key" [name]="f.key" class="form-control" [(ngModel)]="data[f.key]" [required]="f.required"></ng-template></ng-template></ng-template></ng-template>
-</ng-container></div>
-
+<form id="config-form" *ngIf="can(id?'editar':'crear')&&!busy" (ngSubmit)="save()" class="calendar-form" #calendarForm="ngForm">
+<section class="cfg-panel calendar-card">
+<h3>Información general</h3>
+<div class="formgrid">
+<div class="field"><label for="company_id">Empresa *</label><select id="company_id" name="company_id" class="form-select" [(ngModel)]="data['company_id']" required><option value="">Selecciona...</option><option *ngFor="let r of refs['company_id']||[]" [value]="r.id">{{refLabel(r)}}</option></select></div>
+<div class="field"><label for="code">Código *</label><input id="code" name="code" class="form-control" [(ngModel)]="data['code']" required maxlength="50"></div>
+<div class="field"><label for="name">Nombre *</label><input id="name" name="name" class="form-control" [(ngModel)]="data['name']" required maxlength="120"></div>
+<div class="field"><label for="timezone">Zona horaria *</label><select id="timezone" name="timezone" class="form-select" [(ngModel)]="data['timezone']" required><option value="">Selecciona...</option><optgroup label="México"><option *ngFor="let z of mexicanZones" [value]="z[0]">{{z[1]}} ({{z[0]}})</option></optgroup><optgroup label="Otras zonas"><option value="UTC">UTC</option><option *ngFor="let z of otherZones" [value]="z">{{z}}</option><option *ngIf="data['timezone'] && data['timezone']!=='UTC' && !otherZones.includes(data['timezone']) && !isMexicanZone(data['timezone'])" [value]="data['timezone']">{{data['timezone']}}</option></optgroup></select></div>
+<div class="field"><label for="due_date_adjustment">Ajuste de vencimiento</label><input id="due_date_adjustment" name="due_date_adjustment" class="form-control" [(ngModel)]="data['due_date_adjustment']"></div>
+<div class="field"><label>Estado</label><div class="form-check form-switch"><input class="form-check-input" type="checkbox" id="enabled" name="enabled" [(ngModel)]="data['enabled']"><label class="form-check-label" for="enabled">Habilitado</label></div></div>
+</div></section>
+<section class="cfg-panel calendar-card"><h3>Días inhábiles semanales</h3><p>Activa los días en los que no se realizan operaciones. Los días sin marcar son laborables.</p>
+<div class="weekday-grid"><div class="weekday form-check form-switch" *ngFor="let d of weekdays"><input class="form-check-input" type="checkbox" [id]="'weekday-'+d.id" [checked]="selectedDays.includes(d.id)" (change)="toggleDay(d.id,$any($event.target).checked)"><label class="form-check-label" [for]="'weekday-'+d.id">{{d.label}}</label></div></div></section>
+<section class="cfg-panel calendar-card"><h3>Fechas inhábiles específicas</h3><p>Registra festivos, puentes o cierres extraordinarios mediante el selector de fecha.</p><a *ngIf="id && can('editar')" class="btn btn-outline-secondary" [routerLink]="['/dias_inhabiles','nuevo']" [queryParams]="{calendar_id:id}">Agregar día inhábil</a><a *ngIf="id" class="btn btn-outline-secondary ms-2" [routerLink]="[home,id,'detalle']">Consultar fechas registradas</a><p *ngIf="!id">Guarda primero el calendario para registrar fechas específicas.</p></section>
 </form></section>
