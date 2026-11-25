@@ -9,3 +9,5 @@ h2{font-size:1.35rem;margin:0;font-weight:700}h3{font-size:1.05rem}p{color:#6474
 .detail dd{border-bottom:1px solid #ddd;margin:0;padding-bottom:.6rem}.detail dt{color:#475569}
 .relation{border-top:1px solid #ddd;margin-top:1rem;padding-top:1rem}.relation-row{display:flex;justify-content:space-between;padding:.7rem;border-bottom:1px solid #eee}
 @media(max-width:600px){.detail{grid-template-columns:1fr}.cfg{padding:.8rem}}
+
+.calendar-form{display:grid;gap:1rem}.calendar-card{padding:1.25rem}.weekday-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:.75rem}.weekday{border:1px solid #dbe4e3;border-radius:8px;padding:1rem 1rem 1rem 3rem;margin:0}.form-check-input:checked{background-color:#17665e;border-color:#17665e}.calendar-card h3{font-weight:600;margin-bottom:1rem}

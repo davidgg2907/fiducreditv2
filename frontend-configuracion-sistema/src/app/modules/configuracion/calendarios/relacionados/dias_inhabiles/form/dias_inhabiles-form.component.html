@@ -5,12 +5,12 @@
 <form id="config-form" *ngIf="can(id?'editar':'crear')&&!busy" (ngSubmit)="save()" class="formgrid">
 <div class="field" *ngFor="let f of config.fields">
 <ng-container *ngIf="f.key!=='is_active'&&(!id||f.type!=='password')">
-<label [for]="f.key">{{f.label}}{{f.required?' *':''}}</label>
-<select *ngIf="f.type==='ref';else other" [id]="f.key" [name]="f.key" class="form-select" [(ngModel)]="data[f.key]" [required]="f.required"><option value="">Selecciona...</option><option *ngFor="let r of refs[f.key]||[]" [value]="r.id">{{refLabel(r)}}</option></select>
+<label [for]="f.key">{{f.key==='calendar_id'?'Calendario':f.label}}{{f.required?' *':''}}</label>
+<select *ngIf="f.type==='ref';else other" [id]="f.key" [name]="f.key" class="form-select" [(ngModel)]="data[f.key]" [required]="f.required"><option value="">Selecciona...</option><option *ngIf="preselectedCalendar && !hasPreselectedCalendar" [value]="preselectedCalendar.id">{{refLabel(preselectedCalendar)}}</option><option *ngFor="let r of refs[f.key]||[]" [value]="r.id">{{refLabel(r)}}</option></select>
 <ng-template #other><ng-container *ngIf="f.type==='permissions';else standard"><label class="check" *ngFor="let p of catalog"><input type="checkbox" [checked]="checked(p.permission)" (change)="check(p.permission,$any($event.target).checked)"> {{p.module}} · {{p.permission}}</label></ng-container>
-<ng-template #standard><label class="check" *ngIf="f.type==='bool';else textfield"><input type="checkbox" [name]="f.key" [(ngModel)]="data[f.key]"> Habilitado</label>
+<ng-template #standard><div class="form-check form-switch" *ngIf="f.type==='bool';else textfield"><input class="form-check-input" type="checkbox" [id]="f.key" [name]="f.key" [(ngModel)]="data[f.key]"><label class="form-check-label" [for]="f.key">Se repite cada año</label></div>
 <ng-template #textfield><textarea *ngIf="f.type==='json';else inputfield" [id]="f.key" [name]="f.key" class="form-control" rows="5" [(ngModel)]="data[f.key]" [required]="f.required"></textarea>
 <ng-template #inputfield><input [type]="f.type==='number'?'number':f.type==='date'?'date':f.type==='password'?'password':'text'" [step]="f.type==='number'?'any':undefined" [id]="f.key" [name]="f.key" class="form-control" [(ngModel)]="data[f.key]" [required]="f.required"></ng-template></ng-template></ng-template></ng-template>
 </ng-container></div>
 
-</form></section>
+<p class="field" style="grid-column:1/-1">Selecciona la fecha exacta del festivo o puente. Activa la recurrencia solo si se repite el mismo día y mes cada año.</p></form></section>
