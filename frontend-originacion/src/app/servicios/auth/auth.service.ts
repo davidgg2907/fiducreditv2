@@ -1,6 +1,7 @@
+import { ProfileResponse } from 'src/app/interfaces/auth/profile-response.interface';
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-import { BehaviorSubject, Observable, catchError, defer, finalize, firstValueFrom, from, map, of, shareReplay, tap } from 'rxjs';
+import { BehaviorSubject, Observable, catchError, defer, finalize, firstValueFrom, from, map, of, shareReplay, switchMap, tap } from 'rxjs';
 import { runtimeConfig } from 'src/app/config/runtime-config';
 import { LoginResponse, SessionUser } from 'src/app/interfaces/auth/session';
 
@@ -31,7 +32,7 @@ export class AuthService {
   login(email: string, password: string, remember: boolean, mfaCode?: string, replaceSession = false): Observable<LoginResponse> {
     return this.serializeCookieRequest(() => this.http.post<LoginResponse>(
       this.apiUrl + 'login', { email, password, remember, mfa_code: mfaCode, replace_session: replaceSession }, this.options,
-    )).pipe(tap(response => this.persist(response)));
+    )).pipe(tap(response => this.persist(response)), switchMap(response => this.loadProfile().pipe(map(() => response), catchError(error => { this.clear(); throw error; }))));
   }
 
   logout(): Observable<unknown> {
@@ -90,6 +91,16 @@ export class AuthService {
     return this.refreshRequest$;
   }
 
+  loadProfile(): Observable<SessionUser> {
+    return this.http.get<ProfileResponse>(this.apiUrl + 'perfil', {
+      headers: { Authorization: 'Bearer ' + this.accessToken, 'X-Frontend-App': 'originacion' },
+      withCredentials: true,
+    }).pipe(map(response => {
+      if (!response.isSuccess || !response.data?.user) throw new Error('Perfil no disponible');
+      return response.data.user;
+    }), tap(user => this.updateSessionUser(user)));
+  }
+
   private serializeCookieRequest<T>(request: () => Observable<T>): Observable<T> {
     return defer(() => navigator.locks
       ? from(navigator.locks.request('archetype-auth:' + this.apiUrl, () => firstValueFrom(request())))
@@ -101,7 +112,7 @@ export class AuthService {
     this.accessToken = tokens.accessToken;
     this.accessExpiresAt = Date.parse(tokens.accessTokenExpiresAt);
     this.lastUserActivity = Date.now();
-    this.updateSessionUser(user);
+    this.updateSessionUser({ ...user, menu: this.sessionUser$.value?.userId === user.userId ? this.sessionUser$.value?.menu ?? [] : [] });
     sessionStorage.setItem(this.sessionHintKey, '1');
   }
 }

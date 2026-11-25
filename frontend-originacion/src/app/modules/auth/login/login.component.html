@@ -49,6 +49,14 @@
         <button class="login-submit" type="submit" [disabled]="loading || loginForm.invalid">
           {{ loading ? 'Ingresando…' : 'Iniciar sesión' }}
         </button>
+        <button *ngIf="existingSession" class="login-session-replace" type="button"
+          [disabled]="loading || loginForm.invalid" (click)="replaceExistingSession()">
+          <span class="material-icons-outlined" aria-hidden="true">sync_lock</span>
+          Cerrar la sesión anterior e ingresar aquí
+        </button>
+        <p *ngIf="existingSession" class="login-session-help">
+          Esta acción revoca la sesión anterior después de comprobar nuevamente tus credenciales.
+        </p>
       </form>
       <a class="login-recovery" routerLink="/recuperar-acceso">Olvidé mi contraseña</a>
 

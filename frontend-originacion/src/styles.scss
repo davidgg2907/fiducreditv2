@@ -1,8 +1,8 @@
 :root {
-  --app-primary: #526d87;
-  --app-primary-strong: #3e5871;
+  --app-primary: #176c63;
+  --app-primary-strong: #104c46;
   --app-accent-strong: #b9d8d0;
-  --app-accent-deep: #536f83;
+  --app-accent-deep: #24665f;
   --app-accent-soft: rgba(126, 154, 188, 0.14);
   --app-success: #18794e;
   --app-warning: #a85b00;
@@ -19,7 +19,7 @@
   --app-radius-sm: 9px;
   --app-shadow: 0 8px 24px rgba(21, 54, 65, 0.08);
   --app-shadow-hover: 0 14px 30px rgba(21, 54, 65, 0.13);
-  --app-header-gradient: linear-gradient(95deg, #e6edf8 0%, #f1ecf7 58%, #ffffff 100%);
+  --app-header-gradient: linear-gradient(100deg, #0b2031 0%, #173c50 52%, #4a7584 100%);
 }
 
 html,
@@ -158,3 +158,142 @@ button:focus-visible, a:focus-visible, input:focus-visible, [tabindex]:focus-vis
 
 
 .hr-login-visual{display:flex;flex-direction:column;justify-content:center;align-items:center;height:100%;min-height:100%;background:linear-gradient(135deg,#e8f0fa,#c5d9e9);color:#26485f;text-align:center;padding:2rem;box-sizing:border-box}.hr-login-visual span{font-size:7rem;font-weight:900;opacity:.16}.hr-login-visual h1{font-size:clamp(2rem,4vw,4rem);margin:0}.hr-login-visual p{font-size:1.2rem}
+
+/* Configuration lists */
+.main-content .cfg.cfg-list{width:100%;max-width:none;margin:0;padding:0;background:transparent;box-shadow:none;display:flex;flex-direction:column;gap:12px}
+.main-content .cfg-panel{background:#fff;border:1px solid var(--app-border);border-radius:12px;box-shadow:0 2px 10px #152a3a0d;padding:16px 18px;min-width:0;width:100%;box-sizing:border-box}
+.main-content .cfg-heading{display:flex;justify-content:space-between;align-items:center;gap:12px}
+.main-content .cfg-heading h2{font-size:1.4rem;font-weight:700;margin:0}
+.main-content .cfg-heading p{margin:3px 0 0;color:var(--app-muted)}
+.main-content .cfg-heading .btn{display:inline-flex;align-items:center;gap:5px}
+.main-content .cfg-search{display:flex;flex-direction:column;gap:10px}
+.main-content .cfg-search label{font-weight:600;margin:0}
+.main-content .cfg-search-controls{display:flex;gap:8px}
+.main-content .cfg-search-controls input{flex:1;min-width:0}
+.main-content .cfg-table-panel h3{font-size:1.05rem;font-weight:700;margin:0 0 14px}
+.main-content .cfg-table-panel table{width:100%;margin:0}
+.main-content .cfg-table-panel th{background:var(--app-surface-muted)}
+.main-content .cfg-actions{display:flex;align-items:center;gap:5px;white-space:nowrap}
+.main-content .cfg-icon-btn{width:35px;height:35px;display:inline-flex;justify-content:center;align-items:center;border:1px solid transparent;border-radius:8px;background:transparent;color:var(--app-primary);text-decoration:none;cursor:pointer}
+.main-content .cfg-icon-btn:hover{background:#eaf2fc}
+.main-content .cfg-icon-btn--danger{color:var(--app-danger)}
+.main-content .cfg-icon-btn--danger:hover{background:#fff0ee}
+.main-content .cfg-icon-btn .material-icons-outlined{font-size:20px}
+.main-content .cfg-pagination{display:flex;justify-content:center;align-items:center;min-height:70px;position:relative}
+.main-content .cfg-result-count{position:absolute;left:18px;color:var(--app-muted);font-size:.85rem}
+.main-content .cfg-pagination-controls{display:flex;align-items:center;justify-content:center;gap:5px;flex-wrap:wrap}
+.main-content .cfg-pagination-controls .btn{min-width:34px;min-height:34px;display:inline-flex;align-items:center;justify-content:center;padding:4px}
+@media(max-width:700px){.main-content .cfg-panel{padding:12px}.main-content .cfg-search-controls{flex-wrap:wrap}.main-content .cfg-search-controls input{flex-basis:100%}.main-content .cfg-pagination{flex-direction:column;gap:10px}.main-content .cfg-result-count{position:static}}
+
+/* NahuiCloud — vistas de configuración y perfil */
+.main-content .cfg:not(.cfg-list){width:100%;max-width:none;margin:0;padding:0;background:transparent;box-shadow:none}
+.main-content .cfg:not(.cfg-list)>.cfg-heading,.main-content .cfg-detail>.cfg-heading{margin:0 0 12px}
+.main-content .cfg:not(.cfg-list)>.detail,.main-content .cfg:not(.cfg-list)>.relation,.main-content .cfg:not(.cfg-list)>.formgrid{
+ background:#fff;border:1px solid var(--app-border);padding:18px;border-radius:12px;box-shadow:var(--app-shadow);margin:0 0 12px;
+}
+.main-content .cfg .btn-primary,.main-content .profile-page .btn-primary,.main-content .cfg .btn.btn-primary{
+ background:var(--app-primary)!important;border-color:var(--app-primary)!important;color:white!important;box-shadow:none!important;
+}
+.main-content .cfg .btn-primary:hover,.main-content .profile-page .btn-primary:hover{background:var(--app-primary-strong)!important;border-color:var(--app-primary-strong)!important}
+.main-content .cfg .btn-outline-secondary,.main-content .profile-page .btn-outline-secondary{color:var(--app-primary-strong)!important;border-color:var(--app-primary)!important;background:#fff!important}
+.main-content .cfg .btn-outline-secondary:hover{background:#ecf6f1!important}
+.main-content .cfg .btn{display:inline-flex;align-items:center;justify-content:center;gap:6px;border-radius:9px;min-height:36px}
+.main-content .cfg .cfg-heading>.actions a,.main-content .cfg-detail>.cfg-heading>.actions a{
+ display:inline-flex;gap:7px;align-items:center;padding:8px 14px;border:1px solid var(--app-primary);border-radius:9px;color:var(--app-primary-strong);text-decoration:none;font-weight:600;background:#fff;
+}
+.main-content .cfg-detail .cfg-heading>.actions a:first-child:before{content:'←';font-size:20px;line-height:1}
+.main-content .cfg-detail .cfg-heading>.actions a:hover{background:#ecf6f1}
+.main-content .cfg .buttons a:before{content:'✕';font-size:14px;margin-right:6px}
+.main-content .cfg:not(.cfg-list) .cfg-heading button[type=submit]:before{content:'✓';font-weight:800;font-size:17px}
+.main-content .cfg .cfg-pagination-controls .btn-primary{background:var(--app-primary)!important}
+.main-content .cfg .cfg-actions .cfg-icon-btn{color:var(--app-primary)}
+.main-content .cfg .cfg-actions .cfg-icon-btn--danger{color:var(--app-danger)}
+.main-content .cfg .cfg-actions .cfg-icon-btn:hover{background:#e9f5f0}
+.main-content .cfg .form-control:focus,.main-content .cfg .form-select:focus{border-color:var(--app-primary);box-shadow:0 0 0 .2rem rgba(23,108,99,.14)}
+.main-content .cfg .detail{grid-template-columns:minmax(160px,1fr) minmax(0,3fr)}
+.main-content .cfg .detail>dt:last-of-type,.main-content .cfg .detail>dd:last-of-type{overflow-wrap:anywhere}
+.main-content .cfg .cfg-search-controls .btn-primary{background:var(--app-primary);border-color:var(--app-primary)}
+.main-content .profile-page .profile-grid .cfg-panel{margin:0}
+.main-content .profile-page .profile-actions .btn{display:inline-flex;align-items:center;gap:8px;border-radius:9px}
+@media(max-width:700px){.main-content .cfg .detail{grid-template-columns:1fr}.main-content .cfg:not(.cfg-list)>.formgrid{padding:12px}}
+
+/* Los identificadores internos permanecen en API, no en la vista de detalle. */
+.main-content .cfg:not(.cfg-list) .detail > dt:last-of-type,
+.main-content .cfg:not(.cfg-list) .detail > dd:last-of-type {display:none}
+
+/* Switch de estado para la configuración, sin afectar los checkboxes de permisos. */
+.main-content .cfg .field>.check input[type=checkbox],
+.main-content .cfg .advisor-access-switch input[type=checkbox] {
+ appearance:none;-webkit-appearance:none;position:relative;display:inline-block;vertical-align:middle;
+ width:44px;height:24px;border-radius:999px;background:#a6b2b0;border:1px solid #899994;
+ cursor:pointer;margin-right:10px;transition:background .18s ease;
+}
+.main-content .cfg .field>.check input[type=checkbox]:before,
+.main-content .cfg .advisor-access-switch input[type=checkbox]:before {
+ content:'';position:absolute;width:18px;height:18px;left:2px;top:2px;
+ border-radius:50%;background:white;box-shadow:0 1px 3px #0002;transition:transform .18s ease;
+}
+.main-content .cfg .field>.check input[type=checkbox]:checked,
+.main-content .cfg .advisor-access-switch input[type=checkbox]:checked {background:var(--app-primary);border-color:var(--app-primary)}
+.main-content .cfg .field>.check input[type=checkbox]:checked:before,
+.main-content .cfg .advisor-access-switch input[type=checkbox]:checked:before {transform:translateX(20px)}
+.main-content .cfg .field>.check input[type=checkbox]:focus-visible,
+.main-content .cfg .advisor-access-switch input[type=checkbox]:focus-visible {outline:3px solid #68b3aa;outline-offset:3px}
+.main-content .cfg .advisor-access-panel{grid-column:1/-1;border:1px solid var(--app-border);padding:1rem;border-radius:12px;background:#f6faf9}
+.main-content .cfg .advisor-access-fields{display:grid;grid-template-columns:repeat(auto-fit,minmax(235px,1fr));gap:1rem;margin-top:1rem}
+.main-content .cfg .advisor-access-panel h3{font-size:1.1rem;font-weight:700;margin:0 0 .8rem}
+
+/* Domicilios institucionales organizados en un grupo propio */
+.main-content .cfg .cfg-address-section{grid-column:1/-1;background:#f7faf9;padding:16px;border:1px solid var(--app-border);border-radius:12px;margin-top:.5rem}
+.main-content .cfg .cfg-address-section h3{display:flex;align-items:center;gap:8px;font-size:1.1rem;font-weight:700;margin:0 0 14px;color:var(--app-primary-strong)}
+.main-content .cfg .cfg-address-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(230px,1fr));gap:14px}
+.main-content .cfg .cfg-address-grid .field{display:flex;flex-direction:column;gap:6px}
+
+.main-content .cfg .cfg-user-switch{display:inline-flex;align-items:center;position:relative;width:44px;height:24px;border-radius:999px;background:#a6b2b0;border:1px solid #8ea09c;cursor:pointer;padding:2px;transition:background .2s}
+.main-content .cfg .cfg-user-switch[aria-checked=true]{background:var(--app-primary);border-color:var(--app-primary)}
+.main-content .cfg .cfg-user-switch__thumb{width:18px;height:18px;display:block;border-radius:50%;background:white;box-shadow:0 1px 3px #0003;transition:transform .2s}
+.main-content .cfg .cfg-user-switch[aria-checked=true] .cfg-user-switch__thumb{transform:translateX(20px)}
+.main-content .cfg .cfg-user-switch:focus-visible{outline:3px solid #68b3aa;outline-offset:3px}
+
+/* Configuración institucional: tarjetas independientes como listados y buscadores. */
+.main-content .cfg.cfg-institutional { width:100%;max-width:none;padding:0;background:transparent;box-shadow:none; }
+.main-content .cfg-institutional .cfg-institutional-form { display:flex;flex-direction:column;gap:14px;min-width:0; }
+.main-content .cfg-institutional .cfg-form-card {
+  width:100%;min-width:0;margin:0;padding:20px 22px;
+  background:var(--app-surface);border:1px solid var(--app-border);
+  border-radius:12px;box-shadow:0 2px 10px #152a3a0d;
+}
+.main-content .cfg-institutional .cfg-form-card__heading {
+  display:flex;align-items:center;gap:9px;padding:0;margin:0 0 16px;
+}
+.main-content .cfg-institutional .cfg-form-card__heading .material-icons-outlined {
+  color:var(--app-primary);font-size:22px;
+}
+.main-content .cfg-institutional .cfg-form-card__heading h3 {
+  color:var(--app-primary-strong);font-size:1.08rem;font-weight:700;margin:0;
+}
+.main-content .cfg-institutional .cfg-form-card .row {--bs-gutter-x:1rem;--bs-gutter-y:1rem;}
+.main-content .cfg-institutional .cfg-form-card .field {min-width:0;display:flex;flex-direction:column;gap:7px;}
+.main-content .cfg-institutional .cfg-form-card .field>label {font-weight:500;}
+.main-content .cfg-institutional .cfg-access-toggle {display:inline-flex;align-items:center;gap:6px;cursor:pointer;font-weight:500;}
+.main-content .cfg-institutional .cfg-form-actions {display:flex;justify-content:flex-start;align-items:center;padding:2px 0 10px;}
+.main-content .cfg-institutional .cfg-form-actions .btn {display:inline-flex;align-items:center;gap:6px;}
+@media(max-width:767px){
+ .main-content .cfg-institutional .cfg-form-card {padding:16px 14px;}
+ .main-content .cfg-institutional .cfg-heading {align-items:flex-start;}
+}
+
+/* Acciones de formularios en la cabecera: guardar primero, cancelar a la derecha. */
+.main-content .cfg .cfg-header-actions{
+ display:flex;align-items:center;justify-content:flex-end;gap:10px;flex-wrap:wrap;
+}
+.main-content .cfg .cfg-header-actions .cfg-header-cancel{
+ color:var(--app-primary-strong)!important;background:#fff!important;
+ border:1px solid var(--app-primary)!important;text-decoration:none;
+}
+.main-content .cfg .cfg-header-actions .cfg-header-cancel:hover{background:#eaf5f3!important}
+.main-content .cfg .cfg-header-actions .cfg-header-cancel .material-icons-outlined{font-size:18px}
+@media(max-width:575px){
+ .main-content .cfg .cfg-header-actions{width:100%;justify-content:flex-end}
+ .main-content .cfg .cfg-header-actions .btn{flex:0 1 auto}
+}
