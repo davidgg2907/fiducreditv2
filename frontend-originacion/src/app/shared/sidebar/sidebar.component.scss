@@ -1,7 +1,7 @@
 :host{display:block}
 .top-navigation{position:fixed;top:84px;left:0;right:0;z-index:6;height:66px;background:#0b2031;border-bottom:1px solid #244b5c;box-shadow:0 4px 14px rgba(7,26,40,.12)}
 .top-navigation__inner{display:flex;align-items:center;height:100%;width:100%;padding:0 12px;box-sizing:border-box}
-.top-navigation__groups{display:flex;align-items:center;gap:6px;width:100%;min-width:0;height:100%;overflow-x:auto;scrollbar-width:thin;scrollbar-color:#4a7584 transparent}
+.top-navigation__groups{display:flex;align-items:center;justify-content:safe center;gap:6px;width:100%;min-width:0;height:100%;overflow-x:auto;scrollbar-width:thin;scrollbar-color:#4a7584 transparent}
 .top-navigation__trigger{display:inline-flex;align-items:center;justify-content:center;gap:8px;flex:none;padding:10px 14px;min-height:42px;border-radius:9px;border:1px solid transparent;background:transparent;color:#dcecf0;font:600 14px Roboto,Arial,sans-serif;text-decoration:none;white-space:nowrap;cursor:pointer}
 .top-navigation__trigger mat-icon{width:19px;height:19px;font-size:19px;color:#1bd4cf}
 .top-navigation__trigger .top-navigation__chevron{width:16px;height:16px;font-size:16px;color:#b0c7d0}
