@@ -1,12 +1,21 @@
-<section class="panel heading">
-  <h2>Cuentas bancarias</h2>
-  <a routerLink="/cuentas_bancarias">Cancelar</a>
-</section>
-<section class="panel">
-  <h3>{{ id ? 'Editar registro' : 'Nuevo registro' }}</h3>
-  <p class="error" role="alert" *ngIf="error">{{ error }}</p>
-  <p *ngIf="loading || !ready">Cargando información…</p>
-  <form [formGroup]="form" (ngSubmit)="save()">
+<header class="panel heading">
+  <div>
+    <h2>{{ id ? 'Editar' : 'Crear' }} · Cuentas bancarias</h2>
+    <p>Captura y edición de información</p>
+  </div>
+  <div class="header-actions">
+    <button class="btn btn-primary" type="submit" form="originacion-form" [disabled]="saving || loading || !ready || form.disabled || !permissions.can('cuentas_bancarias', id ? 'editar' : 'crear')"><span class="material-icons-outlined" aria-hidden="true">check</span> {{ saving ? 'Guardando…' : 'Guardar' }}</button>
+    <a class="btn btn-outline" routerLink="/cuentas_bancarias"><span class="material-icons-outlined" aria-hidden="true">close</span> Cancelar</a>
+  </div>
+</header>
+<p class="error" role="alert" *ngIf="error">{{ error }}</p>
+<p class="panel muted" *ngIf="loading || !ready">Cargando información…</p>
+<form id="originacion-form" [formGroup]="form" (ngSubmit)="save()">
+  <section class="panel">
+    <div class="section-heading">
+      <span class="material-icons-outlined" aria-hidden="true">account_balance</span>
+      <h3>Datos bancarios</h3>
+    </div>
     <div class="fields">
       <label>
         Cliente *
@@ -46,20 +55,30 @@
         <input formControlName="account_type" type="text">
         <small *ngIf="form.controls.account_type.invalid && form.controls.account_type.touched">Revise este campo.</small>
       </label>
+    </div>
+  </section>
+  <section class="panel">
+    <div class="section-heading">
+      <span class="material-icons-outlined" aria-hidden="true">power_settings_new</span>
+      <h3>Estado y operación</h3>
+    </div>
+    <div class="fields">
       <label>
         Principal
-        <input formControlName="primary" type="checkbox">
+        <span class="switch-line">
+          <input formControlName="primary" type="checkbox" role="switch">
+          <span>{{ form.controls.primary.value ? 'Habilitado' : 'Deshabilitado' }}</span>
+        </span>
         <small *ngIf="form.controls.primary.invalid && form.controls.primary.touched">Revise este campo.</small>
       </label>
       <label>
         Activa
-        <input formControlName="active" type="checkbox">
+        <span class="switch-line">
+          <input formControlName="active" type="checkbox" role="switch">
+          <span>{{ form.controls.active.value ? 'Habilitado' : 'Deshabilitado' }}</span>
+        </span>
         <small *ngIf="form.controls.active.invalid && form.controls.active.touched">Revise este campo.</small>
       </label>
     </div>
-    <div class="actions">
-      <button type="submit" [disabled]="saving || loading || !ready || form.disabled || !permissions.can('cuentas_bancarias', id ? 'editar' : 'crear')">{{ saving ? 'Guardando…' : 'Guardar' }}</button>
-      <a routerLink="/cuentas_bancarias">Volver</a>
-    </div>
-  </form>
-</section>
+  </section>
+</form>

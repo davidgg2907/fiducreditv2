@@ -1,12 +1,21 @@
-<section class="panel heading">
-  <h2>Ingresos y egresos</h2>
-  <a routerLink="/conceptos_financieros">Cancelar</a>
-</section>
-<section class="panel">
-  <h3>{{ id ? 'Editar registro' : 'Nuevo registro' }}</h3>
-  <p class="error" role="alert" *ngIf="error">{{ error }}</p>
-  <p *ngIf="loading || !ready">Cargando información…</p>
-  <form [formGroup]="form" (ngSubmit)="save()">
+<header class="panel heading">
+  <div>
+    <h2>{{ id ? 'Editar' : 'Crear' }} · Ingresos y egresos</h2>
+    <p>Captura y edición de información</p>
+  </div>
+  <div class="header-actions">
+    <button class="btn btn-primary" type="submit" form="originacion-form" [disabled]="saving || loading || !ready || form.disabled || !permissions.can('conceptos_financieros', id ? 'editar' : 'crear')"><span class="material-icons-outlined" aria-hidden="true">check</span> {{ saving ? 'Guardando…' : 'Guardar' }}</button>
+    <a class="btn btn-outline" routerLink="/conceptos_financieros"><span class="material-icons-outlined" aria-hidden="true">close</span> Cancelar</a>
+  </div>
+</header>
+<p class="error" role="alert" *ngIf="error">{{ error }}</p>
+<p class="panel muted" *ngIf="loading || !ready">Cargando información…</p>
+<form id="originacion-form" [formGroup]="form" (ngSubmit)="save()">
+  <section class="panel">
+    <div class="section-heading">
+      <span class="material-icons-outlined" aria-hidden="true">payments</span>
+      <h3>Información financiera</h3>
+    </div>
     <div class="fields">
       <label>
         Solicitud *
@@ -41,15 +50,19 @@
         <select formControlName="frequency"><option value="">Seleccione</option><option value="weekly">Semanal</option><option value="biweekly">Quincenal</option><option value="monthly">Mensual</option><option value="annual">Anual</option></select>
         <small *ngIf="form.controls.frequency.invalid && form.controls.frequency.touched">Revise este campo.</small>
       </label>
-      <label>
+    </div>
+  </section>
+  <section class="panel">
+    <div class="section-heading">
+      <span class="material-icons-outlined" aria-hidden="true">description</span>
+      <h3>Observaciones</h3>
+    </div>
+    <div class="fields">
+      <label class="wide">
         Observaciones
         <textarea formControlName="observations" rows="3"></textarea>
         <small *ngIf="form.controls.observations.invalid && form.controls.observations.touched">Revise este campo.</small>
       </label>
     </div>
-    <div class="actions">
-      <button type="submit" [disabled]="saving || loading || !ready || form.disabled || !permissions.can('conceptos_financieros', id ? 'editar' : 'crear')">{{ saving ? 'Guardando…' : 'Guardar' }}</button>
-      <a routerLink="/conceptos_financieros">Volver</a>
-    </div>
-  </form>
-</section>
+  </section>
+</form>

@@ -1,11 +1,16 @@
-<section class="panel heading">
-  <h2>Expedientes</h2>
-  <a routerLink="/expedientes">Volver</a>
-</section>
+<header class="panel heading">
+  <div>
+    <h2>Expedientes</h2>
+    <p>Consulta de información</p>
+  </div>
+  <div class="header-actions">
+    <a class="btn btn-outline" routerLink="/expedientes"><span class="material-icons-outlined" aria-hidden="true">arrow_back</span> Volver</a>
+  </div>
+</header>
 <section class="panel">
   <p>Captura y edición directa no habilitadas. Este proceso requiere su operación de negocio autorizada.</p>
   <p class="error" role="alert" *ngIf="error">{{ error }}</p>
-  <dl class="fields" *ngIf="record as item">
+  <dl class="fields detail-fields" *ngIf="record as item">
     <div>
       <dt>Folio</dt>
       <dd>{{ item.application_number ?? '—' }}</dd>

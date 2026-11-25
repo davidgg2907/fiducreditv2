@@ -1,12 +1,21 @@
-<section class="panel heading">
-  <h2>Análisis crediticio</h2>
-  <a routerLink="/analisis_crediticio">Cancelar</a>
-</section>
-<section class="panel">
-  <h3>{{ id ? 'Editar registro' : 'Nuevo registro' }}</h3>
-  <p class="error" role="alert" *ngIf="error">{{ error }}</p>
-  <p *ngIf="loading || !ready">Cargando información…</p>
-  <form [formGroup]="form" (ngSubmit)="save()">
+<header class="panel heading">
+  <div>
+    <h2>{{ id ? 'Editar' : 'Crear' }} · Análisis crediticio</h2>
+    <p>Captura y edición de información</p>
+  </div>
+  <div class="header-actions">
+    <button class="btn btn-primary" type="submit" form="originacion-form" [disabled]="saving || loading || !ready || form.disabled || !permissions.can('analisis_crediticio', id ? 'editar' : 'crear')"><span class="material-icons-outlined" aria-hidden="true">check</span> {{ saving ? 'Guardando…' : 'Guardar' }}</button>
+    <a class="btn btn-outline" routerLink="/analisis_crediticio"><span class="material-icons-outlined" aria-hidden="true">close</span> Cancelar</a>
+  </div>
+</header>
+<p class="error" role="alert" *ngIf="error">{{ error }}</p>
+<p class="panel muted" *ngIf="loading || !ready">Cargando información…</p>
+<form id="originacion-form" [formGroup]="form" (ngSubmit)="save()">
+  <section class="panel">
+    <div class="section-heading">
+      <span class="material-icons-outlined" aria-hidden="true">analytics</span>
+      <h3>Datos del análisis</h3>
+    </div>
     <div class="fields">
       <label>
         Solicitud *
@@ -27,24 +36,28 @@
         <small *ngIf="form.controls.status.invalid && form.controls.status.touched">Revise este campo.</small>
       </label>
       <label>
-        Hallazgos
-        <textarea formControlName="findings" rows="3"></textarea>
-        <small *ngIf="form.controls.findings.invalid && form.controls.findings.touched">Revise este campo.</small>
-      </label>
-      <label>
-        Recomendación
-        <textarea formControlName="recommendation" rows="3"></textarea>
-        <small *ngIf="form.controls.recommendation.invalid && form.controls.recommendation.touched">Revise este campo.</small>
-      </label>
-      <label>
         Fecha de conclusión
         <input formControlName="completed_at" type="date">
         <small *ngIf="form.controls.completed_at.invalid && form.controls.completed_at.touched">Revise este campo.</small>
       </label>
     </div>
-    <div class="actions">
-      <button type="submit" [disabled]="saving || loading || !ready || form.disabled || !permissions.can('analisis_crediticio', id ? 'editar' : 'crear')">{{ saving ? 'Guardando…' : 'Guardar' }}</button>
-      <a routerLink="/analisis_crediticio">Volver</a>
+  </section>
+  <section class="panel">
+    <div class="section-heading">
+      <span class="material-icons-outlined" aria-hidden="true">description</span>
+      <h3>Hallazgos y recomendación</h3>
     </div>
-  </form>
-</section>
+    <div class="fields">
+      <label class="wide">
+        Hallazgos
+        <textarea formControlName="findings" rows="3"></textarea>
+        <small *ngIf="form.controls.findings.invalid && form.controls.findings.touched">Revise este campo.</small>
+      </label>
+      <label class="wide">
+        Recomendación
+        <textarea formControlName="recommendation" rows="3"></textarea>
+        <small *ngIf="form.controls.recommendation.invalid && form.controls.recommendation.touched">Revise este campo.</small>
+      </label>
+    </div>
+  </section>
+</form>

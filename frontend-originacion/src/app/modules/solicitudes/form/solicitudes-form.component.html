@@ -1,13 +1,27 @@
-<section class="panel heading">
-  <h2>Solicitudes de crédito</h2>
-  <a routerLink="/solicitudes">Cancelar</a>
-</section>
-<section class="panel">
-  <h3>{{ id ? 'Editar registro' : 'Nuevo registro' }}</h3>
-  <p class="error" role="alert" *ngIf="error">{{ error }}</p>
-  <p *ngIf="loading || !ready">Cargando información…</p>
-  <form [formGroup]="form" (ngSubmit)="save()">
+<header class="panel heading">
+  <div>
+    <h2>{{ id ? 'Editar' : 'Crear' }} · Solicitudes de crédito</h2>
+    <p>Captura y edición de información</p>
+  </div>
+  <div class="header-actions">
+    <button class="btn btn-primary" type="submit" form="originacion-form" [disabled]="saving || loading || !ready || form.disabled || !permissions.can('solicitudes', id ? 'editar' : 'crear')"><span class="material-icons-outlined" aria-hidden="true">check</span> {{ saving ? 'Guardando…' : 'Guardar' }}</button>
+    <a class="btn btn-outline" routerLink="/solicitudes"><span class="material-icons-outlined" aria-hidden="true">close</span> Cancelar</a>
+  </div>
+</header>
+<p class="error" role="alert" *ngIf="error">{{ error }}</p>
+<p class="panel muted" *ngIf="loading || !ready">Cargando información…</p>
+<form id="originacion-form" [formGroup]="form" (ngSubmit)="save()">
+  <section class="panel">
+    <div class="section-heading">
+      <span class="material-icons-outlined" aria-hidden="true">assignment</span>
+      <h3>Datos generales de la solicitud</h3>
+    </div>
     <div class="fields">
+      <label>
+        Folio *
+        <input formControlName="application_number" type="text">
+        <small *ngIf="form.controls.application_number.invalid && form.controls.application_number.touched">Revise este campo.</small>
+      </label>
       <label>
         Cliente *
         <select formControlName="client_id">
@@ -56,11 +70,14 @@
         </select>
         <small *ngIf="form.controls.bank_account_id.invalid && form.controls.bank_account_id.touched">Revise este campo.</small>
       </label>
-      <label>
-        Folio *
-        <input formControlName="application_number" type="text">
-        <small *ngIf="form.controls.application_number.invalid && form.controls.application_number.touched">Revise este campo.</small>
-      </label>
+    </div>
+  </section>
+  <section class="panel">
+    <div class="section-heading">
+      <span class="material-icons-outlined" aria-hidden="true">payments</span>
+      <h3>Condiciones financieras</h3>
+    </div>
+    <div class="fields">
       <label>
         Monto solicitado *
         <input formControlName="requested_amount" type="number" step="0.01">
@@ -82,9 +99,5 @@
         <small *ngIf="form.controls.declared_expenses.invalid && form.controls.declared_expenses.touched">Revise este campo.</small>
       </label>
     </div>
-    <div class="actions">
-      <button type="submit" [disabled]="saving || loading || !ready || form.disabled || !permissions.can('solicitudes', id ? 'editar' : 'crear')">{{ saving ? 'Guardando…' : 'Guardar' }}</button>
-      <a routerLink="/solicitudes">Volver</a>
-    </div>
-  </form>
-</section>
+  </section>
+</form>

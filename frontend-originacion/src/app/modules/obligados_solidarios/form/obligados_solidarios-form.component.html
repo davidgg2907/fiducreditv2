@@ -1,12 +1,21 @@
-<section class="panel heading">
-  <h2>Obligados solidarios</h2>
-  <a routerLink="/obligados_solidarios">Cancelar</a>
-</section>
-<section class="panel">
-  <h3>{{ id ? 'Editar registro' : 'Nuevo registro' }}</h3>
-  <p class="error" role="alert" *ngIf="error">{{ error }}</p>
-  <p *ngIf="loading || !ready">Cargando información…</p>
-  <form [formGroup]="form" (ngSubmit)="save()">
+<header class="panel heading">
+  <div>
+    <h2>{{ id ? 'Editar' : 'Crear' }} · Obligados solidarios</h2>
+    <p>Captura y edición de información</p>
+  </div>
+  <div class="header-actions">
+    <button class="btn btn-primary" type="submit" form="originacion-form" [disabled]="saving || loading || !ready || form.disabled || !permissions.can('obligados_solidarios', id ? 'editar' : 'crear')"><span class="material-icons-outlined" aria-hidden="true">check</span> {{ saving ? 'Guardando…' : 'Guardar' }}</button>
+    <a class="btn btn-outline" routerLink="/obligados_solidarios"><span class="material-icons-outlined" aria-hidden="true">close</span> Cancelar</a>
+  </div>
+</header>
+<p class="error" role="alert" *ngIf="error">{{ error }}</p>
+<p class="panel muted" *ngIf="loading || !ready">Cargando información…</p>
+<form id="originacion-form" [formGroup]="form" (ngSubmit)="save()">
+  <section class="panel">
+    <div class="section-heading">
+      <span class="material-icons-outlined" aria-hidden="true">groups</span>
+      <h3>Identificación del obligado solidario</h3>
+    </div>
     <div class="fields">
       <label>
         Solicitud *
@@ -36,15 +45,19 @@
         <input formControlName="phone" type="text">
         <small *ngIf="form.controls.phone.invalid && form.controls.phone.touched">Revise este campo.</small>
       </label>
+    </div>
+  </section>
+  <section class="panel">
+    <div class="section-heading">
+      <span class="material-icons-outlined" aria-hidden="true">payments</span>
+      <h3>Información financiera</h3>
+    </div>
+    <div class="fields">
       <label>
         Ingreso mensual
         <input formControlName="monthly_income" type="number" step="0.01">
         <small *ngIf="form.controls.monthly_income.invalid && form.controls.monthly_income.touched">Revise este campo.</small>
       </label>
     </div>
-    <div class="actions">
-      <button type="submit" [disabled]="saving || loading || !ready || form.disabled || !permissions.can('obligados_solidarios', id ? 'editar' : 'crear')">{{ saving ? 'Guardando…' : 'Guardar' }}</button>
-      <a routerLink="/obligados_solidarios">Volver</a>
-    </div>
-  </form>
-</section>
+  </section>
+</form>

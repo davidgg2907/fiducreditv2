@@ -1,12 +1,21 @@
-<section class="panel heading">
-  <h2>Consentimientos</h2>
-  <a routerLink="/consentimientos">Cancelar</a>
-</section>
-<section class="panel">
-  <h3>{{ id ? 'Editar registro' : 'Nuevo registro' }}</h3>
-  <p class="error" role="alert" *ngIf="error">{{ error }}</p>
-  <p *ngIf="loading || !ready">Cargando información…</p>
-  <form [formGroup]="form" (ngSubmit)="save()">
+<header class="panel heading">
+  <div>
+    <h2>{{ id ? 'Editar' : 'Crear' }} · Consentimientos</h2>
+    <p>Captura y edición de información</p>
+  </div>
+  <div class="header-actions">
+    <button class="btn btn-primary" type="submit" form="originacion-form" [disabled]="saving || loading || !ready || form.disabled || !permissions.can('consentimientos', id ? 'editar' : 'crear')"><span class="material-icons-outlined" aria-hidden="true">check</span> {{ saving ? 'Guardando…' : 'Guardar' }}</button>
+    <a class="btn btn-outline" routerLink="/consentimientos"><span class="material-icons-outlined" aria-hidden="true">close</span> Cancelar</a>
+  </div>
+</header>
+<p class="error" role="alert" *ngIf="error">{{ error }}</p>
+<p class="panel muted" *ngIf="loading || !ready">Cargando información…</p>
+<form id="originacion-form" [formGroup]="form" (ngSubmit)="save()">
+  <section class="panel">
+    <div class="section-heading">
+      <span class="material-icons-outlined" aria-hidden="true">fact_check</span>
+      <h3>Datos del consentimiento</h3>
+    </div>
     <div class="fields">
       <label>
         Solicitud *
@@ -27,19 +36,26 @@
         <small *ngIf="form.controls.version.invalid && form.controls.version.touched">Revise este campo.</small>
       </label>
       <label>
-        Aceptado
-        <input formControlName="accepted" type="checkbox">
-        <small *ngIf="form.controls.accepted.invalid && form.controls.accepted.touched">Revise este campo.</small>
-      </label>
-      <label>
         Fecha de aceptación
         <input formControlName="accepted_at" type="date">
         <small *ngIf="form.controls.accepted_at.invalid && form.controls.accepted_at.touched">Revise este campo.</small>
       </label>
     </div>
-    <div class="actions">
-      <button type="submit" [disabled]="saving || loading || !ready || form.disabled || !permissions.can('consentimientos', id ? 'editar' : 'crear')">{{ saving ? 'Guardando…' : 'Guardar' }}</button>
-      <a routerLink="/consentimientos">Volver</a>
+  </section>
+  <section class="panel">
+    <div class="section-heading">
+      <span class="material-icons-outlined" aria-hidden="true">verified_user</span>
+      <h3>Aceptación</h3>
     </div>
-  </form>
-</section>
+    <div class="fields">
+      <label>
+        Aceptado
+        <span class="switch-line">
+          <input formControlName="accepted" type="checkbox" role="switch">
+          <span>{{ form.controls.accepted.value ? 'Habilitado' : 'Deshabilitado' }}</span>
+        </span>
+        <small *ngIf="form.controls.accepted.invalid && form.controls.accepted.touched">Revise este campo.</small>
+      </label>
+    </div>
+  </section>
+</form>

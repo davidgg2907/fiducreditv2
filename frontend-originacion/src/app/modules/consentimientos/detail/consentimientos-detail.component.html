@@ -1,12 +1,21 @@
-<section class="panel heading">
-  <h2>Consentimientos</h2>
-  <a routerLink="/consentimientos">Volver a lista</a>
-</section>
+<header class="panel heading">
+  <div>
+    <h2>Detalle · Consentimientos</h2>
+    <p>Consulta de información</p>
+  </div>
+  <div class="header-actions">
+    <a class="btn btn-outline" routerLink="/consentimientos"><span class="material-icons-outlined" aria-hidden="true">arrow_back</span> Volver a lista</a>
+  </div>
+</header>
 <section class="panel">
   <p class="error" role="alert" *ngIf="error">{{ error }}</p>
   <p *ngIf="loading">Cargando detalle…</p>
   <ng-container *ngIf="record as item">
-    <dl class="fields">
+    <div class="section-heading">
+      <span class="material-icons-outlined" aria-hidden="true">description</span>
+      <h3>Información del registro</h3>
+    </div>
+    <dl class="fields detail-fields">
       <div><dt>Identificador</dt><dd>{{ item.id }}</dd></div>
       <div>
         <dt>Solicitud</dt>
