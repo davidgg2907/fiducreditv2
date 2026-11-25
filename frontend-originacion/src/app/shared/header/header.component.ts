@@ -85,7 +85,7 @@ export class HeaderComponent implements OnInit {
       this.userPhotoUrl = photoUrl(sessionUser?.fotografia);
     });
     this.profileService.get().pipe(takeUntilDestroyed(this.destroyRef)).subscribe({ next: response => {
-      const user = { ...response.data?.user, fotografia: response.data?.personal?.fotografia ?? null };
+      const user = { ...response.data?.user, fotografia: response.data?.personal?.fotografia ?? response.data?.user?.fotografia ?? null };
       this.authService.updateSessionUser(user);
     }});
     this.router.events.pipe(

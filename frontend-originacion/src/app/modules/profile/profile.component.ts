@@ -11,7 +11,7 @@ export class ProfileComponent implements OnInit {
  profileForm=new FormGroup({nombre:new FormControl('',Validators.required),correo:new FormControl('',[Validators.required,Validators.email]),contrasena_actual:new FormControl('')});
  passwordForm=new FormGroup({contrasena_actual:new FormControl('',Validators.required),contrasena:new FormControl('',[Validators.required,Validators.minLength(12),Validators.maxLength(72)]),contrasena_confirmation:new FormControl('',Validators.required)});
  constructor(private readonly api:ProfileService,private readonly auth:AuthService,private readonly router:Router){}
- ngOnInit():void {this.api.get().subscribe({next:r=>{const p=r.data.personal??{};this.profileForm.patchValue({nombre:p.nombre??'',correo:p.correo??r.data.user.email});this.loading=false;},error:e=>{this.error=e.error?.message??'No fue posible cargar tu perfil.';this.loading=false;}})}
+ ngOnInit():void {this.api.get().subscribe({next:r=>{const p=r.data.personal;this.profileForm.patchValue({nombre:p?.nombre??r.data.user.nombre??'',correo:p?.correo??r.data.user.email});this.loading=false;},error:e=>{this.error=e.error?.message??'No fue posible cargar tu perfil.';this.loading=false;}})}
  saveProfile():void {
   if(this.profileForm.invalid){this.profileForm.markAllAsTouched();return;}
   this.saving=true;this.error='';this.success='';
