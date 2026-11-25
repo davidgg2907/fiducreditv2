@@ -47,9 +47,57 @@
     </table>
   </div>
   <p *ngIf="!loading && !error && !rows.length">No hay registros.</p>
-  <div class="pagination">
-    <button type="button" (click)="load(page - 1)" [disabled]="loading || page <= 1">Anterior</button>
-    <span>Página {{ page }} de {{ lastPage }} · {{ total }} registros</span>
-    <button type="button" (click)="load(page + 1)" [disabled]="loading || page >= lastPage">Siguiente</button>
-  </div>
 </section>
+
+<nav class="panel originacion-pagination" aria-label="Paginación de registros">
+  <span class="result-count">{{ total }} registros</span>
+  <div class="pagination-controls">
+    <button
+      class="btn btn-outline"
+      type="button"
+      (click)="load(1)"
+      [disabled]="loading || page <= 1"
+      title="Primera página"
+      aria-label="Primera página">
+      <span class="material-icons-outlined" aria-hidden="true">first_page</span>
+    </button>
+    <button
+      class="btn btn-outline"
+      type="button"
+      (click)="load(page - 1)"
+      [disabled]="loading || page <= 1"
+      title="Anterior"
+      aria-label="Anterior">
+      <span class="material-icons-outlined" aria-hidden="true">chevron_left</span>
+    </button>
+    <button
+      *ngFor="let n of pageNumbers"
+      class="btn"
+      [ngClass]="n === page ? 'btn-primary' : 'btn-outline'"
+      type="button"
+      (click)="load(n)"
+      [disabled]="loading"
+      [attr.aria-current]="n === page ? 'page' : null"
+      [attr.aria-label]="'Página ' + n">
+      {{ n }}
+    </button>
+    <button
+      class="btn btn-outline"
+      type="button"
+      (click)="load(page + 1)"
+      [disabled]="loading || page >= lastPage"
+      title="Siguiente"
+      aria-label="Siguiente">
+      <span class="material-icons-outlined" aria-hidden="true">chevron_right</span>
+    </button>
+    <button
+      class="btn btn-outline"
+      type="button"
+      (click)="load(lastPage)"
+      [disabled]="loading || page >= lastPage"
+      title="Última página"
+      aria-label="Última página">
+      <span class="material-icons-outlined" aria-hidden="true">last_page</span>
+    </button>
+  </div>
+</nav>
