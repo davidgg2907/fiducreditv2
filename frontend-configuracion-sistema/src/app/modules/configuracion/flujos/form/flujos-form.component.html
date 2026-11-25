@@ -1,16 +1,27 @@
-<section class="cfg"><header class="cfg-panel cfg-heading"><div><h2>{{id?'Editar':'Crear'}} · {{config.title}}</h2><p>Captura y edición de información</p></div><div class="cfg-header-actions">
-  <button class="btn btn-primary" form="config-form" type="submit" [disabled]="saving||busy">{{saving?'Guardando...':'Guardar'}}</button>
-  <a class="btn btn-outline-secondary cfg-header-cancel" [routerLink]="home"><span class="material-icons-outlined" aria-hidden="true">close</span> Cancelar</a>
-</div></header><p *ngIf="error" class="alert alert-danger">{{error}}</p>
-<form id="config-form" *ngIf="can(id?'editar':'crear')&&!busy" (ngSubmit)="save()" class="formgrid">
-<div class="field" *ngFor="let f of config.fields">
-<ng-container *ngIf="f.key!=='is_active'&&(!id||f.type!=='password')">
-<label [for]="f.key">{{f.label}}{{f.required?' *':''}}</label>
-<select *ngIf="f.type==='ref';else other" [id]="f.key" [name]="f.key" class="form-select" [(ngModel)]="data[f.key]" [required]="f.required"><option value="">Selecciona...</option><option *ngFor="let r of refs[f.key]||[]" [value]="r.id">{{refLabel(r)}}</option></select>
-<ng-template #other><ng-container *ngIf="f.type==='permissions';else standard"><label class="check" *ngFor="let p of catalog"><input type="checkbox" [checked]="checked(p.permission)" (change)="check(p.permission,$any($event.target).checked)"> {{p.module}} · {{p.permission}}</label></ng-container>
-<ng-template #standard><label class="check" *ngIf="f.type==='bool';else textfield"><input type="checkbox" [name]="f.key" [(ngModel)]="data[f.key]"> Habilitado</label>
-<ng-template #textfield><textarea *ngIf="f.type==='json';else inputfield" [id]="f.key" [name]="f.key" class="form-control" rows="5" [(ngModel)]="data[f.key]" [required]="f.required"></textarea>
-<ng-template #inputfield><input [type]="f.type==='number'?'number':f.type==='date'?'date':f.type==='password'?'password':'text'" [step]="f.type==='number'?'any':undefined" [id]="f.key" [name]="f.key" class="form-control" [(ngModel)]="data[f.key]" [required]="f.required"></ng-template></ng-template></ng-template></ng-template>
-</ng-container></div>
-
-</form></section>
+<section class="cfg">
+<header class="cfg-panel cfg-heading"><h2>{{readonlyMode?'Detalle':id?'Editar':'Crear'}} · Workflow</h2><div class="cfg-header-actions"><button *ngIf="!readonlyMode" type="button" class="btn btn-primary" (click)="save()" [disabled]="busy||saving||!allowed||loadFailed||!!modal">{{saving?'Guardando...':'Guardar'}}</button><a class="btn btn-outline-secondary" [routerLink]="home">{{readonlyMode?'Volver':'Cancelar'}}</a></div></header>
+<p *ngIf="error" class="alert alert-danger">{{error}}</p><p *ngIf="busy">Cargando...</p>
+<ng-container *ngIf="allowed&&!busy&&!loadFailed">
+<nav class="product-tabs" aria-label="Configuración del workflow"><button *ngFor="let t of tabs;let i=index" type="button" [class.selected]="tab===i" [attr.aria-current]="tab===i?'page':null" (click)="tab=i"><span class="material-icons-outlined">{{tabIcons[i]}}</span>{{t}}</button></nav>
+<section *ngIf="tab===0" class="cfg-panel product-panel"><h3><span class="material-icons-outlined">description</span> Datos generales del flujo</h3><div class="formgrid general-grid"><ng-container *ngFor="let f of generalFields"><ng-container *ngTemplateOutlet="editor;context:{f:f,row:data}"></ng-container></ng-container></div><p *ngIf="version" class="section-note">Versión {{version['version']}} · {{version['status']}}. Guardar crea un nuevo borrador y conserva las versiones anteriores.</p></section>
+<ng-container *ngIf="tab===1"><header class="cfg-panel product-panel section-heading"><div><h3><span class="material-icons-outlined">account_tree</span> Etapas del flujo</h3><p class="section-note">{{steps.length}} etapas · Arrastra para cambiar el orden de presentación.</p></div><button *ngIf="editable" type="button" class="btn btn-outline-primary" (click)="add()"><span class="material-icons-outlined">add</span> Agregar etapa</button></header>
+<div *ngIf="!steps.length" class="cfg-panel product-panel empty-state">Sin etapas configuradas</div>
+<article *ngFor="let s of steps;let i=index" class="cfg-panel product-panel workflow-step" [class.dragging]="dragIndex===i" (dragover)="$event.preventDefault()" (drop)="drop($event,i)">
+<div class="step-main"><span *ngIf="editable" class="material-icons-outlined drag-handle" draggable="true" (dragstart)="startDrag($event,i)" (dragend)="dragIndex=-1" title="Arrastrar etapa">drag_indicator</span><span class="step-number">{{i+1}}</span><div><strong>{{s['name']||'Sin nombre'}}</strong><p class="section-note">{{s['code']||'Pendiente de configurar'}}</p></div></div>
+<div class="step-actions"><button *ngIf="editable" type="button" class="icon-action" title="Mover arriba" aria-label="Mover arriba" [disabled]="i===0" (click)="move(i,i-1)"><span class="material-icons-outlined">keyboard_arrow_up</span></button><button *ngIf="editable" type="button" class="icon-action" title="Mover abajo" aria-label="Mover abajo" [disabled]="i===steps.length-1" (click)="move(i,i+1)"><span class="material-icons-outlined">keyboard_arrow_down</span></button>
+<button type="button" class="icon-action" [attr.aria-label]="readonlyMode?'Consultar etapa':'Editar etapa'" title="Información de etapa" (click)="open(i,'step')"><span class="material-icons-outlined">{{readonlyMode?'visibility':'edit'}}</span></button>
+<button type="button" class="icon-action" title="Reglas" aria-label="Reglas de etapa" (click)="open(i,'rules')"><span class="material-icons-outlined">rule</span><small>{{s['rules'].length}}</small></button>
+<button type="button" class="icon-action" title="Roles" aria-label="Roles de etapa" (click)="open(i,'roles')"><span class="material-icons-outlined">group</span><small>{{s['roles'].length}}</small></button></div></article>
+</ng-container></ng-container>
+<div *ngIf="modal" class="workflow-overlay" (click)="close()"><section class="workflow-dialog product-panel" role="dialog" aria-modal="true" [attr.aria-label]="modalTitle" (click)="$event.stopPropagation()" (keydown.escape)="close()"><header><h3>{{modalTitle}} · {{steps[selected]['name']||'Sin nombre'}}</h3><button type="button" class="icon-action" aria-label="Cerrar" (click)="close()"><span class="material-icons-outlined">close</span></button></header>
+<p *ngIf="modalError" class="alert alert-danger">{{modalError}}</p>
+<div *ngIf="modal==='step'" class="formgrid"><ng-container *ngFor="let f of stepFields"><ng-container *ngTemplateOutlet="editor;context:{f:f,row:draft}"></ng-container></ng-container></div>
+<ng-container *ngIf="modal!=='step'"><button *ngIf="editable" type="button" class="btn btn-outline-primary" (click)="addEntry()">Agregar {{modal==='rules'?'regla':'rol'}}</button><p *ngIf="!entries.length" class="section-note">Sin registros configurados.</p><section *ngFor="let r of entries;let j=index" class="product-panel entry-panel"><header><strong>{{modal==='rules'?(r['code']||'Nueva regla'):(roleLabel(r['role_id'])||'Nuevo rol')}}</strong><button *ngIf="editable" type="button" class="btn btn-outline-danger" (click)="entries.splice(j,1)">Quitar</button></header><div class="formgrid"><ng-container *ngFor="let f of childFields"><ng-container *ngTemplateOutlet="editor;context:{f:f,row:r}"></ng-container></ng-container></div></section></ng-container>
+<footer class="dialog-actions"><button *ngIf="editable" type="button" class="btn btn-primary" (click)="saveModal()">Aceptar</button><button type="button" class="btn btn-outline-secondary" (click)="close()">{{editable?'Cancelar':'Cerrar'}}</button></footer>
+</section></div>
+<ng-template #editor let-f="f" let-row="row"><div class="field" [class.wide-field]="f.key==='description'||f.type==='json'"><label>{{fieldLabel(f)}}<span *ngIf="f.required" class="required"> *</span></label><ng-container [ngSwitch]="f.type">
+<select *ngSwitchCase="'ref'" class="form-select" [(ngModel)]="row[f.key]" [disabled]="!editable"><option [ngValue]="null">Seleccionar...</option><option *ngFor="let r of options(f)" [ngValue]="r.id">{{label(r)}}</option></select>
+<label *ngSwitchCase="'bool'" class="form-check form-switch"><input class="form-check-input" type="checkbox" role="switch" [ngModel]="row[f.key]===true||row[f.key]===1||row[f.key]==='1'" (ngModelChange)="row[f.key]=$event" [disabled]="!editable"> Habilitado</label>
+<textarea *ngSwitchCase="'json'" class="form-control" rows="3" [ngModel]="jsonValue(row[f.key])" (ngModelChange)="row[f.key]=$event" [disabled]="!editable"></textarea>
+<input *ngSwitchDefault class="form-control" [type]="f.type==='number'?'number':'text'" [(ngModel)]="row[f.key]" [disabled]="!editable">
+</ng-container></div></ng-template></section>
