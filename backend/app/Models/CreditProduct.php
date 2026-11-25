@@ -42,7 +42,7 @@ class CreditProduct extends Model
     public function currentVersion(): \Illuminate\Database\Eloquent\Relations\HasOne
     {
         return $this->hasOne(CreditProductVersion::class, 'product_id')
-            ->ofMany('version', 'max', fn ($query) => $query->where('active', true));
+            ->ofMany(['version' => 'max'], fn ($query) => $query->where('active', true));
     }
 
     public function creditWorkflows(): HasMany

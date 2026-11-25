@@ -11,6 +11,7 @@ on:
       - 'backend/app/Repositories/**'
       - 'backend/tests/Feature/DomainApiRefactorTest.php'
       - 'backend/tests/Feature/CreditApplicationCaptureTest.php'
+      - 'backend/tests/Feature/CreditProductCurrentVersionTest.php'
       - 'backend/composer.json'
       - 'backend/routes/api.php'
       - '.github/workflows/domain-api.yml'
@@ -25,6 +26,7 @@ on:
       - 'backend/app/Repositories/**'
       - 'backend/tests/Feature/DomainApiRefactorTest.php'
       - 'backend/tests/Feature/CreditApplicationCaptureTest.php'
+      - 'backend/tests/Feature/CreditProductCurrentVersionTest.php'
       - 'backend/composer.json'
       - 'backend/routes/api.php'
       - '.github/workflows/domain-api.yml'
@@ -73,3 +75,4 @@ jobs:
         run: |
           php artisan test --filter=DomainApiRefactorTest
           php artisan test --filter=CreditApplicationCaptureTest
+          php artisan test --filter=CreditProductCurrentVersionTest
