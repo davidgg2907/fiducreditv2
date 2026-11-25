@@ -16,12 +16,12 @@
           <span *ngIf="!userPhotoUrl">{{ userInitials }}</span>
         </span>
         <span class="user-summary__copy">
-          <strong class="user-summary__primary">{{ userName || 'Usuario' }}</strong>
+          <strong class="user-summary__primary" [title]="userName">{{ userName || 'Usuario' }}</strong>
         </span>
         <mat-icon class="material-icons-outlined user-summary__chevron">expand_more</mat-icon>
       </span>
     </button>
-    <mat-menu #UserProfile="matMenu" class="dropdown-userprofile">
+    <mat-menu #UserProfile="matMenu" class="dropdown-userprofile" xPosition="before" yPosition="below" [overlapTrigger]="false">
       <div class="menu-userprofile" (click)="$event.stopPropagation()">
         <span class="menu-userprofile__avatar" [class.menu-userprofile__avatar--image]="!!userPhotoUrl">
           <img *ngIf="userPhotoUrl" [src]="userPhotoUrl" [alt]="userName || 'Usuario'">

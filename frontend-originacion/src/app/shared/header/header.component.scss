@@ -90,8 +90,9 @@
   display: inline-flex;
   align-items: center;
   justify-content: flex-start;
-  min-width: clamp(210px, 24vw, 290px);
-  max-width: 100%;
+  width: 260px;
+  min-width: 260px;
+  max-width: 260px;
   height: 54px;
   min-height: 54px;
   padding: 0;
@@ -169,7 +170,7 @@
 .user-summary__primary {
   display: block;
   color: #173f3a;
-  font-size: 0.98rem;
+  font-size: 0.85rem;
   font-weight: 700;
   line-height: 1.08;
   white-space: nowrap;
@@ -286,19 +287,9 @@
     font-size: 1.1rem;
   }
 
-  .user-summary__copy {
-    display: none;
-  }
-
-  .user-summary {
-    min-width: 58px;
-  }
-
-  .user-summary__content {
-    grid-template-columns: 40px 18px;
-    gap: 0.45rem;
-    padding-right: 0.55rem;
-  }
+  .user-summary { width: 180px; min-width: 180px; max-width: 180px; }
+  .user-summary__content { grid-template-columns: 32px minmax(0, 1fr) 16px; gap: 0.4rem; padding: 0.35rem 0.5rem; }
+  .user-summary__avatar { width: 32px; height: 32px; font-size: 0.78rem; }
 }
 
 /* Full-width header above the horizontal navigation */
@@ -308,15 +299,15 @@
 .searchVisible {width:100%!important;}
 
 /* Logotipo junto al nombre del módulo en la franja superior. */
-.header-company-logo{height:62px;width:104px;display:flex;align-items:center;justify-content:center;flex:none;padding:5px 12px;background:rgba(255,255,255,.65);border:1px solid rgba(79,158,150,.2);border-radius:12px;box-sizing:border-box}
-.header-company-logo img{display:block;max-width:100%;max-height:100%;object-fit:contain}
+.header-company-logo{height:62px;width:86px;display:flex;align-items:center;justify-content:center;flex:none;padding:0;background:transparent;border:0;border-radius:0;box-shadow:none;box-sizing:border-box}
+.header-company-logo img{display:block;max-width:100%;max-height:100%;object-fit:contain;filter:url('assets/branding/logo-transparent-filter.svg#remove-white')}
 @media(max-width:600px){.header-company-logo{height:48px;width:70px;padding:4px 6px}.header-main{gap:.55rem}}
 
 /* Menú de sesión: ancho estable, columnas consistentes y texto sin desbordar. */
 ::ng-deep .dropdown-userprofile.mat-mdc-menu-panel {
-  width: min(350px, calc(100vw - 24px)) !important;
-  min-width: min(290px, calc(100vw - 24px)) !important;
-  max-width: calc(100vw - 24px) !important;
+  width: 260px !important;
+  min-width: 260px !important;
+  max-width: 260px !important;
   border-radius: 16px !important;
   overflow: hidden !important;
 }
@@ -352,7 +343,7 @@
   display:flex;flex-direction:column;gap:3px;min-width:0;max-width:100%;
 }
 ::ng-deep .dropdown-userprofile .menu-userprofile__name {
-  font-size:15px;font-weight:750;line-height:1.25;color:#24344a;
+  font-size:13px;font-weight:700;line-height:1.25;color:#24344a;
   white-space:normal;overflow-wrap:anywhere;
 }
 ::ng-deep .dropdown-userprofile .menu-userprofile__role {
@@ -383,3 +374,7 @@
 :host .top-header,:host .top-header.test{left:0!important;right:0;width:100%!important;height:84px;min-height:84px;box-sizing:border-box}
 :host .top-header .menu-toggle{display:none}
 :host .searchbar,:host .searchbar.full-search{left:0!important;right:0}
+
+/* El desplegable replica exactamente el ancho de su disparador. */
+@media(max-width:900px){::ng-deep .dropdown-userprofile.mat-mdc-menu-panel{width:180px!important;min-width:180px!important;max-width:180px!important}}
+@media(max-width:480px){.user-summary{width:146px;min-width:146px;max-width:146px}.user-summary__primary{font-size:12px}.header-copy h1{font-size:1rem;overflow-wrap:anywhere}.header-company-logo{width:48px;padding:0}.header-main{flex:1;min-width:0}::ng-deep .dropdown-userprofile.mat-mdc-menu-panel{width:146px!important;min-width:146px!important;max-width:146px!important}::ng-deep .dropdown-userprofile .menu-userprofile{grid-template-columns:1fr;padding:10px 12px}::ng-deep .dropdown-userprofile .mat-mdc-menu-item{font-size:12px;gap:6px}}
