@@ -16,19 +16,22 @@ export class ProductosFormComponent implements OnInit {
  sectionTitles:Record<string,string>={fees:'Comisiones y cargos',documents:'Requisitos documentales',rules:'Reglas y validaciones',fields:'Campos configurables'};
  sectionIcons:Record<string,string>={fees:'payments',documents:'description',rules:'verified_user',fields:'dynamic_form'};
  tab=0;
- get generalFields(){return this.config.fields.filter(f=>f.key!=='status');}
- get mainFinancial(){return this.financial.filter(f=>['min_amount','max_amount','min_term','max_term','min_annual_rate','max_annual_rate','currency'].includes(f.key));}
- get financialGroups(){return [
- {title:'Plazos y frecuencia de pago',icon:'calendar_month',keys:['term_unit','payment_frequency']},
- {title:'Intereses y amortización',icon:'calculate',keys:['rate_type','interest_method','amortization_method']},
- {title:'Capacidad de pago y buró de crédito',icon:'analytics',keys:['min_dti','max_dti','min_bureau_score','requires_bureau']}
- ].map(g=>({...g,fields:this.financial.filter(f=>g.keys.includes(f.key))}));}
  fieldLabels:Record<string,string>={company_id:'Empresa',parent_product_id:'Producto padre',code:'Clave',name:'Nombre del producto',description:'Descripción',status:'Producto activo',min_amount:'Monto mínimo',max_amount:'Monto máximo',min_term:'Plazo mínimo',max_term:'Plazo máximo',min_annual_rate:'Tasa anual mínima',max_annual_rate:'Tasa anual máxima',currency:'Moneda',term_unit:'Unidad de plazo',payment_frequency:'Frecuencia de pago',rate_type:'Tipo de tasa',interest_method:'Método de interés',amortization_method:'Método de amortización',min_dti:'DTI mínimo',max_dti:'DTI máximo',min_bureau_score:'Puntaje mínimo de buró',requires_bureau:'Requiere consulta de buró',calculation_type:'Tipo de cálculo',amount:'Importe o tasa',taxable:'Aplica impuesto',active:'Activo',document_type_id:'Tipo de documento',required:'Obligatorio',min_files:'Mínimo de archivos',max_files:'Máximo de archivos',display_order:'Orden de presentación',rule_code:'Clave de regla',operator:'Operador',rule_value:'Valor de regla',rejection_reason:'Motivo de rechazo',mandatory:'Obligatoria',custom_field_id:'Campo configurable',scope:'Ámbito',visible:'Visible'};
  fieldLabel(f:Field){return this.fieldLabels[f.key]??f.label;}
  recordLabel(s:typeof this.sections[number],row:Record<string,any>,i:number){const key=s.fields.find(f=>f.reference);const ref=key?.reference?this.refs[key.reference]?.find(r=>r.id===row[key.key]):undefined;return row['name']||row['rule_code']||(ref?this.label(ref):'')||'Registro '+(i+1);}
  
  data:Record<string,any>={status:'active'}; configuration:Record<string,any>={term_unit:'month',rate_type:'fixed',interest_method:'outstanding_balance',min_dti:0,max_dti:0.4,amortization_method:'french',payment_frequency:'monthly',currency:'MXN',requires_bureau:true};
  financial=setting('versiones_productos').fields.filter(f=>!['product_id','version','active','effective_from','effective_to'].includes(f.key));
+ readonly generalFields=this.config.fields.filter(f=>f.key!=='status');
+ readonly mainFinancial=this.financial.filter(f=>['min_amount','max_amount','min_term','max_term','min_annual_rate','max_annual_rate','currency'].includes(f.key));
+ readonly financialGroups=[
+ {title:'Plazos y frecuencia de pago',icon:'calendar_month',keys:['term_unit','payment_frequency']},
+ {title:'Intereses y amortización',icon:'calculate',keys:['rate_type','interest_method','amortization_method']},
+ {title:'Capacidad de pago y buró de crédito',icon:'analytics',keys:['min_dti','max_dti','min_bureau_score','requires_bureau']}
+ ].map(g=>({...g,fields:this.financial.filter(f=>g.keys.includes(f.key))}));
+ selectTab(index:number):void {if(index<0||index>=this.tabs.length||index===this.tab)return;this.historical=null;this.tab=index;}
+ trackField(_index:number,field:Field){return field.key;}
+ trackGroup(_index:number,group:{title:string}){return group.title;}
  sections=[{key:'rules',relation:'credit_product_rules',fields:setting('reglas_productos').fields},{key:'fields',relation:'credit_product_fields',fields:setting('campos_productos').fields},{key:'documents',relation:'credit_product_documents',fields:setting('requisitos_documentales').fields},{key:'fees',relation:'credit_product_fees',fields:setting('comisiones_productos').fields}].map(s=>({...s,fields:s.fields.filter(f=>f.key!=='product_version_id')}));
  rows:Record<string,Record<string,any>[]>= {rules:[],fields:[],documents:[],fees:[]}; refs:Record<string,Item[]>={}; history:Item[]=[]; historical:Item|null=null; busy=false;saving=false;error='';
  get editable(){return !this.readonlyMode&&!this.historical;}
