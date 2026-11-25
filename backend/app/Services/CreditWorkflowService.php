@@ -121,9 +121,11 @@ class CreditWorkflowService
             }
         }
         $transitionMap = [];
+        $removedTransitions = [];
         foreach ($oldTransitions as $transition) {
             if (!isset($map[$transition->from_step_id], $map[$transition->to_step_id])) {
-                throw ValidationException::withMessages(['steps' => 'No se puede retirar una etapa vinculada a una transición.']);
+                $removedTransitions[$transition->id] = $transition->from_step_id;
+                continue;
             }
             $copy = $version->creditWorkflowTransitions()->create(
                 Arr::except($transition->getAttributes(), ['id','workflow_version_id','from_step_id','to_step_id','created_at','updated_at']) +
@@ -134,6 +136,9 @@ class CreditWorkflowService
         foreach (array_values($steps) as $index => $row) {
             foreach ($row['rules'] as $rule) {
                 $transitionId = $rule['transition_id'] ?? null;
+                if ($transitionId && isset($removedTransitions[$transitionId]) && $removedTransitions[$transitionId] === ($row['id'] ?? null)) {
+                    continue;
+                }
                 if ($transitionId && (!isset($transitionMap[$transitionId]) || $oldTransitions[$transitionId]->from_step_id !== ($row['id'] ?? null))) {
                     throw ValidationException::withMessages(['steps' => 'La transición de la regla no pertenece a la etapa.']);
                 }

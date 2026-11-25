@@ -145,6 +145,10 @@ final class CreditSystemMenusSeeder extends Seeder
                             ]);
                         }
                         $viewId = DB::table('module_actions')->where('permission', $moduleCode.'.ver')->value('id');
+                        if ($app === 'configuracion-sistema' && in_array($code, ['etapas_flujos', 'reglas_flujos', 'roles_flujos'], true)) {
+                            DB::table('menu_items')->where('code', $moduleCode)->delete();
+                            continue;
+                        }
                         DB::table('menu_items')->updateOrInsert(['code' => $moduleCode], [
                             'label' => $name, 'route' => '/'.$code, 'icon' => $icon,
                             'parent_id' => $parent, 'module_action_id' => $viewId,
