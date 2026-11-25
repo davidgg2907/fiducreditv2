@@ -19,6 +19,11 @@ class CreditWorkflowStep extends Model
         'updated_at',
     ];
 
+    protected function casts(): array
+    {
+        return ['metadata' => 'array'];
+    }
+
     public function workflowVersion(): BelongsTo
     {
         return $this->belongsTo(CreditWorkflowVersion::class, 'workflow_version_id');

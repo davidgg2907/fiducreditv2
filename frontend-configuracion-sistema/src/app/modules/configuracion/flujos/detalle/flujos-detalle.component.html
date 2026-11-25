@@ -1,7 +1,7 @@
 <section class="cfg"><header><h2>Detalle · {{config.title}}</h2><div class="actions"><a [routerLink]="home">Volver</a><a *ngIf="item&&can('editar')" [routerLink]="[home,item.id,'editar']">Editar</a></div></header>
 <p *ngIf="error" class="alert alert-danger">{{error}}</p><p *ngIf="busy">Cargando detalle...</p>
 <dl *ngIf="item" class="detail"><ng-container *ngFor="let f of config.fields"><dt *ngIf="f.type!=='password'">{{f.label}}</dt><dd *ngIf="f.type!=='password'">{{value(item,f)}}</dd></ng-container><dt>ID</dt><dd>{{item.id}}</dd></dl>
-<section class="relation" *ngFor="let r of relations"><header><h3>{{r.config.title}}</h3><a *ngIf="permissions.can(r.config,'crear')" [routerLink]="['/',r.config.key,'nuevo']">Agregar</a></header>
+<section class="relation" *ngFor="let r of relations"><header><h3>{{r.config.title}}</h3></header>
 <p *ngIf="r.error" class="alert alert-warning">{{r.error}}</p><p *ngIf="!r.rows.length&&!r.error">Sin registros relacionados</p>
 <div class="relation-row" *ngFor="let child of r.rows"><span>{{child['name']||child['code']||child['label']||child.id}}</span><a *ngIf="permissions.can(r.config,'detalle')" [routerLink]="['/',r.config.key,child.id,'detalle']">Detalle</a></div>
 </section></section>
