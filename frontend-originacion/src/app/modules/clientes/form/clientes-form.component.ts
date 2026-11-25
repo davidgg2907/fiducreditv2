@@ -30,19 +30,19 @@ export class ClientesFormComponent implements OnInit {
   readonly form = this.fb.group({
     company_id: ['', [Validators.required, Validators.pattern(/^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i)]],
     first_name: ['', [Validators.required, Validators.maxLength(255)]],
-    middle_name: [null, [Validators.maxLength(255)]],
+    middle_name: this.fb.control<string | null>(null, [Validators.maxLength(255)]),
     last_name: ['', [Validators.required, Validators.maxLength(255)]],
-    second_last_name: [null, [Validators.maxLength(255)]],
-    birth_date: [null, []],
-    rfc: [null, [Validators.maxLength(13)]],
-    curp: [null, [Validators.maxLength(18)]],
-    ine_folio: [null, [Validators.maxLength(255)]],
-    passport_number: [null, [Validators.maxLength(255)]],
-    nss: [null, [Validators.maxLength(255)]],
-    health_provider: [null, [Validators.maxLength(255)]],
-    email: [null, [Validators.email]],
-    phone: [null, [Validators.maxLength(20)]],
-    status: [null, [Validators.maxLength(255)]]
+    second_last_name: this.fb.control<string | null>(null, [Validators.maxLength(255)]),
+    birth_date: this.fb.control<string | null>(null, []),
+    rfc: this.fb.control<string | null>(null, [Validators.maxLength(13)]),
+    curp: this.fb.control<string | null>(null, [Validators.maxLength(18)]),
+    ine_folio: this.fb.control<string | null>(null, [Validators.maxLength(255)]),
+    passport_number: this.fb.control<string | null>(null, [Validators.maxLength(255)]),
+    nss: this.fb.control<string | null>(null, [Validators.maxLength(255)]),
+    health_provider: this.fb.control<string | null>(null, [Validators.maxLength(255)]),
+    email: this.fb.control<string | null>(null, [Validators.email]),
+    phone: this.fb.control<string | null>(null, [Validators.maxLength(20)]),
+    status: this.fb.control<string | null>(null, [Validators.maxLength(255)])
   });
   error = '';
   saving = false;

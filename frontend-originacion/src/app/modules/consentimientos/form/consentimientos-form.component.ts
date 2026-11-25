@@ -32,7 +32,7 @@ export class ConsentimientosFormComponent implements OnInit {
     consent_type: ['', [Validators.required, Validators.maxLength(255)]],
     version: ['', [Validators.required, Validators.maxLength(255)]],
     accepted: [false, []],
-    accepted_at: [null, []]
+    accepted_at: this.fb.control<string | null>(null, [])
   });
   error = '';
   saving = false;

@@ -30,10 +30,10 @@ export class ObligadosSolidariosFormComponent implements OnInit {
   readonly form = this.fb.group({
     application_id: ['', [Validators.required, Validators.pattern(/^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i)]],
     full_name: ['', [Validators.required, Validators.maxLength(255)]],
-    rfc: [null, [Validators.maxLength(13)]],
+    rfc: this.fb.control<string | null>(null, [Validators.maxLength(13)]),
     relationship: ['', [Validators.required, Validators.maxLength(255)]],
-    phone: [null, [Validators.maxLength(20)]],
-    monthly_income: [null, []]
+    phone: this.fb.control<string | null>(null, [Validators.maxLength(20)]),
+    monthly_income: this.fb.control<number | null>(null, [])
   });
   error = '';
   saving = false;

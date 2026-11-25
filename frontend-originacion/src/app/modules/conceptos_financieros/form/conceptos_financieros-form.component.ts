@@ -31,10 +31,10 @@ export class ConceptosFinancierosFormComponent implements OnInit {
     application_id: ['', [Validators.required, Validators.pattern(/^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i)]],
     entry_type: ['', [Validators.required]],
     concept: ['', [Validators.required, Validators.maxLength(255)]],
-    counterparty: [null, [Validators.maxLength(255)]],
-    amount: [null, [Validators.required, Validators.min(0.01)]],
+    counterparty: this.fb.control<string | null>(null, [Validators.maxLength(255)]),
+    amount: this.fb.control<number | null>(null, [Validators.required, Validators.min(0.01)]),
     frequency: ['', [Validators.required]],
-    observations: [null, []]
+    observations: this.fb.control<string | null>(null, [])
   });
   error = '';
   saving = false;

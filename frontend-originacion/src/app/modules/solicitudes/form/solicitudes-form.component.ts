@@ -38,12 +38,12 @@ export class SolicitudesFormComponent implements OnInit {
     advisor_id: ['', [Validators.required, Validators.pattern(/^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i)]],
     branch_id: ['', [Validators.required, Validators.pattern(/^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i)]],
     address_version_id: ['', [Validators.required, Validators.pattern(/^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i)]],
-    bank_account_id: [null, [Validators.pattern(/^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i)]],
+    bank_account_id: this.fb.control<string | null>(null, [Validators.pattern(/^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i)]),
     application_number: ['', [Validators.required, Validators.maxLength(255)]],
-    requested_amount: [null, [Validators.required, Validators.min(0.01)]],
-    requested_term: [null, [Validators.required, Validators.pattern(/^\d+$/), Validators.min(1)]],
-    declared_income: [null, []],
-    declared_expenses: [null, []]
+    requested_amount: this.fb.control<number | null>(null, [Validators.required, Validators.min(0.01)]),
+    requested_term: this.fb.control<number | null>(null, [Validators.required, Validators.pattern(/^\d+$/), Validators.min(1)]),
+    declared_income: this.fb.control<number | null>(null, []),
+    declared_expenses: this.fb.control<number | null>(null, [])
   });
   error = '';
   saving = false;

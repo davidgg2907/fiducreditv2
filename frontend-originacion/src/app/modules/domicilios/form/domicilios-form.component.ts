@@ -29,7 +29,7 @@ export class DomiciliosFormComponent implements OnInit {
   readonly id = this.route.snapshot.paramMap.get('id');
   readonly form = this.fb.group({
     client_id: ['', [Validators.required, Validators.pattern(/^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i)]],
-    address_type: [null, [Validators.maxLength(255)]],
+    address_type: this.fb.control<string | null>(null, [Validators.maxLength(255)]),
     primary: [false, []],
     active: [true, []]
   });
