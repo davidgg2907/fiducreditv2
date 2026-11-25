@@ -11,3 +11,5 @@ h2{font-size:1.35rem;margin:0;font-weight:700}h3{font-size:1.05rem}p{color:#6474
 @media(max-width:600px){.detail{grid-template-columns:1fr}.cfg{padding:.8rem}}
 
 .calendar-form{display:grid;gap:1rem}.calendar-card{padding:1.25rem}.weekday-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:.75rem}.weekday{border:1px solid #dbe4e3;border-radius:8px;padding:1rem 1rem 1rem 3rem;margin:0}.form-check-input:checked{background-color:#17665e;border-color:#17665e}.calendar-card h3{font-weight:600;margin-bottom:1rem}
+
+.holiday-heading{display:flex;justify-content:space-between;align-items:flex-start;gap:1rem;flex-wrap:wrap}.holiday-heading button{display:flex;align-items:center;gap:.4rem}.holiday-row{display:grid;grid-template-columns:minmax(150px,1fr) minmax(180px,2fr) minmax(170px,1fr) auto;gap:1rem;align-items:end;padding:1rem 0;border-top:1px solid #dbe4e3}.holiday-row .form-switch{align-self:center}.holiday-row button{align-self:end}@media(max-width:800px){.holiday-row{grid-template-columns:1fr}}

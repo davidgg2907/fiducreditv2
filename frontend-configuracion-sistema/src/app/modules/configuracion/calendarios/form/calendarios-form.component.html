@@ -1,8 +1,8 @@
 <section class="cfg"><header class="cfg-panel cfg-heading"><div><h2>{{id?'Editar':'Crear'}} · {{config.title}}</h2><p>Captura y edición de información</p></div><div class="cfg-header-actions">
-  <button class="btn btn-primary" form="config-form" type="submit" [disabled]="saving||busy">{{saving?'Guardando...':'Guardar'}}</button>
+  <button class="btn btn-primary" form="config-form" type="submit" [disabled]="saving||busy||loadFailed">{{saving?'Guardando...':'Guardar'}}</button>
   <a class="btn btn-outline-secondary cfg-header-cancel" [routerLink]="home"><span class="material-icons-outlined" aria-hidden="true">close</span> Cancelar</a>
 </div></header><p *ngIf="error" class="alert alert-danger">{{error}}</p>
-<form id="config-form" *ngIf="can(id?'editar':'crear')&&!busy" (ngSubmit)="save()" class="calendar-form" #calendarForm="ngForm">
+<form id="config-form" *ngIf="can(id?'editar':'crear')&&!busy&&!loadFailed" (ngSubmit)="save()" class="calendar-form" #calendarForm="ngForm">
 <section class="cfg-panel calendar-card">
 <h3>Información general</h3>
 <div class="formgrid">
@@ -15,5 +15,15 @@
 </div></section>
 <section class="cfg-panel calendar-card"><h3>Días inhábiles semanales</h3><p>Activa los días en los que no se realizan operaciones. Los días sin marcar son laborables.</p>
 <div class="weekday-grid"><div class="weekday form-check form-switch" *ngFor="let d of weekdays"><input class="form-check-input" type="checkbox" [id]="'weekday-'+d.id" [checked]="selectedDays.includes(d.id)" (change)="toggleDay(d.id,$any($event.target).checked)"><label class="form-check-label" [for]="'weekday-'+d.id">{{d.label}}</label></div></div></section>
-<section class="cfg-panel calendar-card"><h3>Fechas inhábiles específicas</h3><p>Registra festivos, puentes o cierres extraordinarios mediante el selector de fecha.</p><a *ngIf="id && can('editar')" class="btn btn-outline-secondary" [routerLink]="['/dias_inhabiles','nuevo']" [queryParams]="{calendar_id:id}">Agregar día inhábil</a><a *ngIf="id" class="btn btn-outline-secondary ms-2" [routerLink]="[home,id,'detalle']">Consultar fechas registradas</a><p *ngIf="!id">Guarda primero el calendario para registrar fechas específicas.</p></section>
+<section class="cfg-panel calendar-card">
+<div class="holiday-heading"><div><h3>Fechas inhábiles específicas</h3><p>Agrega festivos, puentes o cierres extraordinarios. Todos se guardarán junto con el calendario.</p></div><button type="button" class="btn btn-outline-secondary" (click)="addHoliday()" [disabled]="saving"><span class="material-icons-outlined" aria-hidden="true">add</span> Agregar fecha</button></div>
+<p *ngIf="!holidays.length">No hay fechas específicas registradas.</p>
+<div class="holiday-row" *ngFor="let h of holidays;let i=index">
+<div class="field"><label [for]="'holiday-date-'+i">Fecha *</label><input type="date" class="form-control" [id]="'holiday-date-'+i" [name]="'holiday-date-'+i" [(ngModel)]="h.holiday_date" required [disabled]="saving"></div>
+<div class="field"><label [for]="'holiday-description-'+i">Motivo *</label><input class="form-control" [id]="'holiday-description-'+i" [name]="'holiday-description-'+i" [(ngModel)]="h.description" required maxlength="150" placeholder="Ej. Navidad" [disabled]="saving"></div>
+<div class="form-check form-switch"><input type="checkbox" class="form-check-input" [id]="'holiday-recurring-'+i" [name]="'holiday-recurring-'+i" [(ngModel)]="h.recurring" [disabled]="saving"><label class="form-check-label" [for]="'holiday-recurring-'+i">Se repite cada año</label></div>
+<button *ngIf="!h.id" type="button" class="btn btn-outline-secondary" (click)="removeHoliday(i)" [disabled]="saving" aria-label="Quitar fecha sin guardar"><span class="material-icons-outlined" aria-hidden="true">close</span></button>
+</div>
+<p *ngIf="holidays.length" class="mb-0">Las fechas ya guardadas pueden editarse, pero no se eliminan físicamente.</p>
+</section>
 </form></section>

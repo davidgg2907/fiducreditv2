@@ -56,12 +56,7 @@ final class CreditBusinessHolidayController extends Controller
         $this->authorizeAction($request, 'write');
         
 
-        $record = $this->service->create($request->validated());
-
-        return response()->json([
-            'isSuccess' => true,
-            'data' => (new CreditBusinessHolidayResource($record))->resolve(),
-        ], 201);
+        abort(405, 'Registra las fechas desde el formulario de calendario.');
     }
 
     public function update(UpdateCreditBusinessHolidayRequest $request, string $id): JsonResponse
@@ -69,12 +64,7 @@ final class CreditBusinessHolidayController extends Controller
         $this->authorizeAction($request, 'write');
         
 
-        $record = $this->service->update($id, $request->validated());
-
-        return response()->json([
-            'isSuccess' => true,
-            'data' => (new CreditBusinessHolidayResource($record))->resolve(),
-        ]);
+        abort(405, 'Edita las fechas desde el formulario de calendario.');
     }
 
     public function destroy(Request $request, string $id): JsonResponse
