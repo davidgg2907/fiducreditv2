@@ -1,4 +1,9 @@
-<section class="operativo-module">
-<header class="operativo-module__header"><div><h1>FiduCredit V2 · Configuración del Sistema</h1><p>Panel inicial</p></div></header>
-<mat-card><mat-card-content><h2>Arquetipo funcional</h2><p>Base independiente de configuración del sistema: Usuarios, roles, permisos, empresas, sucursales, productos y flujos. Se conservan autenticación, menú y perfil del arquetipo; los módulos de negocio y sus permisos se implementarán por separado.</p><a mat-raised-button color="primary" routerLink="/perfil">Mi perfil</a></mat-card-content></mat-card>
+<section class="operativo-module dashboard">
+<header class="operativo-module__header"><div><h1>Indicadores operativos</h1><p>Monitoreo de sesiones, solicitudes y transacciones</p></div><button mat-raised-button color="primary" (click)="refresh()" [disabled]="loading"><mat-icon>refresh</mat-icon> Actualizar</button></header>
+<mat-progress-bar *ngIf="loading" mode="indeterminate"></mat-progress-bar>
+<p role="alert" *ngIf="error">{{error}}</p>
+<p *ngIf="data">Última consulta: {{data.generated_at | date:'dd/MM/yyyy HH:mm:ss'}}</p>
+<div class="panels"><mat-card *ngFor="let panel of panels"><mat-card-content><ng-container *ngTemplateOutlet="table;context:{$implicit:panel}"></ng-container></mat-card-content></mat-card></div>
+<mat-card *ngIf="data"><mat-card-content><h2>Últimas 50 transacciones por sistema</h2><mat-tab-group><mat-tab *ngFor="let panel of logPanels" [label]="panel.title"><ng-template matTabContent><ng-container *ngTemplateOutlet="table;context:{$implicit:panel}"></ng-container></ng-template></mat-tab></mat-tab-group></mat-card-content></mat-card>
+<ng-template #table let-panel><h2>{{panel.title}} <span class="count">{{panel.rows.length}}</span></h2><div class="table-wrap"><table><thead><tr><th *ngFor="let col of panel.columns">{{col.label}}</th></tr></thead><tbody><tr *ngFor="let row of panel.rows"><td *ngFor="let col of panel.columns">{{value(row,col.key)}}</td></tr><tr *ngIf="!panel.rows.length"><td [attr.colspan]="panel.columns.length">Sin registros disponibles.</td></tr></tbody></table></div></ng-template>
 </section>

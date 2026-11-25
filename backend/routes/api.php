@@ -19,8 +19,9 @@ Route::middleware(ProtectBrowserAuth::class)->group(function (): void {
     Route::post('password/reset', [AuthController::class, 'resetPassword'])->middleware('throttle:auth-recovery');
 });
 
-Route::middleware(AuthenticateAccessToken::class)->group(function (): void {
+Route::middleware([AuthenticateAccessToken::class, \App\Http\Middleware\RecordOperationalRequest::class])->group(function (): void {
     Route::get('me', [AuthController::class, 'me']);
+    Route::get('access/operational-dashboard', [\App\Http\Controllers\OperationalDashboardController::class, 'index'])->middleware('can:manage-access');
     Route::prefix('access')->middleware('can:manage-access')->group(function (): void {
         Route::get('catalog', [AccessRoleController::class, 'catalog']);
         Route::get('roles', [AccessRoleController::class, 'index']);
@@ -59,7 +60,7 @@ Route::middleware(AuthenticateAccessToken::class)->group(function (): void {
 
 
 // Captura masiva transaccional de ingresos y egresos de una solicitud.
-Route::middleware(AuthenticateAccessToken::class)
+Route::middleware([AuthenticateAccessToken::class, \App\Http\Middleware\RecordOperationalRequest::class])
     ->post(
         'v1/credit-applications/{id}/financial-items/batch',
         [\App\Http\Controllers\CreditApplicationFinancialItemController::class, 'storeBatch']
@@ -67,7 +68,7 @@ Route::middleware(AuthenticateAccessToken::class)
 
 // Los cinco frontends comparten estos recursos. Solo acceso administrativo
 // hasta implementar políticas operativas por empresa, sucursal y flujo.
-Route::middleware(AuthenticateAccessToken::class)
+Route::middleware([AuthenticateAccessToken::class, \App\Http\Middleware\RecordOperationalRequest::class])
     ->prefix('v1')
     ->group(function (): void {
         Route::apiResource(

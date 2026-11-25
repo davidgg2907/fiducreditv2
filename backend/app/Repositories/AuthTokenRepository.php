@@ -54,7 +54,14 @@ class AuthTokenRepository
             $this->revokeForUser($user->id);
             $minutes = config($remember ? 'auth_tokens.refresh_token_ttl_remember' : 'auth_tokens.refresh_token_ttl');
 
-            return $this->createPair($user, $remember, now()->toImmutable()->addMinutes($minutes));
+            $pair = $this->createPair($user, $remember, now()->toImmutable()->addMinutes($minutes));
+            $frontend = request()->header('X-Frontend-App');
+            DB::table('auth_login_history')->insert([
+                'user_id' => $user->id, 'user_name' => $user->name,
+                'frontend' => in_array($frontend, ['originacion','administracion','pld-operacion','pld-configuracion','configuracion-sistema'], true) ? $frontend : null,
+                'started_at' => now(),
+            ]);
+            return $pair;
         }, 3);
     }
 
