@@ -33,14 +33,14 @@ export class ProductosFormComponent implements OnInit {
  trackField(_index:number,field:Field){return field.key;}
  trackGroup(_index:number,group:{title:string}){return group.title;}
  sections=[{key:'rules',relation:'credit_product_rules',fields:setting('reglas_productos').fields},{key:'fields',relation:'credit_product_fields',fields:setting('campos_productos').fields},{key:'documents',relation:'credit_product_documents',fields:setting('requisitos_documentales').fields},{key:'fees',relation:'credit_product_fees',fields:setting('comisiones_productos').fields}].map(s=>({...s,fields:s.fields.filter(f=>f.key!=='product_version_id')}));
- rows:Record<string,Record<string,any>[]>= {rules:[],fields:[],documents:[],fees:[]}; refs:Record<string,Item[]>={}; history:Item[]=[]; historical:Item|null=null; busy=false;saving=false;error='';
- get editable(){return !this.readonlyMode&&!this.historical;}
+ rows:Record<string,Record<string,any>[]>= {rules:[],fields:[],documents:[],fees:[]}; refs:Record<string,Item[]>={}; history:Item[]=[]; historical:Item|null=null; busy=false;saving=false;loadFailed=false;error='';
+ get editable(){return !this.readonlyMode&&!this.historical&&!this.loadFailed;}
  get allowed(){return this.permissions.can(this.config,this.readonlyMode?'detalle':this.id?'editar':'crear');}
  ngOnInit(){
   if(!this.allowed){this.error='Sin permiso para esta operación.';return;}
   const refs=[...this.config.fields,...this.sections.flatMap(s=>s.fields)].filter(f=>f.reference);
   for(const f of refs){const key=f.reference!;if(this.refs[key])continue;this.refs[key]=[];this.loadRefs(key,1);}
-  if(this.id){this.busy=true;this.api.detail(this.config.api,this.id).subscribe({next:r=>{this.data=r;this.configuration=r['current_version']??{};for(const s of this.sections)this.rows[s.key]=this.configuration[s.relation]??[];this.history=r['credit_product_versions']??[];this.busy=false;},error:e=>{this.fail(e);this.busy=false;}});}
+  if(this.id){this.busy=true;this.api.detail(this.config.api,this.id).subscribe({next:r=>{this.data=r;this.configuration=r['current_version']??{};for(const s of this.sections)this.rows[s.key]=this.configuration[s.relation]??[];this.history=r['credit_product_versions']??[];this.busy=false;},error:e=>{this.loadFailed=true;this.fail(e);this.busy=false;}});}
  }
  loadRefs(key:string,page:number){this.api.list(setting(key).api,page).subscribe({next:r=>{this.refs[key].push(...r.data);if(page<r.last_page)this.loadRefs(key,page+1);},error:e=>this.fail(e)});}
  label(r:Item){return r['name']??r['legal_name']??r['label']??r['code']??r.id;}
