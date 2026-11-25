@@ -1,8 +1,39 @@
 @use '../../originacion-institutional';
 :host { display: contents; }
-dialog { width: min(1000px, 94vw); max-height: 88vh; overflow: auto; padding: 24px; border: 1px solid var(--app-border); border-radius: 12px; color: var(--app-text); background: var(--app-surface); }
+dialog {
+  position: fixed;
+  inset: 0;
+  margin: auto;
+  width: min(1000px, calc(100vw - 32px));
+  height: fit-content;
+  max-height: calc(100dvh - 32px);
+  box-sizing: border-box;
+  overflow: hidden;
+  padding: 0;
+  border: 1px solid var(--app-border);
+  border-radius: 12px;
+  color: var(--app-text);
+  background: var(--app-surface);
+}
+dialog[open] { display: flex; flex-direction: column; }
 dialog::backdrop { background: rgba(15, 30, 40, .48); }
-dialog .heading, dialog .table-scroll, .relation-fields, .modal-actions { margin: 16px 0; }
+.modal-header, .modal-footer {
+  flex: 0 0 auto;
+  background: #173c50;
+  color: #fff;
+  padding: 14px 20px;
+  margin: 0;
+}
+.modal-header h2 { color: #fff; font-size: 1.15rem; }
+.modal-header .icon-btn { color: #fff; }
+.modal-header .icon-btn:hover { background: rgba(255,255,255,.15); }
+.modal-body { min-height: 0; overflow: auto; padding: 20px; }
+.modal-footer { display: flex; align-items: center; justify-content: flex-end; gap: 10px; flex-wrap: wrap; }
+.modal-footer .btn-outline { background: transparent; color: #fff; border-color: rgba(255,255,255,.7); }
+.modal-footer .btn-outline:hover:not(:disabled) { background: rgba(255,255,255,.12); }
+.modal-footer .btn-primary { border-color: var(--app-accent-strong); }
+dialog .table-scroll, .relation-fields { margin: 16px 0; }
 details { margin: 10px 0; }
 summary { cursor: pointer; color: var(--app-primary-strong); }
 .icon-btn { cursor: pointer; }
+@media (max-width: 700px) { .modal-header, .modal-body, .modal-footer { padding: 12px; } }

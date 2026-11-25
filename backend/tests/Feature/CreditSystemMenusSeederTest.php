@@ -51,6 +51,15 @@ final class CreditSystemMenusSeederTest extends TestCase
         $this->assertNotContains('credit_administracion_creditos', $codes);
         $this->assertNotContains('credit_pld-operacion_alertas_pld', $codes);
 
+        $originacionCodes = $flatten($service->forPermissions([], true, 'originacion'));
+        foreach (['domicilios', 'cuentas_bancarias'] as $module) {
+            $code = 'credit_originacion_'.$module;
+            $this->assertNotContains($code, $originacionCodes);
+            $this->assertDatabaseMissing('menu_items', ['code' => $code]);
+            $this->assertDatabaseHas('module_actions', ['permission' => $code.'.crear']);
+            $this->assertDatabaseHas('module_actions', ['permission' => $code.'.editar']);
+        }
+
         $adminMenu = $service->forPermissions([], true, 'configuracion-sistema');
         $adminCodes = $flatten($adminMenu);
         $this->assertContains('credit_configuracion-sistema_usuarios', $adminCodes);

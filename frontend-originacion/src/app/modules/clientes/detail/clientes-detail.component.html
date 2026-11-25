@@ -4,7 +4,6 @@
     <p>Consulta de información</p>
   </div>
   <div class="header-actions">
-    <a class="btn btn-primary" *ngIf="record && permissions.can('clientes', 'editar')" [routerLink]="['/clientes', record.id, 'editar']"><span class="material-icons-outlined" aria-hidden="true">edit</span> Editar</a>
     <a class="btn btn-outline" routerLink="/clientes"><span class="material-icons-outlined" aria-hidden="true">arrow_back</span> Volver a lista</a>
   </div>
 </header>
@@ -82,4 +81,4 @@
   </ng-container>
 </section>
 
-<app-clientes-relaciones *ngIf="record" [clientId]="record.id"></app-clientes-relaciones>
+<app-clientes-relaciones *ngIf="record" [clientId]="record.id" [readOnly]="true"></app-clientes-relaciones>

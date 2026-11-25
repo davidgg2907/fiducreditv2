@@ -12,6 +12,8 @@ final class SessionMenu
             ->where(fn ($query) => $query->whereNull('menu_items.app_code')
                 ->when($appCode !== null, fn ($q) => $q->orWhere('menu_items.app_code', $appCode)))
             ->whereNotIn('menu_items.code', [
+                'credit_originacion_domicilios',
+                'credit_originacion_cuentas_bancarias',
                 'credit_configuracion-sistema_versiones_productos',
                 'credit_configuracion-sistema_comisiones_productos',
                 'credit_configuracion-sistema_reglas_productos',
