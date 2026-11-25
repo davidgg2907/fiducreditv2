@@ -8,8 +8,8 @@ import {ConfigPermissions} from '../../shared/permissions.service';
 import {setting} from '../../shared/schema';
 import {FormPage} from '../../shared/pages';
 import {CalendariosService} from '../../../../servicios/configuracion/calendarios.service';
-@Component({selector:'app-calendarios-form',standalone:true,imports:[CommonModule,FormsModule,RouterModule],templateUrl:'./calendarios-form.component.html',styleUrls:['./calendarios-form.component.scss']})
 interface HolidayRow { id?:string; holiday_date:string; description:string; recurring:boolean; }
+@Component({selector:'app-calendarios-form',standalone:true,imports:[CommonModule,FormsModule,RouterModule],templateUrl:'./calendarios-form.component.html',styleUrls:['./calendarios-form.component.scss']})
 export class CalendariosFormComponent extends FormPage{
  readonly weekdays=[{id:1,label:'Lunes'},{id:2,label:'Martes'},{id:3,label:'Miércoles'},{id:4,label:'Jueves'},{id:5,label:'Viernes'},{id:6,label:'Sábado'},{id:0,label:'Domingo'}];
  readonly mexicanZones=[['America/Mexico_City','Ciudad de México / Centro'],['America/Monterrey','Monterrey'],['America/Cancun','Cancún'],['America/Merida','Mérida'],['America/Tijuana','Tijuana'],['America/Hermosillo','Hermosillo'],['America/Mazatlan','Mazatlán'],['America/Chihuahua','Chihuahua'],['America/Ciudad_Juarez','Ciudad Juárez'],['America/Ojinaga','Ojinaga'],['America/Matamoros','Matamoros'],['America/Bahia_Banderas','Bahía de Banderas'],['America/Tepic','Tepic']];
