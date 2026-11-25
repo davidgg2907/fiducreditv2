@@ -364,12 +364,6 @@
 }
 ::ng-deep .dropdown-userprofile .menu-userprofile__avatar img {width:100%;height:100%;object-fit:cover;}
 
-/* Configuración: header compacto alineado al sidebar (sin navegación horizontal). */
-.top-header,.top-header.test{left:260px!important;right:0!important;width:calc(100% - 260px)!important;min-height:76px}
-.top-header .menu-toggle{display:none}
-.searchbar,.searchbar.full-search{left:260px!important;right:0!important}
-@media(max-width:900px){.top-header,.top-header.test{left:0!important;width:100%!important}.top-header .menu-toggle{display:grid}.searchbar,.searchbar.full-search{left:0!important}}
-
 /* Cabecera institucional: tonos del sidebar, de azul marino a azul petróleo. */
 .top-header{background:var(--app-header-gradient);border-bottom-color:#244b5c;box-shadow:0 4px 18px rgba(7,26,40,.15)}
 .header-copy h1{color:#f1f8fa}
@@ -384,3 +378,8 @@
   border-bottom: 1px solid #244b5c !important;
 }
 :host .top-header .header-copy h1 { color:#ffffff !important; text-shadow:0 1px 2px rgba(0,0,0,.15); }
+
+/* Originación: cabecera a todo el ancho, encima del menú horizontal. */
+:host .top-header,:host .top-header.test{left:0!important;right:0;width:100%!important;height:84px;min-height:84px;box-sizing:border-box}
+:host .top-header .menu-toggle{display:none}
+:host .searchbar,:host .searchbar.full-search{left:0!important;right:0}

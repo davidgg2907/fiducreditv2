@@ -45,6 +45,11 @@ export class SidebarComponent implements OnInit {
 
   logOut = (): void => { this.authService.logout().subscribe({ next: () => void this.router.navigate(['/login']), error: () => this.toast.error('No se pudo cerrar la sesión. Intenta de nuevo.') }); }
 
+  isActive(item: MenuItem): boolean {
+    const path = this.router.url.split(/[?#]/, 1)[0];
+    return item.routerLink === path || (item.children ?? []).some(child => this.isActive(child));
+  }
+
   trackByCode(_index: number, item: MenuItem): string {
     return item.code;
   }
