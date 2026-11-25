@@ -1,0 +1,50 @@
+<section class="panel heading">
+  <h2>Obligados solidarios</h2>
+  <a routerLink="/obligados_solidarios">Cancelar</a>
+</section>
+<section class="panel">
+  <h3>{{ id ? 'Editar registro' : 'Nuevo registro' }}</h3>
+  <p class="error" role="alert" *ngIf="error">{{ error }}</p>
+  <p *ngIf="loading || !ready">Cargando información…</p>
+  <form [formGroup]="form" (ngSubmit)="save()">
+    <div class="fields">
+      <label>
+        Solicitud *
+        <select formControlName="application_id">
+          <option [ngValue]="null">Seleccione</option>
+          <option *ngFor="let option of application_idOptions" [value]="option.id">{{ option.label }}</option>
+        </select>
+        <small *ngIf="form.controls.application_id.invalid && form.controls.application_id.touched">Revise este campo.</small>
+      </label>
+      <label>
+        Nombre completo *
+        <input formControlName="full_name" type="text">
+        <small *ngIf="form.controls.full_name.invalid && form.controls.full_name.touched">Revise este campo.</small>
+      </label>
+      <label>
+        RFC
+        <input formControlName="rfc" type="text">
+        <small *ngIf="form.controls.rfc.invalid && form.controls.rfc.touched">Revise este campo.</small>
+      </label>
+      <label>
+        Parentesco o relación *
+        <input formControlName="relationship" type="text">
+        <small *ngIf="form.controls.relationship.invalid && form.controls.relationship.touched">Revise este campo.</small>
+      </label>
+      <label>
+        Teléfono
+        <input formControlName="phone" type="text">
+        <small *ngIf="form.controls.phone.invalid && form.controls.phone.touched">Revise este campo.</small>
+      </label>
+      <label>
+        Ingreso mensual
+        <input formControlName="monthly_income" type="number" step="0.01">
+        <small *ngIf="form.controls.monthly_income.invalid && form.controls.monthly_income.touched">Revise este campo.</small>
+      </label>
+    </div>
+    <div class="actions">
+      <button type="submit" [disabled]="saving || loading || !ready || form.disabled || !permissions.can('obligados_solidarios', id ? 'editar' : 'crear')">{{ saving ? 'Guardando…' : 'Guardar' }}</button>
+      <a routerLink="/obligados_solidarios">Volver</a>
+    </div>
+  </form>
+</section>

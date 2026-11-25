@@ -1,0 +1,38 @@
+<section class="panel heading">
+  <h2>Análisis crediticio</h2>
+  <a routerLink="/analisis_crediticio">Volver a lista</a>
+</section>
+<section class="panel">
+  <p class="error" role="alert" *ngIf="error">{{ error }}</p>
+  <p *ngIf="loading">Cargando detalle…</p>
+  <ng-container *ngIf="record as item">
+    <dl class="fields">
+      <div><dt>Identificador</dt><dd>{{ item.id }}</dd></div>
+      <div>
+        <dt>Solicitud</dt>
+        <dd>{{ item.application_id ?? '—' }}</dd>
+      </div>
+      <div>
+        <dt>Analista</dt>
+        <dd>{{ item.analyst_id ?? '—' }}</dd>
+      </div>
+      <div>
+        <dt>Estado</dt>
+        <dd>{{ item.status ?? '—' }}</dd>
+      </div>
+      <div>
+        <dt>Hallazgos</dt>
+        <dd>{{ item.findings ?? '—' }}</dd>
+      </div>
+      <div>
+        <dt>Recomendación</dt>
+        <dd>{{ item.recommendation ?? '—' }}</dd>
+      </div>
+      <div>
+        <dt>Fecha de conclusión</dt>
+        <dd>{{ item.completed_at ?? '—' }}</dd>
+      </div>
+    </dl>
+    <a *ngIf="permissions.can('analisis_crediticio', 'editar')" [routerLink]="['/analisis_crediticio', item.id, 'editar']">Editar</a>
+  </ng-container>
+</section>

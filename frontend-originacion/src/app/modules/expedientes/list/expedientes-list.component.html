@@ -1,0 +1,48 @@
+<section class="panel heading">
+  <h2>Expedientes</h2>
+  
+</section>
+<section class="panel">
+  <form class="actions" (ngSubmit)="load()">
+    <label>Folio (coincidencia exacta)
+      <input name="search" [(ngModel)]="search" placeholder="Buscar">
+    </label>
+    <button type="submit" [disabled]="loading">Buscar</button>
+    <button type="button" (click)="clearSearch()" [disabled]="loading">Limpiar</button>
+  </form>
+</section>
+<section class="panel">
+  <p class="error" role="alert" *ngIf="error">{{ error }}</p>
+  <p *ngIf="loading">Cargando registros…</p>
+  <div class="table-scroll">
+    <table>
+      <thead>
+        <tr>
+          <th scope="col">Folio</th>
+          <th scope="col">Cliente</th>
+          <th scope="col">Monto solicitado</th>
+          <th scope="col">Estado</th>
+          <th scope="col">Acciones</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let row of rows">
+          <td>{{ row.application_number ?? '—' }}</td>
+          <td>{{ row.client_id ?? '—' }}</td>
+          <td>{{ row.requested_amount ?? '—' }}</td>
+          <td>{{ row.status ?? '—' }}</td>
+          <td>
+            <a *ngIf="permissions.can('expedientes', 'detalle')" [routerLink]="[row.id]">Detalle</a>
+
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+  <p *ngIf="!loading && !error && !rows.length">No hay registros.</p>
+  <div class="pagination">
+    <button type="button" (click)="load(page - 1)" [disabled]="loading || page <= 1">Anterior</button>
+    <span>Página {{ page }} de {{ lastPage }} · {{ total }} registros</span>
+    <button type="button" (click)="load(page + 1)" [disabled]="loading || page >= lastPage">Siguiente</button>
+  </div>
+</section>

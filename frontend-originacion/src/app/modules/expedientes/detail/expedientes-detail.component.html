@@ -1,0 +1,50 @@
+<section class="panel heading">
+  <h2>Expedientes</h2>
+  <a routerLink="/expedientes">Volver a lista</a>
+</section>
+<section class="panel">
+  <p class="error" role="alert" *ngIf="error">{{ error }}</p>
+  <p *ngIf="loading">Cargando detalle…</p>
+  <ng-container *ngIf="record as item">
+    <dl class="fields">
+      <div><dt>Identificador</dt><dd>{{ item.id }}</dd></div>
+      <div>
+        <dt>Folio</dt>
+        <dd>{{ item.application_number ?? '—' }}</dd>
+      </div>
+      <div>
+        <dt>Cliente</dt>
+        <dd>{{ item.client_id ?? '—' }}</dd>
+      </div>
+      <div>
+        <dt>Versión de producto</dt>
+        <dd>{{ item.product_version_id ?? '—' }}</dd>
+      </div>
+      <div>
+        <dt>Monto solicitado</dt>
+        <dd>{{ item.requested_amount ?? '—' }}</dd>
+      </div>
+      <div>
+        <dt>Plazo</dt>
+        <dd>{{ item.requested_term ?? '—' }}</dd>
+      </div>
+      <div>
+        <dt>Estado</dt>
+        <dd>{{ item.status ?? '—' }}</dd>
+      </div>
+      <div>
+        <dt>Subestado</dt>
+        <dd>{{ item.review_substatus ?? '—' }}</dd>
+      </div>
+      <div>
+        <dt>Ingreso declarado</dt>
+        <dd>{{ item.declared_income ?? '—' }}</dd>
+      </div>
+      <div>
+        <dt>Egreso declarado</dt>
+        <dd>{{ item.declared_expenses ?? '—' }}</dd>
+      </div>
+    </dl>
+
+  </ng-container>
+</section>

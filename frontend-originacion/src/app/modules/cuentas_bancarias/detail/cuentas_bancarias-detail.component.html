@@ -1,0 +1,50 @@
+<section class="panel heading">
+  <h2>Cuentas bancarias</h2>
+  <a routerLink="/cuentas_bancarias">Volver a lista</a>
+</section>
+<section class="panel">
+  <p class="error" role="alert" *ngIf="error">{{ error }}</p>
+  <p *ngIf="loading">Cargando detalle…</p>
+  <ng-container *ngIf="record as item">
+    <dl class="fields">
+      <div><dt>Identificador</dt><dd>{{ item.id }}</dd></div>
+      <div>
+        <dt>Cliente</dt>
+        <dd>{{ item.client_id ?? '—' }}</dd>
+      </div>
+      <div>
+        <dt>Clave bancaria</dt>
+        <dd>{{ item.bank_code ?? '—' }}</dd>
+      </div>
+      <div>
+        <dt>Banco</dt>
+        <dd>{{ item.bank_name ?? '—' }}</dd>
+      </div>
+      <div>
+        <dt>Titular</dt>
+        <dd>{{ item.holder_name ?? '—' }}</dd>
+      </div>
+      <div>
+        <dt>CLABE</dt>
+        <dd>{{ item.clabe ?? '—' }}</dd>
+      </div>
+      <div>
+        <dt>Últimos cuatro dígitos</dt>
+        <dd>{{ item.account_last4 ?? '—' }}</dd>
+      </div>
+      <div>
+        <dt>Tipo de cuenta</dt>
+        <dd>{{ item.account_type ?? '—' }}</dd>
+      </div>
+      <div>
+        <dt>Principal</dt>
+        <dd>{{ item.primary ?? '—' }}</dd>
+      </div>
+      <div>
+        <dt>Activa</dt>
+        <dd>{{ item.active ?? '—' }}</dd>
+      </div>
+    </dl>
+    <a *ngIf="permissions.can('cuentas_bancarias', 'editar')" [routerLink]="['/cuentas_bancarias', item.id, 'editar']">Editar</a>
+  </ng-container>
+</section>

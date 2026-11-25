@@ -1,0 +1,48 @@
+<section class="panel heading">
+  <h2>Obligados solidarios</h2>
+  <a *ngIf="permissions.can('obligados_solidarios', 'crear')" routerLink="nuevo">Nuevo registro</a>
+</section>
+<section class="panel">
+  <form class="actions" (ngSubmit)="load()">
+    <label>Nombre completo (coincidencia exacta)
+      <input name="search" [(ngModel)]="search" placeholder="Buscar">
+    </label>
+    <button type="submit" [disabled]="loading">Buscar</button>
+    <button type="button" (click)="clearSearch()" [disabled]="loading">Limpiar</button>
+  </form>
+</section>
+<section class="panel">
+  <p class="error" role="alert" *ngIf="error">{{ error }}</p>
+  <p *ngIf="loading">Cargando registros…</p>
+  <div class="table-scroll">
+    <table>
+      <thead>
+        <tr>
+          <th scope="col">Solicitud</th>
+          <th scope="col">Nombre completo</th>
+          <th scope="col">Parentesco o relación</th>
+          <th scope="col">Ingreso mensual</th>
+          <th scope="col">Acciones</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let row of rows">
+          <td>{{ row.application_id ?? '—' }}</td>
+          <td>{{ row.full_name ?? '—' }}</td>
+          <td>{{ row.relationship ?? '—' }}</td>
+          <td>{{ row.monthly_income ?? '—' }}</td>
+          <td>
+            <a *ngIf="permissions.can('obligados_solidarios', 'detalle')" [routerLink]="[row.id]">Detalle</a>
+            <a *ngIf="permissions.can('obligados_solidarios', 'editar')" [routerLink]="[row.id, 'editar']">Editar</a>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+  <p *ngIf="!loading && !error && !rows.length">No hay registros.</p>
+  <div class="pagination">
+    <button type="button" (click)="load(page - 1)" [disabled]="loading || page <= 1">Anterior</button>
+    <span>Página {{ page }} de {{ lastPage }} · {{ total }} registros</span>
+    <button type="button" (click)="load(page + 1)" [disabled]="loading || page >= lastPage">Siguiente</button>
+  </div>
+</section>

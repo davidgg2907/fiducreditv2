@@ -1,0 +1,74 @@
+<section class="panel heading">
+  <h2>Clientes</h2>
+  <a routerLink="/clientes">Volver a lista</a>
+</section>
+<section class="panel">
+  <p class="error" role="alert" *ngIf="error">{{ error }}</p>
+  <p *ngIf="loading">Cargando detalle…</p>
+  <ng-container *ngIf="record as item">
+    <dl class="fields">
+      <div><dt>Identificador</dt><dd>{{ item.id }}</dd></div>
+      <div>
+        <dt>Empresa</dt>
+        <dd>{{ item.company_id ?? '—' }}</dd>
+      </div>
+      <div>
+        <dt>Nombre</dt>
+        <dd>{{ item.first_name ?? '—' }}</dd>
+      </div>
+      <div>
+        <dt>Segundo nombre</dt>
+        <dd>{{ item.middle_name ?? '—' }}</dd>
+      </div>
+      <div>
+        <dt>Apellido paterno</dt>
+        <dd>{{ item.last_name ?? '—' }}</dd>
+      </div>
+      <div>
+        <dt>Apellido materno</dt>
+        <dd>{{ item.second_last_name ?? '—' }}</dd>
+      </div>
+      <div>
+        <dt>Fecha de nacimiento</dt>
+        <dd>{{ item.birth_date ?? '—' }}</dd>
+      </div>
+      <div>
+        <dt>RFC</dt>
+        <dd>{{ item.rfc ?? '—' }}</dd>
+      </div>
+      <div>
+        <dt>CURP</dt>
+        <dd>{{ item.curp ?? '—' }}</dd>
+      </div>
+      <div>
+        <dt>Folio INE</dt>
+        <dd>{{ item.ine_folio ?? '—' }}</dd>
+      </div>
+      <div>
+        <dt>Pasaporte</dt>
+        <dd>{{ item.passport_number ?? '—' }}</dd>
+      </div>
+      <div>
+        <dt>NSS</dt>
+        <dd>{{ item.nss ?? '—' }}</dd>
+      </div>
+      <div>
+        <dt>Seguridad social</dt>
+        <dd>{{ item.health_provider ?? '—' }}</dd>
+      </div>
+      <div>
+        <dt>Correo</dt>
+        <dd>{{ item.email ?? '—' }}</dd>
+      </div>
+      <div>
+        <dt>Teléfono</dt>
+        <dd>{{ item.phone ?? '—' }}</dd>
+      </div>
+      <div>
+        <dt>Estado</dt>
+        <dd>{{ item.status ?? '—' }}</dd>
+      </div>
+    </dl>
+    <a *ngIf="permissions.can('clientes', 'editar')" [routerLink]="['/clientes', item.id, 'editar']">Editar</a>
+  </ng-container>
+</section>

@@ -1,0 +1,38 @@
+<section class="panel heading">
+  <h2>Mesa de control</h2>
+  <a routerLink="/mesa_control">Volver</a>
+</section>
+<section class="panel">
+  <p>Captura y edición directa no habilitadas. Este proceso requiere su operación de negocio autorizada.</p>
+  <p class="error" role="alert" *ngIf="error">{{ error }}</p>
+  <dl class="fields" *ngIf="record as item">
+    <div>
+      <dt>Solicitud</dt>
+      <dd>{{ item.application_id ?? '—' }}</dd>
+    </div>
+    <div>
+      <dt>Versión de flujo</dt>
+      <dd>{{ item.workflow_version_id ?? '—' }}</dd>
+    </div>
+    <div>
+      <dt>Etapa actual</dt>
+      <dd>{{ item.current_step_id ?? '—' }}</dd>
+    </div>
+    <div>
+      <dt>Estado</dt>
+      <dd>{{ item.status ?? '—' }}</dd>
+    </div>
+    <div>
+      <dt>Inicio</dt>
+      <dd>{{ item.started_at ?? '—' }}</dd>
+    </div>
+    <div>
+      <dt>Fin</dt>
+      <dd>{{ item.completed_at ?? '—' }}</dd>
+    </div>
+    <div>
+      <dt>Versión de bloqueo</dt>
+      <dd>{{ item.lock_version ?? '—' }}</dd>
+    </div>
+  </dl>
+</section>

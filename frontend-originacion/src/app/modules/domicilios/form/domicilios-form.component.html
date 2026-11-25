@@ -1,0 +1,40 @@
+<section class="panel heading">
+  <h2>Domicilios y versiones</h2>
+  <a routerLink="/domicilios">Cancelar</a>
+</section>
+<section class="panel">
+  <h3>{{ id ? 'Editar registro' : 'Nuevo registro' }}</h3>
+  <p class="error" role="alert" *ngIf="error">{{ error }}</p>
+  <p *ngIf="loading || !ready">Cargando información…</p>
+  <form [formGroup]="form" (ngSubmit)="save()">
+    <div class="fields">
+      <label>
+        Cliente *
+        <select formControlName="client_id">
+          <option [ngValue]="null">Seleccione</option>
+          <option *ngFor="let option of client_idOptions" [value]="option.id">{{ option.label }}</option>
+        </select>
+        <small *ngIf="form.controls.client_id.invalid && form.controls.client_id.touched">Revise este campo.</small>
+      </label>
+      <label>
+        Tipo de domicilio
+        <input formControlName="address_type" type="text">
+        <small *ngIf="form.controls.address_type.invalid && form.controls.address_type.touched">Revise este campo.</small>
+      </label>
+      <label>
+        Principal
+        <input formControlName="primary" type="checkbox">
+        <small *ngIf="form.controls.primary.invalid && form.controls.primary.touched">Revise este campo.</small>
+      </label>
+      <label>
+        Activo
+        <input formControlName="active" type="checkbox">
+        <small *ngIf="form.controls.active.invalid && form.controls.active.touched">Revise este campo.</small>
+      </label>
+    </div>
+    <div class="actions">
+      <button type="submit" [disabled]="saving || loading || !ready || form.disabled || !permissions.can('domicilios', id ? 'editar' : 'crear')">{{ saving ? 'Guardando…' : 'Guardar' }}</button>
+      <a routerLink="/domicilios">Volver</a>
+    </div>
+  </form>
+</section>

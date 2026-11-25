@@ -1,0 +1,30 @@
+<section class="panel heading">
+  <h2>Domicilios y versiones</h2>
+  <a routerLink="/domicilios">Volver a lista</a>
+</section>
+<section class="panel">
+  <p class="error" role="alert" *ngIf="error">{{ error }}</p>
+  <p *ngIf="loading">Cargando detalle…</p>
+  <ng-container *ngIf="record as item">
+    <dl class="fields">
+      <div><dt>Identificador</dt><dd>{{ item.id }}</dd></div>
+      <div>
+        <dt>Cliente</dt>
+        <dd>{{ item.client_id ?? '—' }}</dd>
+      </div>
+      <div>
+        <dt>Tipo de domicilio</dt>
+        <dd>{{ item.address_type ?? '—' }}</dd>
+      </div>
+      <div>
+        <dt>Principal</dt>
+        <dd>{{ item.primary ?? '—' }}</dd>
+      </div>
+      <div>
+        <dt>Activo</dt>
+        <dd>{{ item.active ?? '—' }}</dd>
+      </div>
+    </dl>
+    <a *ngIf="permissions.can('domicilios', 'editar')" [routerLink]="['/domicilios', item.id, 'editar']">Editar</a>
+  </ng-container>
+</section>
