@@ -575,6 +575,8 @@ Route::middleware([AuthenticateAccessToken::class, \App\Http\Middleware\RecordOp
     Route::get('products', [\App\Http\Controllers\CreditApplicationCaptureController::class, 'productsList']);
     Route::get('products/{id}', [\App\Http\Controllers\CreditApplicationCaptureController::class, 'configuration']);
     Route::post('applications', [\App\Http\Controllers\CreditApplicationCaptureController::class, 'store']);
+    Route::get('applications/{id}/edit', [\App\Http\Controllers\CreditApplicationCaptureController::class, 'edit']);
+    Route::post('applications/{id}', [\App\Http\Controllers\CreditApplicationCaptureController::class, 'updateCapture']);
     Route::get('applications/{id}', [\App\Http\Controllers\CreditApplicationCaptureController::class, 'detail']);
     Route::get('applications', [\App\Http\Controllers\CreditApplicationCaptureController::class, 'index']);
 });
