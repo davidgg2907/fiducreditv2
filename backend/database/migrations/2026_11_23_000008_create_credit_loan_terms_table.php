@@ -12,13 +12,13 @@ return new class extends Migration
             $table->uuid('id')->primary();
             $table->foreignUuid('loan_id')->constrained('credit_loans')->restrictOnDelete();
             $table->unsignedInteger('version');
-            $table->string('interest_rate_type',30)->default('fixed');
+            $table->string('interest_rate_type',30)->default('fija');
             $table->decimal('ordinary_annual_rate',12,8);
             $table->decimal('default_annual_rate',12,8)->default(0);
             $table->string('day_count_convention',30)->default('ACT_365');
-            $table->string('amortization_method',30)->default('french');
-            $table->string('payment_frequency',30)->default('monthly');
-            $table->string('interest_calculation',30)->default('outstanding_balance');
+            $table->string('amortization_method',30)->default('frances');
+            $table->string('payment_frequency',30)->default('mensual');
+            $table->string('interest_calculation',30)->default('saldo_insoluto');
             $table->string('rounding_mode',30)->default('half_up');
             $table->unsignedSmallInteger('grace_days')->default(0);
             $table->boolean('tax_on_interest')->default(false);
