@@ -17,6 +17,7 @@ import { originacionError } from '../../../servicios/originacion/originacion-err
 export class ClientesRelacionesComponent implements OnInit {
   @Input() clientId: string | null = null;
   @Input() staged = false;
+  @Input() applicationCapture = false;
   @Input() compact = false;
   @Input() readOnly = false;
   modalEditing = false;
@@ -69,9 +70,11 @@ export class ClientesRelacionesComponent implements OnInit {
   }
 
   canView(kind: 'addresses' | 'bank_accounts'): boolean {
+    if (this.applicationCapture) return this.permissions.can('solicitudes','crear');
     return this.permissions.can(kind === 'addresses' ? 'domicilios' : 'cuentas_bancarias', 'ver');
   }
   canWrite(kind: 'addresses' | 'bank_accounts', existing: boolean): boolean {
+    if (this.applicationCapture) return !this.readOnly && this.permissions.can('solicitudes','crear');
     return !this.readOnly && this.canView(kind) &&
       this.permissions.can(kind === 'addresses' ? 'domicilios' : 'cuentas_bancarias', existing ? 'editar' : 'crear') &&
       this.permissions.can('clientes', this.clientId ? 'editar' : 'crear');
@@ -185,7 +188,7 @@ export class ClientesRelacionesComponent implements OnInit {
   }
 
   private captureAddress(): boolean {
-    if (!this.showAddress || (!this.addressForm.dirty && (this.selectedAddress >= 0 || this.isNewClient))) return true;
+    if (!this.showAddress || (!this.addressForm.dirty && (this.selectedAddress >= 0 || (this.isNewClient && !this.applicationCapture)))) return true;
     if (this.addressForm.invalid) { this.addressForm.markAllAsTouched(); this.error = 'Complete los campos obligatorios del domicilio.'; return false; }
     const v = this.addressValue();
     const index = this.selectedAddress < 0 ? this.addresses.length : this.selectedAddress;
@@ -196,7 +199,7 @@ export class ClientesRelacionesComponent implements OnInit {
     return true;
   }
   private captureAccount(): boolean {
-    if (!this.showAccount || (!this.accountForm.dirty && (this.selectedAccount >= 0 || this.isNewClient))) return true;
+    if (!this.showAccount || (!this.accountForm.dirty && (this.selectedAccount >= 0 || (this.isNewClient && !this.applicationCapture)))) return true;
     if (this.accountForm.invalid) { this.accountForm.markAllAsTouched(); this.error = 'Revise los campos de la cuenta bancaria.'; return false; }
     const v = this.accountValue();
     const index = this.selectedAccount < 0 ? this.accounts.length : this.selectedAccount;
