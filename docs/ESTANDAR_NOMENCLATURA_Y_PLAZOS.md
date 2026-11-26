@@ -16,3 +16,6 @@ Probar instalación nueva y actualización con datos; alta/edición/detalle de p
 
 ## Implementación inicial de plazos
 Se agrega catálogo periodos_credito (día, semana, mes, año), seeder idempotente y configuración JSON versionada, más unidad_plazo y frecuencia_pago de la solicitud. Los campos antiguos se conservan para compatibilidad; las versiones antiguas usan sus condiciones previas como respaldo. La homologación integral de campos existentes permanece pendiente. Validar compilación y regresiones antes de fusionar. No se incluye motor financiero.
+
+## Corrección de valores visibles en productos (noviembre 2026)
+Los defaults de versiones y condiciones de crédito y los fixtures de originación y administración usan mes, mensual, fija, saldo_insoluto, frances, porcentaje y la regla FACTOR_DEUDA_INGRESO_MAXIMO con maximo. El formulario de producto guarda unidad y frecuencia predeterminada en español y la captura muestra los valores traducidos. Los nombres de columnas legacy (min_dti, max_dti, term_unit, etc.) y otros dominios aún requieren homologación transversal; no se considera completa. La instalación limpia carga los fixtures nuevos; no hay migración de valores existentes. Validar compilación y pruebas antes de integrar.
