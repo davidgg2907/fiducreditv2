@@ -24,7 +24,7 @@ final class UpdateCreditProductFeeRequest extends FormRequest
             'product_version_id' => ['sometimes', 'uuid', 'exists:credit_product_versions,id'],
             'code' => ['sometimes', 'string', 'max:255'],
             'name' => ['sometimes', 'string', 'max:255'],
-            'calculation_type' => ['sometimes', 'string', 'max:255', 'in:porcentaje,fijo,fija'],
+            'calculation_type' => ['sometimes', 'string', 'max:255'],
             'amount' => ['sometimes', 'numeric'],
             'taxable' => ['sometimes', 'boolean'],
             'active' => ['sometimes', 'boolean'],
