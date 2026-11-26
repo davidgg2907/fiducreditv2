@@ -24,7 +24,7 @@ final class StoreCreditProductFeeRequest extends FormRequest
             'product_version_id' => ['required', 'uuid', 'exists:credit_product_versions,id'],
             'code' => ['required', 'string', 'max:255'],
             'name' => ['required', 'string', 'max:255'],
-            'calculation_type' => ['required', 'string', 'max:255'],
+            'calculation_type' => ['required', 'string', 'max:255', 'in:porcentaje,fijo,fija'],
             'amount' => ['required', 'numeric'],
             'taxable' => ['sometimes', 'boolean'],
             'active' => ['sometimes', 'boolean'],
