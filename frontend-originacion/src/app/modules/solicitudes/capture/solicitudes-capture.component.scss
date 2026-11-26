@@ -1,2 +1,14 @@
 @use '../../originacion-institutional';
-.wizard-tabs{display:flex;gap:4px;margin:16px 0;flex-wrap:wrap}.wizard-tabs button{flex:1;padding:12px;border:1px solid #174650;background:white;color:#174650;border-radius:5px}.wizard-tabs button.current{background:#174650;color:white}.wizard-tabs button:disabled{opacity:.55}.wizard-footer{display:flex;justify-content:space-between;background:#174650;padding:16px;border-radius:5px;margin-top:16px}.document{padding:16px 0;border-bottom:1px solid #ddd}[hidden]{display:none!important}
+:host{--product-accent:var(--app-primary,#176c63);--product-border:var(--app-border,#e0e5ee)}
+.product-tabs{display:flex;align-items:stretch;overflow-x:auto;gap:0;background:#fff;border:1px solid var(--product-border);border-radius:10px;margin:0 0 1rem;padding:0 .4rem;box-shadow:0 2px 8px #25324708}
+.product-tabs button{flex:1 0 auto;display:flex;justify-content:center;align-items:center;gap:.55rem;white-space:nowrap;border:0;border-bottom:3px solid transparent;background:transparent;color:var(--app-muted,#617281);font-size:.9rem;font-weight:500;padding:.95rem .8rem;transition:background .15s,color .15s}
+.product-tabs button .material-icons-outlined{font-size:1.3rem}
+.product-tabs button:hover:not(:disabled){background:#f2f8f7}
+.product-tabs button.selected{color:var(--product-accent);border-bottom-color:var(--product-accent);font-weight:700;background:#f2f8f7}
+.product-tabs button:focus-visible{outline:2px solid var(--product-accent);outline-offset:-4px}
+.product-tabs button:disabled{opacity:.55;cursor:not-allowed}
+@media(max-width:900px){.product-tabs button{flex:0 0 auto}}
+.wizard-footer{display:flex;justify-content:space-between;background:var(--app-primary-strong,#174650);padding:16px;border-radius:5px;margin-top:16px}
+.document{padding:16px 0;border-bottom:1px solid var(--app-border)}
+[hidden]{display:none!important}
+.field-error{display:block;color:var(--app-danger,#b42318);font-size:.85rem;font-weight:400;line-height:1.35;margin:0}

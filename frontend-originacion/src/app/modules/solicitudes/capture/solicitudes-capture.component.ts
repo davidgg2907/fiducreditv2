@@ -1,6 +1,6 @@
 import { Component, OnInit, ViewChild, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { FormsModule, ReactiveFormsModule, FormBuilder, Validators } from '@angular/forms';
+import { FormsModule, ReactiveFormsModule, FormBuilder, Validators, AbstractControl } from '@angular/forms';
 import { ActivatedRoute, Router, RouterModule } from '@angular/router';
 import { finalize } from 'rxjs';
 import { SolicitudesService } from '../../../servicios/originacion/solicitudes.service';
@@ -17,6 +17,20 @@ export class SolicitudesCaptureComponent implements OnInit {
  @ViewChild(ClientesRelacionesComponent) relations?: ClientesRelacionesComponent;
  config?:CaptureConfiguration; error=''; saving=false; loading=true; tab=0;
  tabs=['Cliente','Obligado solidario','Información financiera','Documentos'];
+ tabIcons=['person','group','payments','description'];
+ furthestTab=0; assignmentAttempted=false; financialAttempted=false; documentsAttempted=false;
+ validationMessage(control:AbstractControl):string {
+  if(control.hasError('required'))return 'Este campo es obligatorio.';
+  if(control.hasError('email'))return 'Ingrese un correo electrónico válido.';
+  if(control.hasError('maxlength'))return 'Longitud máxima excedida.';
+  if(control.hasError('min')||control.hasError('max'))return 'El valor está fuera del rango permitido.';
+  return 'Ingrese un valor válido.';
+ }
+ selectTab(index:number):void {
+  if(this.saving||index>this.furthestTab)return;
+  if(index<=this.tab){this.tab=index;this.error='';return;}
+  while(this.tab<index){const previous=this.tab;this.next();if(this.tab===previous)break;}
+ }
  branchId=''; advisorId=''; hasGuarantor=false;
  readonly client=this.fb.group({first_name:['',Validators.required],middle_name:'',last_name:['',Validators.required],second_last_name:'',birth_date:'',rfc:['',Validators.maxLength(13)],curp:['',Validators.maxLength(18)],ine_folio:'',passport_number:'',nss:'',health_provider:'',email:['',Validators.email],phone:['',Validators.maxLength(20)],status:'active'});
  readonly guarantor=this.fb.group({full_name:['',Validators.required],relationship:['',Validators.required],rfc:['',Validators.maxLength(13)],phone:['',Validators.maxLength(20)],monthly_income:''});
@@ -37,8 +51,22 @@ export class SolicitudesCaptureComponent implements OnInit {
  addFile(id:string,event:Event,max:number){const input=event.target as HTMLInputElement;const file=input.files?.[0];if(file){const list=this.files[id]??[];if(list.length<max)this.files[id]=[...list,file];}input.value='';}
  removeFile(id:string,i:number){this.files[id].splice(i,1);}
  options(value:unknown):string[]{return Array.isArray(value)?value.map(v=>typeof v==='object'&&v!==null?String((v as {value?:unknown;label?:unknown}).value??(v as {label?:unknown}).label??''):String(v)):[];}
- next(){this.error='';if(this.tab===0){this.client.markAllAsTouched();const r=this.relations?.payload();if(this.client.invalid||!r?.addresses?.length||!r?.bank_accounts?.length){this.error='Complete los datos del cliente, domicilio y cuenta bancaria.';return;}}if(this.tab===1&&this.hasGuarantor&&this.guarantor.invalid){this.guarantor.markAllAsTouched();this.error='Complete los datos del obligado solidario.';return;}if(this.tab===2&&(this.financial.invalid||this.items.some(i=>!i.concept.trim()||!i.amount||i.amount<=0)||this.config?.fields.some(f=>f.required&&!this.values[f.custom_field_id]))){this.error='Revise los montos, plazo, conceptos financieros y campos obligatorios.';return;}this.tab=Math.min(3,this.tab+1);}
- save(){if(this.saving||!this.config)return;this.error='';const r=this.relations?.payload();if(this.client.invalid||!r?.addresses?.length||!r?.bank_accounts?.length){this.tab=0;this.error='Complete los datos del cliente.';return;}if(!this.branchId||!this.advisorId){this.error='Seleccione sucursal y asesor.';return;}if(this.hasGuarantor&&this.guarantor.invalid){this.tab=1;this.error='Complete el obligado solidario.';return;}if(this.financial.invalid||this.items.some(i=>!i.concept.trim()||!i.amount||i.amount<=0)||this.config.fields.some(f=>f.required&&!this.values[f.custom_field_id])){this.tab=2;this.error='Revise la información financiera.';return;}if(this.config.documents.some(d=>d.required&&(this.files[d.document_type_id]?.length??0)<d.min_files)){this.error='Cargue todos los documentos obligatorios.';return;}
+ private validateStep(index:number):boolean {
+  if(index===0){
+   this.client.markAllAsTouched();
+   const r=this.relations?.payload();
+   return this.client.valid && !!r?.addresses?.length && !!r?.bank_accounts?.length;
+  }
+  if(index===1){if(!this.hasGuarantor)return true;this.guarantor.markAllAsTouched();return this.guarantor.valid;}
+  if(index===2){this.financialAttempted=true;this.financial.markAllAsTouched();return this.financial.valid && !this.items.some(i=>!i.concept.trim()||!i.amount||i.amount<=0) && !this.config?.fields.some(f=>f.required&&!this.values[f.custom_field_id]);}
+  this.documentsAttempted=true;
+  return !this.config?.documents.some(d=>d.required&&(this.files[d.document_type_id]?.length??0)<d.min_files);
+ }
+ next(){this.error='';if(!this.validateStep(this.tab))return;this.tab=Math.min(3,this.tab+1);this.furthestTab=Math.max(this.furthestTab,this.tab);}
+ save(){if(this.saving||!this.config)return;this.error='';this.assignmentAttempted=true;
+  if(!this.branchId||!this.advisorId)return;
+  for(let i=0;i<4;i++){if(!this.validateStep(i)){this.tab=i;return;}}
+  const r=this.relations?.payload();if(!r)return;
  const data=new FormData();
  const append=(key:string,value:unknown):void=>{if(value===null||value===undefined||value==='')return;if(value instanceof File){data.append(key,value);return;}if(typeof value==='object'){Object.entries(value).forEach(([k,v])=>append(key+'['+k+']',v));return;}data.append(key,typeof value==='boolean'?(value?'1':'0'):String(value));};
  const documents=Object.entries(this.files).flatMap(([document_type_id,files])=>files.map(file=>({document_type_id,file})));

@@ -2,8 +2,8 @@
 <p class="error" role="alert" *ngIf="error">{{error}}</p><p *ngIf="loading">Cargando producto…</p>
 <ng-container *ngIf="config as c">
 <section class="panel"><h3>{{c.product.name}}</h3><p>{{c.product.description}}</p><div class="fields"><label>Monto mínimo<strong>{{c.configuration.min_amount | currency:c.configuration.currency}}</strong></label><label>Monto máximo<strong>{{c.configuration.max_amount | currency:c.configuration.currency}}</strong></label><label>Plazo<strong>{{c.configuration.min_term}} – {{c.configuration.max_term}} ({{c.configuration.term_unit}})</strong></label><label>Tasa anual<strong>{{c.configuration.min_annual_rate | percent:'1.0-2'}} – {{c.configuration.max_annual_rate | percent:'1.0-2'}}</strong></label><label>Frecuencia<strong>{{c.configuration.payment_frequency}}</strong></label><label>Amortización<strong>{{c.configuration.amortization_method}}</strong></label></div></section>
-<section class="panel" *ngIf="!c.assignment"><h3>Asignación de solicitud</h3><div class="fields"><label>Sucursal<select [(ngModel)]="branchId" (ngModelChange)="advisorId=''"><option value="">Seleccione</option><option *ngFor="let b of c.branches" [value]="b.id">{{b.name}}</option></select></label><label>Asesor<select [(ngModel)]="advisorId"><option value="">Seleccione</option><option *ngFor="let a of advisors" [value]="a.id">{{a.name}}</option></select></label></div></section>
-<nav class="wizard-tabs" aria-label="Pasos"><button *ngFor="let t of tabs;let i=index" type="button" [class.current]="tab===i" [disabled]="i>tab" (click)="tab=i">{{i+1}}. {{t}}</button></nav>
+<section class="panel" *ngIf="!c.assignment"><h3>Asignación de solicitud</h3><div class="fields"><label>Sucursal *<select [(ngModel)]="branchId" (ngModelChange)="advisorId=''"><option value="">Seleccione</option><option *ngFor="let b of c.branches" [value]="b.id">{{b.name}}</option></select><small class="field-error" *ngIf="assignmentAttempted && !branchId">Este campo es obligatorio.</small></label><label>Asesor *<select [(ngModel)]="advisorId"><option value="">Seleccione</option><option *ngFor="let a of advisors" [value]="a.id">{{a.name}}</option></select><small class="field-error" *ngIf="assignmentAttempted && !advisorId">Este campo es obligatorio.</small></label></div></section>
+<nav class="product-tabs" aria-label="Pasos de captura"><button type="button" *ngFor="let t of tabs;let i=index" [class.selected]="tab===i" [attr.aria-current]="tab===i?'step':null" [disabled]="saving || i>furthestTab" (click)="selectTab(i)"><span class="material-icons-outlined" aria-hidden="true">{{tabIcons[i]}}</span><span>{{t}}</span></button></nav>
 <div [hidden]="tab!==0" [formGroup]="client">  <section class="panel">
     <div class="section-heading">
       <span class="material-icons-outlined" aria-hidden="true">person</span>
@@ -14,27 +14,27 @@
       <label>
         Nombre *
         <input formControlName="first_name" type="text">
-        <small *ngIf="client.controls.first_name.invalid && client.controls.first_name.touched">Revise este campo.</small>
+        <small class="field-error" *ngIf="client.controls.first_name.invalid && client.controls.first_name.touched">{{validationMessage(client.controls.first_name)}}</small>
       </label>
       <label>
         Segundo nombre
         <input formControlName="middle_name" type="text">
-        <small *ngIf="client.controls.middle_name.invalid && client.controls.middle_name.touched">Revise este campo.</small>
+        <small class="field-error" *ngIf="client.controls.middle_name.invalid && client.controls.middle_name.touched">{{validationMessage(client.controls.middle_name)}}</small>
       </label>
       <label>
         Apellido paterno *
         <input formControlName="last_name" type="text">
-        <small *ngIf="client.controls.last_name.invalid && client.controls.last_name.touched">Revise este campo.</small>
+        <small class="field-error" *ngIf="client.controls.last_name.invalid && client.controls.last_name.touched">{{validationMessage(client.controls.last_name)}}</small>
       </label>
       <label>
         Apellido materno
         <input formControlName="second_last_name" type="text">
-        <small *ngIf="client.controls.second_last_name.invalid && client.controls.second_last_name.touched">Revise este campo.</small>
+        <small class="field-error" *ngIf="client.controls.second_last_name.invalid && client.controls.second_last_name.touched">{{validationMessage(client.controls.second_last_name)}}</small>
       </label>
       <label>
         Fecha de nacimiento
         <input formControlName="birth_date" type="date">
-        <small *ngIf="client.controls.birth_date.invalid && client.controls.birth_date.touched">Revise este campo.</small>
+        <small class="field-error" *ngIf="client.controls.birth_date.invalid && client.controls.birth_date.touched">{{validationMessage(client.controls.birth_date)}}</small>
       </label>
     </div>
   </section>
@@ -47,32 +47,32 @@
       <label>
         RFC
         <input formControlName="rfc" type="text">
-        <small *ngIf="client.controls.rfc.invalid && client.controls.rfc.touched">Revise este campo.</small>
+        <small class="field-error" *ngIf="client.controls.rfc.invalid && client.controls.rfc.touched">{{validationMessage(client.controls.rfc)}}</small>
       </label>
       <label>
         CURP
         <input formControlName="curp" type="text">
-        <small *ngIf="client.controls.curp.invalid && client.controls.curp.touched">Revise este campo.</small>
+        <small class="field-error" *ngIf="client.controls.curp.invalid && client.controls.curp.touched">{{validationMessage(client.controls.curp)}}</small>
       </label>
       <label>
         Folio INE
         <input formControlName="ine_folio" type="text">
-        <small *ngIf="client.controls.ine_folio.invalid && client.controls.ine_folio.touched">Revise este campo.</small>
+        <small class="field-error" *ngIf="client.controls.ine_folio.invalid && client.controls.ine_folio.touched">{{validationMessage(client.controls.ine_folio)}}</small>
       </label>
       <label>
         Pasaporte
         <input formControlName="passport_number" type="text">
-        <small *ngIf="client.controls.passport_number.invalid && client.controls.passport_number.touched">Revise este campo.</small>
+        <small class="field-error" *ngIf="client.controls.passport_number.invalid && client.controls.passport_number.touched">{{validationMessage(client.controls.passport_number)}}</small>
       </label>
       <label>
         NSS
         <input formControlName="nss" type="text">
-        <small *ngIf="client.controls.nss.invalid && client.controls.nss.touched">Revise este campo.</small>
+        <small class="field-error" *ngIf="client.controls.nss.invalid && client.controls.nss.touched">{{validationMessage(client.controls.nss)}}</small>
       </label>
       <label>
         Seguridad social
         <input formControlName="health_provider" type="text">
-        <small *ngIf="client.controls.health_provider.invalid && client.controls.health_provider.touched">Revise este campo.</small>
+        <small class="field-error" *ngIf="client.controls.health_provider.invalid && client.controls.health_provider.touched">{{validationMessage(client.controls.health_provider)}}</small>
       </label>
     </div>
   </section>
@@ -85,26 +85,26 @@
       <label>
         Correo
         <input formControlName="email" type="email">
-        <small *ngIf="client.controls.email.invalid && client.controls.email.touched">Revise este campo.</small>
+        <small class="field-error" *ngIf="client.controls.email.invalid && client.controls.email.touched">{{validationMessage(client.controls.email)}}</small>
       </label>
       <label>
         Teléfono
         <input formControlName="phone" type="text">
-        <small *ngIf="client.controls.phone.invalid && client.controls.phone.touched">Revise este campo.</small>
+        <small class="field-error" *ngIf="client.controls.phone.invalid && client.controls.phone.touched">{{validationMessage(client.controls.phone)}}</small>
       </label>
       <label>
         Estado
         <input formControlName="status" type="text">
-        <small *ngIf="client.controls.status.invalid && client.controls.status.touched">Revise este campo.</small>
+        <small class="field-error" *ngIf="client.controls.status.invalid && client.controls.status.touched">{{validationMessage(client.controls.status)}}</small>
       </label>
     </div>
   </section>
   <app-clientes-relaciones [clientId]="null" [applicationCapture]="true" [staged]="true"></app-clientes-relaciones>
 </div>
-<section class="panel" [hidden]="tab!==1"><h3>Obligado solidario</h3><label><input type="checkbox" [(ngModel)]="hasGuarantor"> Registrar obligado solidario</label><div class="fields" *ngIf="hasGuarantor" [formGroup]="guarantor"><label>Nombre completo *<input formControlName="full_name"></label><label>Parentesco *<input formControlName="relationship"></label><label>RFC<input formControlName="rfc"></label><label>Teléfono<input formControlName="phone"></label><label>Ingreso mensual<input type="number" formControlName="monthly_income"></label></div></section>
-<section class="panel" [hidden]="tab!==2"><h3>Condiciones financieras</h3><div class="fields" [formGroup]="financial"><label>Monto solicitado *<input type="number" step=".01" formControlName="requested_amount"></label><label>Plazo solicitado *<input type="number" formControlName="requested_term"></label></div>
-<h3>Ingresos y egresos mensuales</h3><div class="header-actions"><button type="button" class="btn btn-outline" (click)="addItem('income')">Agregar ingreso</button><button type="button" class="btn btn-outline" (click)="addItem('expense')">Agregar egreso</button></div><div class="fields" *ngFor="let item of items;let i=index"><label>Tipo<strong>{{item.entry_type==='income'?'Ingreso':'Egreso'}}</strong></label><label>Concepto<input [(ngModel)]="item.concept"></label><label>Monto<input type="number" step=".01" [(ngModel)]="item.amount"></label><button type="button" class="btn btn-outline" (click)="items.splice(i,1)">Quitar</button></div><p>Ingresos: {{total('income')|currency:c.configuration.currency}} · Egresos: {{total('expense')|currency:c.configuration.currency}}</p>
-<h3 *ngIf="c.fields.length">Información adicional del producto</h3><div class="fields"><label *ngFor="let f of c.fields">{{f.custom_field.label}}{{f.required?' *':''}}<select *ngIf="options(f.custom_field.options).length;else typed" [(ngModel)]="values[f.custom_field_id]"><option value="">Seleccione</option><option *ngFor="let o of options(f.custom_field.options)" [value]="o">{{o}}</option></select><ng-template #typed><select *ngIf="f.custom_field.data_type==='boolean';else regular" [(ngModel)]="values[f.custom_field_id]"><option value="">Seleccione</option><option value="1">Sí</option><option value="0">No</option></select><ng-template #regular><input [type]="f.custom_field.data_type==='date'?'date':(['number','integer','decimal'].includes(f.custom_field.data_type)?'number':'text')" [(ngModel)]="values[f.custom_field_id]"></ng-template></ng-template></label></div></section>
-<section class="panel" [hidden]="tab!==3"><h3>Expediente documental</h3><p *ngIf="!c.documents.length">El producto no tiene requisitos documentales.</p><div class="document" *ngFor="let d of c.documents"><strong>{{d.document_type.name}} {{d.required?'*':''}}</strong><p>{{files[d.document_type_id]?.length||0}} / {{d.max_files}} archivos · mínimo {{d.required?d.min_files:0}}</p><input type="file" accept=".pdf,.jpg,.jpeg,.png" [disabled]="(files[d.document_type_id]?.length||0)>=d.max_files" (change)="addFile(d.document_type_id,$event,d.max_files)"><p *ngFor="let f of files[d.document_type_id];let i=index">{{f.name}} <button class="btn btn-outline" type="button" (click)="removeFile(d.document_type_id,i)">Quitar</button></p></div></section>
+<section class="panel" [hidden]="tab!==1"><h3>Obligado solidario</h3><label><input type="checkbox" [(ngModel)]="hasGuarantor"> Registrar obligado solidario</label><div class="fields" *ngIf="hasGuarantor" [formGroup]="guarantor"><label>Nombre completo *<input formControlName="full_name"><small class="field-error" *ngIf="guarantor.controls.full_name.invalid && guarantor.controls.full_name.touched">{{validationMessage(guarantor.controls.full_name)}}</small></label><label>Parentesco *<input formControlName="relationship"><small class="field-error" *ngIf="guarantor.controls.relationship.invalid && guarantor.controls.relationship.touched">{{validationMessage(guarantor.controls.relationship)}}</small></label><label>RFC<input formControlName="rfc"><small class="field-error" *ngIf="guarantor.controls.rfc.invalid && guarantor.controls.rfc.touched">{{validationMessage(guarantor.controls.rfc)}}</small></label><label>Teléfono<input formControlName="phone"><small class="field-error" *ngIf="guarantor.controls.phone.invalid && guarantor.controls.phone.touched">{{validationMessage(guarantor.controls.phone)}}</small></label><label>Ingreso mensual<input type="number" formControlName="monthly_income"><small class="field-error" *ngIf="guarantor.controls.monthly_income.invalid && guarantor.controls.monthly_income.touched">{{validationMessage(guarantor.controls.monthly_income)}}</small></label></div></section>
+<section class="panel" [hidden]="tab!==2"><h3>Condiciones financieras</h3><div class="fields" [formGroup]="financial"><label>Monto solicitado *<input type="number" step=".01" formControlName="requested_amount"><small class="field-error" *ngIf="financial.controls.requested_amount.invalid && financial.controls.requested_amount.touched">{{validationMessage(financial.controls.requested_amount)}}</small></label><label>Plazo solicitado *<input type="number" formControlName="requested_term"><small class="field-error" *ngIf="financial.controls.requested_term.invalid && financial.controls.requested_term.touched">{{validationMessage(financial.controls.requested_term)}}</small></label></div>
+<h3>Ingresos y egresos mensuales</h3><div class="header-actions"><button type="button" class="btn btn-outline" (click)="addItem('income')">Agregar ingreso</button><button type="button" class="btn btn-outline" (click)="addItem('expense')">Agregar egreso</button></div><div class="fields" *ngFor="let item of items;let i=index"><label>Tipo<strong>{{item.entry_type==='income'?'Ingreso':'Egreso'}}</strong></label><label>Concepto *<input [(ngModel)]="item.concept"><small class="field-error" *ngIf="financialAttempted && !item.concept.trim()">Este campo es obligatorio.</small></label><label>Monto *<input type="number" step=".01" [(ngModel)]="item.amount"><small class="field-error" *ngIf="financialAttempted && (item.amount===null || item.amount<=0)">{{item.amount===null ? "Este campo es obligatorio." : "Ingrese un monto mayor a cero."}}</small></label><button type="button" class="btn btn-outline" (click)="items.splice(i,1)">Quitar</button></div><p>Ingresos: {{total('income')|currency:c.configuration.currency}} · Egresos: {{total('expense')|currency:c.configuration.currency}}</p>
+<h3 *ngIf="c.fields.length">Información adicional del producto</h3><div class="fields"><label *ngFor="let f of c.fields">{{f.custom_field.label}}{{f.required?' *':''}}<select *ngIf="options(f.custom_field.options).length;else typed" [(ngModel)]="values[f.custom_field_id]"><option value="">Seleccione</option><option *ngFor="let o of options(f.custom_field.options)" [value]="o">{{o}}</option></select><ng-template #typed><select *ngIf="f.custom_field.data_type==='boolean';else regular" [(ngModel)]="values[f.custom_field_id]"><option value="">Seleccione</option><option value="1">Sí</option><option value="0">No</option></select><ng-template #regular><input [type]="f.custom_field.data_type==='date'?'date':(['number','integer','decimal'].includes(f.custom_field.data_type)?'number':'text')" [(ngModel)]="values[f.custom_field_id]"></ng-template></ng-template><small class="field-error" *ngIf="financialAttempted && f.required && !values[f.custom_field_id]">Este campo es obligatorio.</small></label></div></section>
+<section class="panel" [hidden]="tab!==3"><h3>Expediente documental</h3><p *ngIf="!c.documents.length">El producto no tiene requisitos documentales.</p><div class="document" *ngFor="let d of c.documents"><strong>{{d.document_type.name}} {{d.required?'*':''}}</strong><p>{{files[d.document_type_id]?.length||0}} / {{d.max_files}} archivos · mínimo {{d.required?d.min_files:0}}</p><input type="file" accept=".pdf,.jpg,.jpeg,.png" [disabled]="(files[d.document_type_id]?.length||0)>=d.max_files" (change)="addFile(d.document_type_id,$event,d.max_files)"><small class="field-error" *ngIf="documentsAttempted && d.required && (files[d.document_type_id]?.length||0)<d.min_files">Este documento es obligatorio.</small><p *ngFor="let f of files[d.document_type_id];let i=index">{{f.name}} <button class="btn btn-outline" type="button" (click)="removeFile(d.document_type_id,i)">Quitar</button></p></div></section>
 <footer class="wizard-footer"><button class="btn btn-outline" type="button" [disabled]="tab===0||saving" (click)="tab=tab-1">Atrás</button><button class="btn btn-primary" type="button" *ngIf="tab<3" (click)="next()">Siguiente</button><button class="btn btn-primary" type="button" *ngIf="tab===3" [disabled]="saving" (click)="save()">{{saving?'Guardando…':'Guardar solicitud'}}</button></footer>
 </ng-container>
