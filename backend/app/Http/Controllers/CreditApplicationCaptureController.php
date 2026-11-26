@@ -151,7 +151,7 @@ final class CreditApplicationCaptureController extends Controller
             'requested_amount'=>'required|numeric|gt:0', 'requested_term'=>'required|integer|min:1',
             'financial_items'=>'array|max:200', 'financial_items.*.entry_type'=>'required|in:income,expense',
             'financial_items.*.concept'=>'required|string|max:255', 'financial_items.*.amount'=>'required|numeric|gt:0',
-            'financial_items.*.frequency'=>'required|in:monthly,weekly,biweekly,fortnightly,annual,daily,quarterly,yearly',
+            'financial_items.*.frequency'=>'required|in:monthly',
             'guarantor'=>'nullable|array:full_name,rfc,relationship,phone,monthly_income',
             'guarantor.full_name'=>'required_with:guarantor|string|max:255', 'guarantor.relationship'=>'required_with:guarantor|string|max:255',
             'guarantor.rfc'=>'nullable|string|max:13','guarantor.phone'=>'nullable|string|max:20','guarantor.monthly_income'=>'nullable|numeric|min:0',
@@ -209,7 +209,12 @@ final class CreditApplicationCaptureController extends Controller
                     $bankKeys=['bank_code','bank_name','holder_name','clabe','account_last4','account_type'];
                     foreach($bankKeys as $key){if((string)($account[$key]??'')!==(string)($record->bankAccount->$key??'')){unset($account['id']);break;}}
                 }
-                $clientData['addresses']=[$address];$clientData['bank_accounts']=[$account];
+                // Keep the exact historical address if its data was not changed.
+                $addressUnchanged = $record->addressVersion && isset($address['id']);
+                foreach(Arr::except($address,['id','address_type','primary','active']) as $key=>$value){
+                    if((string)$value !== (string)($record->addressVersion?->$key ?? '')){$addressUnchanged=false;break;}
+                }
+                $clientData['addresses']=$addressUnchanged?[]:[$address];$clientData['bank_accounts']=[$account];
                 $fields=$version->creditProductFields()->where('visible',true)->with('customField')->get();
                 $values=$data['fields']??[];
                 if(array_diff(array_keys($values),$fields->pluck('custom_field_id')->all()))throw ValidationException::withMessages(['fields'=>'Campo ajeno al producto.']);
@@ -223,10 +228,11 @@ final class CreditApplicationCaptureController extends Controller
                 $before=Arr::only($record->getAttributes(),['requested_amount','requested_term','declared_income','declared_expenses','advisor_id','branch_id','address_version_id','bank_account_id']);
                 $client=$clients->update($record->client_id,$clientData);
                 $parent=isset($address['id'])?$client->creditClientAddresses()->findOrFail($address['id']):$client->creditClientAddresses()->latest('created_at')->firstOrFail();
-                $addressVersion=$parent->creditClientAddressVersions()->orderByDesc('version')->firstOrFail();
+                $addressVersion=$addressUnchanged?$record->addressVersion:$parent->creditClientAddressVersions()->orderByDesc('version')->firstOrFail();
                 $bank=isset($account['id'])?$client->creditClientBankAccounts()->findOrFail($account['id']):$client->creditClientBankAccounts()->latest('created_at')->firstOrFail();
                 $items=collect($data['financial_items']??[]);
                 abort_if($record->creditApplicationFinancialItems()->where('verified',true)->exists(),422,'Existen conceptos financieros verificados; no pueden reemplazarse en captura.');
+                abort_if($record->creditApplicationFinancialItems()->where('frequency','!=','monthly')->exists(),422,'Existen conceptos no mensuales. Se requiere normalización antes de editarlos.');
                 $record->creditApplicationFinancialItems()->delete();
                 foreach($items as $item)$record->creditApplicationFinancialItems()->create([...$item,'captured_by'=>$request->user()->id,'verified'=>false]);
                 $record->fill(['advisor_id'=>$advisor->id,'branch_id'=>$branch->id,'address_version_id'=>$addressVersion->id,'bank_account_id'=>$bank->id,'requested_amount'=>$data['requested_amount'],'requested_term'=>$data['requested_term'],'declared_income'=>$items->where('entry_type','income')->sum('amount'),'declared_expenses'=>$items->where('entry_type','expense')->sum('amount')])->save();
@@ -238,7 +244,7 @@ final class CreditApplicationCaptureController extends Controller
                     $path=Storage::disk('local')->putFile('credit/documents/'.$record->id,$file);
                     if(!is_string($path)||$path==='')throw new \RuntimeException('No fue posible guardar el archivo.');
                     $stored[]=$path;
-                    $record->creditApplicationDocuments()->create(['document_type_id'=>$type,'previous_document_id'=>$previous?->id,'version'=>$previous?->version+1 ?: 1,'storage_disk'=>'local','storage_path'=>$path,'original_filename'=>$file->getClientOriginalName(),'mime_type'=>$file->getMimeType()??'application/octet-stream','size_bytes'=>$file->getSize(),'sha256'=>hash_file('sha256',$file->getRealPath()),'status'=>'pending','uploaded_by'=>$request->user()->id]);
+                    $record->creditApplicationDocuments()->create(['document_type_id'=>$type,'previous_document_id'=>$previous?->id,'version'=>$previous ? $previous->version+1 : 1,'storage_disk'=>'local','storage_path'=>$path,'original_filename'=>$file->getClientOriginalName(),'mime_type'=>$file->getMimeType()??'application/octet-stream','size_bytes'=>$file->getSize(),'sha256'=>hash_file('sha256',$file->getRealPath()),'status'=>'pending','uploaded_by'=>$request->user()->id]);
                 };
                 foreach($docs as $doc)$upload($doc['file'],$doc['document_type_id']);
                 foreach($data['replacements']??[] as $docId=>$file)$upload($file,$current[$docId]->document_type_id,$current[$docId]);

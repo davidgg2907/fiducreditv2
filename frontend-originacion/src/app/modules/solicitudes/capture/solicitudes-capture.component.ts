@@ -45,7 +45,7 @@ export class SolicitudesCaptureComponent implements OnInit {
   if(this.editId){
    this.service.editConfiguration(this.editId).pipe(finalize(()=>this.loading=false)).subscribe({next:result=>{
     const a=result.application;this.applyConfiguration(result);this.branchId=a['branch_id'];this.advisorId=a['advisor_id'];
-    this.client.patchValue(a['client']);this.client.controls.birth_date.setValue(a['client']?.birth_date?.slice(0,10)??'');
+    this.client.patchValue(a['client']??{});this.client.controls.birth_date.setValue(a['client']?.birth_date?.slice(0,10)??'');
     this.initialRelations={address:a['address_version'],account:a['bank_account']};
     this.financial.patchValue({requested_amount:Number(a['requested_amount']),requested_term:Number(a['requested_term'])});
     this.items=(a['credit_application_financial_items']??[]).map((i:any)=>({entry_type:i.entry_type,concept:i.concept,amount:Number(i.amount),frequency:i.frequency}));
@@ -70,7 +70,7 @@ export class SolicitudesCaptureComponent implements OnInit {
  total(kind:string){return this.items.filter(i=>i.entry_type===kind).reduce((s,i)=>s+Number(i.amount||0),0);}
  readonly financialGroups=[{kind:'income' as const,title:'Ingresos',icon:'trending_up'},{kind:'expense' as const,title:'Egresos',icon:'trending_down'}];
  itemsFor(kind:string){return this.items.filter(i=>i.entry_type===kind);}
- removeItem(item:typeof this.items[number]){this.items=this.items.filter(i=>i!==item);}
+ removeItem(item:(typeof this.items)[number]){this.items=this.items.filter(i=>i!==item);}
  documentCount(id:string){return (this.files[id]?.length??0)+(this.existingFiles[id]?.length??0);}
  replaceFile(id:string,index:number,event:Event){const input=event.target as HTMLInputElement;const file=input.files?.[0];if(file)this.files[id][index]=file;input.value='';}
  replaceExisting(id:string,event:Event){const input=event.target as HTMLInputElement;const file=input.files?.[0];if(file)this.replacements[id]=file;input.value='';}
@@ -95,7 +95,7 @@ export class SolicitudesCaptureComponent implements OnInit {
   for(let i=0;i<4;i++){if(!this.validateStep(i)){this.tab=i;return;}}
   const r=this.relations?.payload();if(!r)return;
  const data=new FormData();
- const append=(key:string,value:unknown):void=>{if(value===null||value===undefined||value==='')return;if(value instanceof File){data.append(key,value);return;}if(typeof value==='object'){Object.entries(value).forEach(([k,v])=>append(key+'['+k+']',v));return;}data.append(key,typeof value==='boolean'?(value?'1':'0'):String(value));};
+ const append=(key:string,value:unknown):void=>{if(value===undefined)return;if(value===null||value===''){if(this.editId&&key.startsWith('client['))data.append(key,'');return;}if(value instanceof File){data.append(key,value);return;}if(typeof value==='object'){Object.entries(value).forEach(([k,v])=>append(key+'['+k+']',v));return;}data.append(key,typeof value==='boolean'?(value?'1':'0'):String(value));};
  const documents=Object.entries(this.files).flatMap(([document_type_id,files])=>files.map(file=>({document_type_id,file})));
  Object.entries({product_id:this.config.product.id,product_version_id:this.config.configuration.id,branch_id:this.branchId,advisor_id:this.advisorId,client:{...this.client.getRawValue(),...r},...this.financial.getRawValue(),financial_items:this.items,guarantor:this.hasGuarantor?this.guarantor.getRawValue():null,fields:this.values,documents}).forEach(([k,v])=>append(k,v));
  if(this.editId){Object.entries(this.replacements).forEach(([id,file])=>data.append('replacements['+id+']',file));data.append('has_guarantor',this.hasGuarantor?'1':'0');}
