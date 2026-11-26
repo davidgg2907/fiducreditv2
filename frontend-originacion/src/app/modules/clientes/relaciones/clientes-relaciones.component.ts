@@ -1,6 +1,6 @@
 import { CommonModule } from '@angular/common';
 import { Component, ElementRef, Input, OnInit, ViewChild, inject } from '@angular/core';
-import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
+import { FormBuilder, ReactiveFormsModule, Validators, AbstractControl } from '@angular/forms';
 import { finalize } from 'rxjs';
 import { ClienteCuenta, ClienteDomicilio, ClienteDomicilioRegistro, ClienteRelaciones } from '../../../interfaces/originacion/clientes.interface';
 import { ClientesService } from '../../../servicios/originacion/clientes.service';
@@ -30,6 +30,14 @@ export class ClientesRelacionesComponent implements OnInit {
   saving = false;
   loaded = false;
   error = '';
+  validationMessage(control:AbstractControl):string {
+    if(control.hasError('required'))return 'Este campo es obligatorio.';
+    if(control.hasError('maxlength'))return 'Longitud máxima excedida.';
+    if(control===this.accountForm.controls.clabe)return 'Ingrese una CLABE de 18 dígitos.';
+    if(control===this.accountForm.controls.account_last4)return 'Ingrese 4 dígitos.';
+    if(control===this.addressForm.controls.country)return 'Ingrese un código de país de dos letras.';
+    return 'Ingrese un valor válido.';
+  }
   mode: 'addresses' | 'bank_accounts' = 'addresses';
   addresses: ClienteDomicilio[] = [];
   accounts: ClienteCuenta[] = [];
@@ -189,7 +197,7 @@ export class ClientesRelacionesComponent implements OnInit {
 
   private captureAddress(): boolean {
     if (!this.showAddress || (!this.addressForm.dirty && (this.selectedAddress >= 0 || (this.isNewClient && !this.applicationCapture)))) return true;
-    if (this.addressForm.invalid) { this.addressForm.markAllAsTouched(); this.error = 'Complete los campos obligatorios del domicilio.'; return false; }
+    if (this.addressForm.invalid) { this.addressForm.markAllAsTouched(); this.error = ''; return false; }
     const v = this.addressValue();
     const index = this.selectedAddress < 0 ? this.addresses.length : this.selectedAddress;
     this.addresses[index] = v;
@@ -200,7 +208,7 @@ export class ClientesRelacionesComponent implements OnInit {
   }
   private captureAccount(): boolean {
     if (!this.showAccount || (!this.accountForm.dirty && (this.selectedAccount >= 0 || (this.isNewClient && !this.applicationCapture)))) return true;
-    if (this.accountForm.invalid) { this.accountForm.markAllAsTouched(); this.error = 'Revise los campos de la cuenta bancaria.'; return false; }
+    if (this.accountForm.invalid) { this.accountForm.markAllAsTouched(); this.error = ''; return false; }
     const v = this.accountValue();
     const index = this.selectedAccount < 0 ? this.accounts.length : this.selectedAccount;
     this.accounts[index] = v;
@@ -211,7 +219,10 @@ export class ClientesRelacionesComponent implements OnInit {
   }
 
   payload(): ClienteRelaciones | null {
-    if (this.loading || !this.loaded || this.dialog.nativeElement.open || !this.captureAddress() || !this.captureAccount()) return null;
+    if (this.loading || !this.loaded || this.dialog.nativeElement.open) return null;
+    const addressValid = this.captureAddress();
+    const accountValid = this.captureAccount();
+    if (!addressValid || !accountValid) return null;
     return {addresses: [...this.pendingAddresses.values()], bank_accounts: [...this.pendingAccounts.values()]};
   }
 

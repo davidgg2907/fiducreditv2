@@ -37,3 +37,5 @@ details { margin: 10px 0; }
 summary { cursor: pointer; color: var(--app-primary-strong); }
 .icon-btn { cursor: pointer; }
 @media (max-width: 700px) { .modal-header, .modal-body, .modal-footer { padding: 12px; } }
+
+.field-error{display:block;color:var(--app-danger,#b42318);font-size:.85rem;font-weight:400;line-height:1.35;margin:0}

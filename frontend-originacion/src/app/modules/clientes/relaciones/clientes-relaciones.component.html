@@ -62,33 +62,31 @@
 
 <ng-template #addressFields>
   <div class="fields relation-fields" [formGroup]="addressForm">
-    <label>Tipo de domicilio *<select formControlName="address_type"><option value="home">Particular</option><option value="work">Laboral</option><option value="other">Otro</option></select></label>
-    <label>Calle *<input formControlName="street" maxlength="255"></label>
-    <label>Número exterior<input formControlName="exterior_number"></label>
-    <label>Número interior<input formControlName="interior_number"></label>
-    <label>Colonia *<input formControlName="neighborhood"></label>
-    <label>Ciudad *<input formControlName="city"></label>
-    <label>Municipio / alcaldía *<input formControlName="municipality"></label>
-    <label>Estado *<input formControlName="state"></label>
-    <label>Código postal *<input formControlName="postal_code" maxlength="10"></label>
-    <label>País (ISO) *<input formControlName="country" maxlength="2"></label>
+    <label>Tipo de domicilio *<select formControlName="address_type"><option value="home">Particular</option><option value="work">Laboral</option><option value="other">Otro</option></select><small class="field-error" *ngIf="addressForm.controls.address_type.invalid && addressForm.controls.address_type.touched">{{validationMessage(addressForm.controls.address_type)}}</small></label>
+    <label>Calle *<input formControlName="street" maxlength="255"><small class="field-error" *ngIf="addressForm.controls.street.invalid && addressForm.controls.street.touched">{{validationMessage(addressForm.controls.street)}}</small></label>
+    <label>Número exterior<input formControlName="exterior_number"><small class="field-error" *ngIf="addressForm.controls.exterior_number.invalid && addressForm.controls.exterior_number.touched">{{validationMessage(addressForm.controls.exterior_number)}}</small></label>
+    <label>Número interior<input formControlName="interior_number"><small class="field-error" *ngIf="addressForm.controls.interior_number.invalid && addressForm.controls.interior_number.touched">{{validationMessage(addressForm.controls.interior_number)}}</small></label>
+    <label>Colonia *<input formControlName="neighborhood"><small class="field-error" *ngIf="addressForm.controls.neighborhood.invalid && addressForm.controls.neighborhood.touched">{{validationMessage(addressForm.controls.neighborhood)}}</small></label>
+    <label>Ciudad *<input formControlName="city"><small class="field-error" *ngIf="addressForm.controls.city.invalid && addressForm.controls.city.touched">{{validationMessage(addressForm.controls.city)}}</small></label>
+    <label>Municipio / alcaldía *<input formControlName="municipality"><small class="field-error" *ngIf="addressForm.controls.municipality.invalid && addressForm.controls.municipality.touched">{{validationMessage(addressForm.controls.municipality)}}</small></label>
+    <label>Estado *<input formControlName="state"><small class="field-error" *ngIf="addressForm.controls.state.invalid && addressForm.controls.state.touched">{{validationMessage(addressForm.controls.state)}}</small></label>
+    <label>Código postal *<input formControlName="postal_code" maxlength="10"><small class="field-error" *ngIf="addressForm.controls.postal_code.invalid && addressForm.controls.postal_code.touched">{{validationMessage(addressForm.controls.postal_code)}}</small></label>
+    <label>País (ISO) *<input formControlName="country" maxlength="2"><small class="field-error" *ngIf="addressForm.controls.country.invalid && addressForm.controls.country.touched">{{validationMessage(addressForm.controls.country)}}</small></label>
     <label>Principal<span class="switch-line"><input type="checkbox" role="switch" formControlName="primary"></span></label>
     <label>Activo<span class="switch-line"><input type="checkbox" role="switch" formControlName="active"></span></label>
   </div>
-  <p class="error" *ngIf="addressForm.invalid && addressForm.touched">Complete los campos obligatorios del domicilio.</p>
   <button type="button" class="btn btn-outline" *ngIf="staged && !isNewClient && !dialog.open && selectedAddress < 0" (click)="cancelAddress()">Omitir domicilio</button>
 </ng-template>
 <ng-template #accountFields>
   <div class="fields relation-fields" [formGroup]="accountForm">
-    <label>Banco *<input formControlName="bank_name"></label>
-    <label>Clave bancaria<input formControlName="bank_code" maxlength="5"></label>
-    <label>Titular *<input formControlName="holder_name"></label>
-    <label>CLABE<input formControlName="clabe" maxlength="18" inputmode="numeric" autocomplete="off"></label>
-    <label>Últimos 4 dígitos<input formControlName="account_last4" maxlength="4" inputmode="numeric"></label>
-    <label>Tipo de cuenta *<select formControlName="account_type"><option value="checking">Cheques</option><option value="savings">Ahorro</option><option value="payroll">Nómina</option><option value="other">Otra</option></select></label>
+    <label>Banco *<input formControlName="bank_name"><small class="field-error" *ngIf="accountForm.controls.bank_name.invalid && accountForm.controls.bank_name.touched">{{validationMessage(accountForm.controls.bank_name)}}</small></label>
+    <label>Clave bancaria<input formControlName="bank_code" maxlength="5"><small class="field-error" *ngIf="accountForm.controls.bank_code.invalid && accountForm.controls.bank_code.touched">{{validationMessage(accountForm.controls.bank_code)}}</small></label>
+    <label>Titular *<input formControlName="holder_name"><small class="field-error" *ngIf="accountForm.controls.holder_name.invalid && accountForm.controls.holder_name.touched">{{validationMessage(accountForm.controls.holder_name)}}</small></label>
+    <label>CLABE<input formControlName="clabe" maxlength="18" inputmode="numeric" autocomplete="off"><small class="field-error" *ngIf="accountForm.controls.clabe.invalid && accountForm.controls.clabe.touched">{{validationMessage(accountForm.controls.clabe)}}</small></label>
+    <label>Últimos 4 dígitos<input formControlName="account_last4" maxlength="4" inputmode="numeric"><small class="field-error" *ngIf="accountForm.controls.account_last4.invalid && accountForm.controls.account_last4.touched">{{validationMessage(accountForm.controls.account_last4)}}</small></label>
+    <label>Tipo de cuenta *<select formControlName="account_type"><option value="checking">Cheques</option><option value="savings">Ahorro</option><option value="payroll">Nómina</option><option value="other">Otra</option></select><small class="field-error" *ngIf="accountForm.controls.account_type.invalid && accountForm.controls.account_type.touched">{{validationMessage(accountForm.controls.account_type)}}</small></label>
     <label>Principal<span class="switch-line"><input type="checkbox" role="switch" formControlName="primary"></span></label>
     <label>Activa<span class="switch-line"><input type="checkbox" role="switch" formControlName="active"></span></label>
   </div>
-  <p class="error" *ngIf="accountForm.invalid && accountForm.touched">Revise los campos obligatorios, la CLABE (18 dígitos) y la terminación (4 dígitos).</p>
   <button type="button" class="btn btn-outline" *ngIf="staged && !isNewClient && !dialog.open && selectedAccount < 0" (click)="cancelAccount()">Omitir cuenta</button>
 </ng-template>
