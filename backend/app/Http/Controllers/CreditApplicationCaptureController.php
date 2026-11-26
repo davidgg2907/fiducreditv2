@@ -29,6 +29,20 @@ final class CreditApplicationCaptureController extends Controller
             ->when(!$request->user()->is_superadmin, fn ($q) => $q->whereIn('company_id', $this->advisors($request)->select('company_id')));
     }
 
+    private function applications(Request $request)
+    {
+        return CreditApplication::query()->when(!$request->user()->is_superadmin,fn ($q)=>$q->whereIn('advisor_id',$this->advisors($request)->select('id')));
+    }
+
+    public function index(Request $request)
+    {
+        $this->permit('ver');
+        $filter = $request->validate(['filter.application_number'=>'nullable|string|max:255','per_page'=>'nullable|integer|between:1,100']);
+        $page = $this->applications($request)->with('client')->when($filter['filter']['application_number'] ?? null,fn ($q,$folio)=>$q->where('application_number',$folio))->orderByDesc('created_at')->paginate($filter['per_page'] ?? 25);
+        $page->through(fn ($a)=>['id'=>$a->id,'application_number'=>$a->application_number,'client_name'=>trim(($a->client?->first_name ?? '').' '.($a->client?->last_name ?? '')),'requested_amount'=>$a->requested_amount,'status'=>$a->status]);
+        return response()->json(['data'=>['data'=>$page->items(),'meta'=>['current_page'=>$page->currentPage(),'last_page'=>$page->lastPage(),'total'=>$page->total()]]]);
+    }
+
     public function productsList(Request $request)
     {
         $this->permit('crear');
@@ -46,7 +60,7 @@ final class CreditApplicationCaptureController extends Controller
             'product' => $product, 'configuration' => $version,
             'fields' => $version->creditProductFields()->where('visible', true)->with('customField')->orderBy('display_order')->get(),
             'documents' => $version->creditProductDocuments()->with('documentType')->orderBy('display_order')->get(),
-            'advisors' => $advisors->map(fn ($a) => ['id'=>$a->id,'branch_id'=>$a->branch_id,'name'=>$a->employee_code]),
+            'advisors' => $advisors->map(fn ($a) => ['id'=>$a->id,'branch_id'=>$a->branch_id,'name'=>DB::table('users')->where('id',$a->user_id)->value('name') ?? $a->employee_code])->values(),
             'branches' => CreditBranch::query()->where('company_id',$product->company_id)->whereIn('id',$advisors->pluck('branch_id'))->get(['id','name']),
             'assignment' => $own->count() === 1 ? $own->first()->only(['id','branch_id']) : null,
         ]]);
@@ -137,11 +151,14 @@ final class CreditApplicationCaptureController extends Controller
     {
         $this->permit('detalle');
         $record = CreditApplication::query()->when(!$request->user()->is_superadmin,fn ($q)=>$q->whereIn('advisor_id',$this->advisors($request)->select('id')))->findOrFail($id);
-        $record->load(['client','addressVersion','bankAccount','productVersion.product','creditApplicationGuarantors','creditApplicationFields.customField','creditApplicationFinancialItems','creditApplicationDocuments.documentType','creditWorkflowInstances']);
+        $record->load(['client','addressVersion','bankAccount','advisor','branch','productVersion.product','creditApplicationGuarantors','creditApplicationFields.customField','creditApplicationFinancialItems','creditApplicationDocuments.documentType','creditWorkflowInstances']);
         $instance = $record->creditWorkflowInstances->first();
         $steps = $instance ? CreditWorkflowVersion::findOrFail($instance->workflow_version_id)->creditWorkflowSteps()->orderBy('sort_order')->get(['id','name']) : [];
         $result = $record->toArray();
         foreach ($result['credit_application_documents'] as &$document) unset($document['storage_path'],$document['storage_disk']);
-        return response()->json(['data'=>['application'=>$result,'steps'=>$steps,'current_step_id'=>$instance?->current_step_id]]);
+        unset($document);
+        $result['advisor_name'] = DB::table('users')->where('id',$record->advisor?->user_id)->value('name');
+        $completed = $instance ? CreditWorkflowTask::query()->where('instance_id',$instance->id)->whereIn('status',['completed','resolved'])->pluck('step_id')->unique()->values() : [];
+        return response()->json(['data'=>['application'=>$result,'steps'=>$steps,'current_step_id'=>$instance?->current_step_id,'completed_step_ids'=>$completed]]);
     }
 }
