@@ -18,6 +18,24 @@ import { finalize } from 'rxjs';
 export class SolicitudesListComponent implements OnInit {
   private readonly service = inject(SolicitudesService);
   readonly permissions = inject(OriginacionPermissionsService);
+  private readonly router = inject(Router);
+  products: {id: string; name: string}[] = [];
+  productId = '';
+  productLoading = false;
+  productError = '';
+  openProducts(dialog: HTMLDialogElement): void {
+    this.productId = ''; this.productError = ''; this.products = []; this.productLoading = true;
+    dialog.showModal();
+    this.service.products().pipe(finalize(() => this.productLoading = false)).subscribe({
+      next: rows => this.products = rows,
+      error: e => this.productError = originacionError(e)
+    });
+  }
+  selectProduct(dialog: HTMLDialogElement): void {
+    if (!this.productId) return;
+    dialog.close();
+    void this.router.navigate(['/solicitudes', 'nuevo'], {queryParams: {product: this.productId}});
+  }
   rows: SolicitudesRecord[] = [];
   search = '';
   page = 1;

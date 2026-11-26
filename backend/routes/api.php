@@ -570,3 +570,11 @@ Route::middleware([AuthenticateAccessToken::class, \App\Http\Middleware\RecordOp
             'pld-reports' => 'id',
         ]);
     });
+
+Route::middleware([AuthenticateAccessToken::class, \App\Http\Middleware\RecordOperationalRequest::class])->prefix('v1/origination-capture')->group(function (): void {
+    Route::get('products', [\App\Http\Controllers\CreditApplicationCaptureController::class, 'productsList']);
+    Route::get('products/{id}', [\App\Http\Controllers\CreditApplicationCaptureController::class, 'configuration']);
+    Route::post('applications', [\App\Http\Controllers\CreditApplicationCaptureController::class, 'store']);
+    Route::get('applications/{id}', [\App\Http\Controllers\CreditApplicationCaptureController::class, 'detail']);
+    Route::get('applications', [\App\Http\Controllers\CreditApplicationCaptureController::class, 'index']);
+});
