@@ -1,0 +1,2 @@
+@use '../../originacion-institutional';
+.wizard-tabs{display:flex;gap:4px;margin:16px 0;flex-wrap:wrap}.wizard-tabs button{flex:1;padding:12px;border:1px solid #174650;background:white;color:#174650;border-radius:5px}.wizard-tabs button.current{background:#174650;color:white}.wizard-tabs button:disabled{opacity:.55}.wizard-footer{display:flex;justify-content:space-between;background:#174650;padding:16px;border-radius:5px;margin-top:16px}.document{padding:16px 0;border-bottom:1px solid #ddd}[hidden]{display:none!important}

@@ -1,71 +1,14 @@
-<header class="panel heading">
-  <div>
-    <h2>Detalle · Solicitudes de crédito</h2>
-    <p>Consulta de información</p>
-  </div>
-  <div class="header-actions">
-    <a class="btn btn-primary" *ngIf="record && permissions.can('solicitudes', 'editar') && record.status === 'captured'" [routerLink]="['/solicitudes', record.id, 'editar']"><span class="material-icons-outlined" aria-hidden="true">edit</span> Editar</a>
-    <a class="btn btn-outline" routerLink="/solicitudes"><span class="material-icons-outlined" aria-hidden="true">arrow_back</span> Volver a lista</a>
-  </div>
-</header>
-<section class="panel">
-  <p class="error" role="alert" *ngIf="error">{{ error }}</p>
-  <p *ngIf="loading">Cargando detalle…</p>
-  <ng-container *ngIf="record as item">
-    <div class="section-heading">
-      <span class="material-icons-outlined" aria-hidden="true">description</span>
-      <h3>Información del registro</h3>
-    </div>
-    <dl class="fields detail-fields">
-      <div><dt>Identificador</dt><dd>{{ item.id }}</dd></div>
-      <div>
-        <dt>Cliente</dt>
-        <dd>{{ item.client_id ?? '—' }}</dd>
-      </div>
-      <div>
-        <dt>Versión de producto</dt>
-        <dd>{{ item.product_version_id ?? '—' }}</dd>
-      </div>
-      <div>
-        <dt>Asesor</dt>
-        <dd>{{ item.advisor_id ?? '—' }}</dd>
-      </div>
-      <div>
-        <dt>Sucursal</dt>
-        <dd>{{ item.branch_id ?? '—' }}</dd>
-      </div>
-      <div>
-        <dt>Versión de domicilio</dt>
-        <dd>{{ item.address_version_id ?? '—' }}</dd>
-      </div>
-      <div>
-        <dt>Cuenta bancaria</dt>
-        <dd>{{ item.bank_account_id ?? '—' }}</dd>
-      </div>
-      <div>
-        <dt>Folio</dt>
-        <dd>{{ item.application_number ?? '—' }}</dd>
-      </div>
-      <div>
-        <dt>Monto solicitado</dt>
-        <dd>{{ item.requested_amount ?? '—' }}</dd>
-      </div>
-      <div>
-        <dt>Plazo</dt>
-        <dd>{{ item.requested_term ?? '—' }}</dd>
-      </div>
-      <div>
-        <dt>Ingreso declarado</dt>
-        <dd>{{ item.declared_income ?? '—' }}</dd>
-      </div>
-      <div>
-        <dt>Egreso declarado</dt>
-        <dd>{{ item.declared_expenses ?? '—' }}</dd>
-      </div>
-      <div>
-        <dt>Estado</dt>
-        <dd>{{ item.status ?? '—' }}</dd>
-      </div>
-    </dl>
-  </ng-container>
-</section>
+<header class="panel heading"><h2>Detalle · Solicitud de crédito</h2><a class="btn btn-outline" routerLink="/solicitudes">Volver a lista</a></header>
+<p class="error" *ngIf="error">{{error}}</p><p *ngIf="loading">Cargando detalle…</p>
+<ng-container *ngIf="detail as d">
+<section class="panel"><h3>Seguimiento de solicitud</h3><p *ngIf="!d.steps.length">Sin instancia de workflow registrada.</p><ol class="timeline"><li *ngFor="let step of d.steps" [class.current]="step.id===d.current_step_id" [class.completed]="d.completed_step_ids?.includes(step.id)"><span class="point"></span>{{step.name}}<small *ngIf="step.id===d.current_step_id">Etapa actual</small></li></ol></section>
+<ng-container *ngIf="d.application as a">
+<section class="panel"><h3>{{a['product_version']?.product?.name}} · {{a['application_number']}}</h3><dl class="fields detail-fields"><div><dt>Estado</dt><dd>{{a['status']}}</dd></div><div><dt>Sucursal</dt><dd>{{a['branch']?.name}}</dd></div><div><dt>Asesor</dt><dd>{{a['advisor_name']}}</dd></div><div><dt>Fecha de captura</dt><dd>{{a['created_at']|date:'medium'}}</dd></div></dl></section>
+<section class="panel" *ngIf="a['client'] as c"><h3>Datos del cliente</h3><dl class="fields detail-fields">
+<div><dt>Nombre</dt><dd>{{c.first_name}} {{c.middle_name}} {{c.last_name}} {{c.second_last_name}}</dd></div><div><dt>Fecha de nacimiento</dt><dd>{{c.birth_date||'—'}}</dd></div><div><dt>RFC</dt><dd>{{c.rfc||'—'}}</dd></div><div><dt>CURP</dt><dd>{{c.curp||'—'}}</dd></div><div><dt>Folio INE</dt><dd>{{c.ine_folio||'—'}}</dd></div><div><dt>Pasaporte</dt><dd>{{c.passport_number||'—'}}</dd></div><div><dt>NSS</dt><dd>{{c.nss||'—'}}</dd></div><div><dt>Seguridad social</dt><dd>{{c.health_provider||'—'}}</dd></div><div><dt>Correo</dt><dd>{{c.email||'—'}}</dd></div><div><dt>Teléfono</dt><dd>{{c.phone||'—'}}</dd></div><div><dt>Estado</dt><dd>{{c.status}}</dd></div></dl>
+<h3>Domicilio</h3><dl class="fields detail-fields" *ngIf="a['address_version'] as v"><div><dt>Calle y número</dt><dd>{{v.street}} {{v.exterior_number}} {{v.interior_number}}</dd></div><div><dt>Colonia</dt><dd>{{v.neighborhood}}</dd></div><div><dt>Ciudad</dt><dd>{{v.city}}</dd></div><div><dt>Municipio</dt><dd>{{v.municipality}}</dd></div><div><dt>Estado</dt><dd>{{v.state}}</dd></div><div><dt>Código postal</dt><dd>{{v.postal_code}}</dd></div><div><dt>País</dt><dd>{{v.country}}</dd></div></dl>
+<h3>Cuenta bancaria</h3><dl class="fields detail-fields" *ngIf="a['bank_account'] as b"><div><dt>Banco</dt><dd>{{b.bank_name}}</dd></div><div><dt>Titular</dt><dd>{{b.holder_name}}</dd></div><div><dt>Cuenta</dt><dd>•••• {{b.account_last4||b.clabe?.slice(-4)||'—'}}</dd></div><div><dt>Tipo</dt><dd>{{b.account_type}}</dd></div></dl></section>
+<section class="panel"><h3>Obligado solidario</h3><p *ngIf="!a['credit_application_guarantors']?.length">Sin obligado solidario.</p><dl class="fields detail-fields" *ngFor="let g of a['credit_application_guarantors']"><div><dt>Nombre</dt><dd>{{g.full_name}}</dd></div><div><dt>Parentesco</dt><dd>{{g.relationship}}</dd></div><div><dt>RFC</dt><dd>{{g.rfc||'—'}}</dd></div><div><dt>Teléfono</dt><dd>{{g.phone||'—'}}</dd></div><div><dt>Ingreso mensual</dt><dd>{{g.monthly_income||'—'}}</dd></div></dl></section>
+<section class="panel"><h3>Información financiera</h3><dl class="fields detail-fields"><div><dt>Monto solicitado</dt><dd>{{a['requested_amount']|currency}}</dd></div><div><dt>Plazo</dt><dd>{{a['requested_term']}} {{a['product_version']?.term_unit}}</dd></div><div><dt>Ingresos</dt><dd>{{a['declared_income']|currency}}</dd></div><div><dt>Egresos</dt><dd>{{a['declared_expenses']|currency}}</dd></div></dl><table><thead><tr><th>Tipo</th><th>Concepto</th><th>Monto</th><th>Frecuencia</th></tr></thead><tbody><tr *ngFor="let i of a['credit_application_financial_items']"><td>{{i.entry_type==='income'?'Ingreso':'Egreso'}}</td><td>{{i.concept}}</td><td>{{i.amount|currency}}</td><td>{{i.frequency}}</td></tr></tbody></table><h3>Campos adicionales</h3><dl class="fields detail-fields"><div *ngFor="let f of a['credit_application_fields']"><dt>{{f.custom_field?.label}}</dt><dd>{{f.field_value?.value}}</dd></div></dl></section>
+<section class="panel"><h3>Expediente documental</h3><table><thead><tr><th>Documento</th><th>Archivo</th><th>Estado</th></tr></thead><tbody><tr *ngFor="let doc of a['credit_application_documents']"><td>{{doc.document_type?.name}}</td><td>{{doc.original_filename}}</td><td>{{doc.status}}</td></tr></tbody></table></section>
+</ng-container></ng-container>

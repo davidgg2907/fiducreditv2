@@ -1,5 +1,6 @@
 export interface SolicitudesRecord {
   id: string;
+  client_name?: string;
   client_id?: string | null;
   product_version_id?: string | null;
   advisor_id?: string | null;
@@ -29,3 +30,14 @@ export interface SolicitudesPayload {
   declared_income?: number | string | null;
   declared_expenses?: number | string | null;
 }
+
+export interface CaptureConfiguration {
+ product: {id:string;name:string;description?:string};
+ configuration: {id:string;min_amount:number;max_amount:number;min_term:number;max_term:number;term_unit:string;currency:string;min_annual_rate:number;max_annual_rate:number;payment_frequency:string;rate_type:string;amortization_method:string};
+ fields: {custom_field_id:string;required:boolean;custom_field:{label:string;data_type:string;options:unknown}}[];
+ documents: {document_type_id:string;required:boolean;min_files:number;max_files:number;document_type:{name:string}}[];
+ branches:{id:string;name:string}[];
+ advisors:{id:string;name:string;branch_id:string}[];
+ assignment:{id:string;branch_id:string}|null;
+}
+export interface CaptureDetail {application: Record<string, any>;steps:{id:string;name:string}[];current_step_id:string|null;completed_step_ids?:string[];}
