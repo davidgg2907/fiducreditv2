@@ -29,6 +29,8 @@ final class UpdateCreditApplicationRequest extends FormRequest
             'bank_account_id' => ['sometimes', 'nullable', 'uuid', 'exists:credit_client_bank_accounts,id'],
             'application_number' => ['sometimes', 'string', 'max:255', Rule::unique('credit_applications', 'application_number')->ignore($this->route('id'))],
             'requested_amount' => ['sometimes', 'numeric'],
+            'unidad_plazo' => ['sometimes','string','in:dia,semana,mes,anio'],
+            'frecuencia_pago' => ['sometimes','string'],
             'requested_term' => ['sometimes', 'integer'],
             'declared_income' => ['sometimes', 'nullable', 'numeric'],
             'declared_expenses' => ['sometimes', 'nullable', 'numeric'],

@@ -33,7 +33,7 @@ export interface SolicitudesPayload {
 
 export interface CaptureConfiguration {
  product: {id:string;name:string;description?:string};
- configuration: {id:string;min_amount:number;max_amount:number;min_term:number;max_term:number;term_unit:string;currency:string;min_annual_rate:number;max_annual_rate:number;payment_frequency:string;rate_type:string;amortization_method:string};
+ configuration: {configuracion_plazos:{plazos:{unidad_plazo:string;plazo_minimo:number;plazo_maximo:number;incremento:number}[];frecuencias_pago:string[];frecuencia_pago_predeterminada:string};id:string;min_amount:number;max_amount:number;min_term:number;max_term:number;term_unit:string;currency:string;min_annual_rate:number;max_annual_rate:number;payment_frequency:string;rate_type:string;amortization_method:string};
  fields: {custom_field_id:string;required:boolean;custom_field:{label:string;data_type:string;options:unknown}}[];
  documents: {document_type_id:string;required:boolean;min_files:number;max_files:number;document_type:{name:string}}[];
  branches:{id:string;name:string}[];

@@ -65,7 +65,7 @@ final class CreditApplicationCaptureController extends Controller
         $advisors = $this->advisors($request)->where('company_id', $product->company_id)->get();
         $own = $advisors->where('user_id', $request->user()->id);
         return [
-            'product' => $product, 'configuration' => $version,
+            'product' => $product, 'configuration' => array_merge($version->toArray(), ['configuracion_plazos'=>\App\Services\ConfiguracionPlazos::obtener($version)]),
             'fields' => $version->creditProductFields()->where('visible', true)->with('customField')->orderBy('display_order')->get(),
             'documents' => $version->creditProductDocuments()->with('documentType')->orderBy('display_order')->get(),
             'advisors' => $advisors->map(fn ($a) => ['id'=>$a->id,'branch_id'=>$a->branch_id,'name'=>DB::table('users')->where('id',$a->user_id)->value('name') ?? $a->employee_code])->values(),
@@ -87,7 +87,7 @@ final class CreditApplicationCaptureController extends Controller
                 $own = $this->advisors($request)->where('company_id',$product->company_id)->where('user_id',$request->user()->id)->get();
                 $advisor = $own->count() === 1 ? $own->first() : $this->advisors($request)->where('company_id',$product->company_id)->where('branch_id',$data['branch_id'] ?? null)->findOrFail($data['advisor_id'] ?? '');
                 $branch = CreditBranch::query()->where('company_id',$product->company_id)->where('active',true)->findOrFail($advisor->branch_id);
-                Validator::make($data, ['requested_amount'=>'numeric|between:'.$version->min_amount.','.$version->max_amount,'requested_term'=>'integer|between:'.$version->min_term.','.$version->max_term])->validate();
+                Validator::make($data, ['requested_amount'=>'numeric|between:'.$version->min_amount.','.$version->max_amount])->validate();
                 $rules = (new StoreCreditClientRequest())->rules();
                 $rules['addresses'] = ['required','array','size:1'];
                 $rules['bank_accounts'] = ['required','array','size:1'];
@@ -124,7 +124,7 @@ final class CreditApplicationCaptureController extends Controller
                 $application = $applications->create([
                     'client_id'=>$client->id,'product_version_id'=>$version->id,'advisor_id'=>$advisor->id,'branch_id'=>$branch->id,
                     'address_version_id'=>$address->id,'bank_account_id'=>$account->id,'application_number'=>'SOL-'.Str::ulid(),
-                    'requested_amount'=>$data['requested_amount'],'requested_term'=>$data['requested_term'],
+                    'requested_amount'=>$data['requested_amount'],'requested_term'=>$data['requested_term'],...\App\Services\ConfiguracionPlazos::seleccionar($version,$data),
                     'declared_income'=>$items->where('entry_type','income')->sum('amount'),'declared_expenses'=>$items->where('entry_type','expense')->sum('amount'),
                     'financial_items'=>$items->all(),'documents'=>$docs->all(),
                 ], $request->user()->id);
@@ -148,7 +148,7 @@ final class CreditApplicationCaptureController extends Controller
         return [
             'product_id'=>'required|uuid', 'product_version_id'=>'required|uuid',
             'client'=>'required|array', 'advisor_id'=>'nullable|uuid', 'branch_id'=>'nullable|uuid',
-            'requested_amount'=>'required|numeric|gt:0', 'requested_term'=>'required|integer|min:1',
+            'requested_amount'=>'required|numeric|gt:0', 'requested_term'=>'required|integer|min:1', 'unidad_plazo'=>'sometimes|string|in:dia,semana,mes,anio', 'frecuencia_pago'=>'sometimes|string',
             'financial_items'=>'array|max:200', 'financial_items.*.entry_type'=>'required|in:income,expense',
             'financial_items.*.concept'=>'required|string|max:255', 'financial_items.*.amount'=>'required|numeric|gt:0',
             'financial_items.*.frequency'=>'required|in:monthly',
@@ -188,7 +188,7 @@ final class CreditApplicationCaptureController extends Controller
                 $version=$record->productVersion;
                 $product=$version->product;
                 abort_unless($data['product_id']===$product->id && $data['product_version_id']===$version->id,422,'No se puede cambiar el producto de una solicitud existente.');
-                Validator::make($data,['requested_amount'=>'numeric|between:'.$version->min_amount.','.$version->max_amount,'requested_term'=>'integer|between:'.$version->min_term.','.$version->max_term])->validate();
+                Validator::make($data,['requested_amount'=>'numeric|between:'.$version->min_amount.','.$version->max_amount])->validate();
                 $advisor=$this->advisors($request)->where('company_id',$product->company_id)->where('branch_id',$data['branch_id']??null)->findOrFail($data['advisor_id']??'');
                 $branch=CreditBranch::query()->where('company_id',$product->company_id)->where('active',true)->findOrFail($advisor->branch_id);
                 $rules=(new UpdateCreditClientRequest())->rules();
@@ -235,7 +235,7 @@ final class CreditApplicationCaptureController extends Controller
                 abort_if($record->creditApplicationFinancialItems()->where('frequency','!=','monthly')->exists(),422,'Existen conceptos no mensuales. Se requiere normalización antes de editarlos.');
                 $record->creditApplicationFinancialItems()->delete();
                 foreach($items as $item)$record->creditApplicationFinancialItems()->create([...$item,'captured_by'=>$request->user()->id,'verified'=>false]);
-                $record->fill(['advisor_id'=>$advisor->id,'branch_id'=>$branch->id,'address_version_id'=>$addressVersion->id,'bank_account_id'=>$bank->id,'requested_amount'=>$data['requested_amount'],'requested_term'=>$data['requested_term'],'declared_income'=>$items->where('entry_type','income')->sum('amount'),'declared_expenses'=>$items->where('entry_type','expense')->sum('amount')])->save();
+                $record->fill(['advisor_id'=>$advisor->id,'branch_id'=>$branch->id,'address_version_id'=>$addressVersion->id,'bank_account_id'=>$bank->id,'requested_amount'=>$data['requested_amount'],'requested_term'=>$data['requested_term'],...\App\Services\ConfiguracionPlazos::seleccionar($version,$data),'declared_income'=>$items->where('entry_type','income')->sum('amount'),'declared_expenses'=>$items->where('entry_type','expense')->sum('amount')])->save();
                 foreach($fields as $field){$key=$field->custom_field_id;if(isset($values[$key]))$record->creditApplicationFields()->updateOrCreate(['custom_field_id'=>$key],['field_value'=>['value'=>$values[$key]]]);else $record->creditApplicationFields()->where('custom_field_id',$key)->delete();}
                 $guarantors=$record->creditApplicationGuarantors();
                 abort_if($guarantors->count()>1,422,'La solicitud tiene varios obligados solidarios y requiere revisión.');

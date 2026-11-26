@@ -27,6 +27,7 @@ final class UpdateCreditProductVersionRequest extends FormRequest
             'max_amount' => ['sometimes', 'numeric'],
             'min_term' => ['sometimes', 'integer'],
             'max_term' => ['sometimes', 'integer'],
+            'configuracion_plazos' => ['sometimes', 'array'],
             'term_unit' => ['sometimes', 'string', 'max:255'],
             'min_annual_rate' => ['sometimes', 'numeric'],
             'max_annual_rate' => ['sometimes', 'numeric'],

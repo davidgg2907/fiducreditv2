@@ -25,6 +25,7 @@ class CreditProductVersionService
 
     public function create(array $attributes): CreditProductVersion
     {
+        if (isset($attributes['configuracion_plazos'])) ConfiguracionPlazos::validar($attributes['configuracion_plazos']);
         return DB::transaction(
             fn (): CreditProductVersion => $this->repository->create($attributes)
         );
@@ -32,6 +33,7 @@ class CreditProductVersionService
 
     public function update(string $id, array $attributes): CreditProductVersion
     {
+        if (isset($attributes['configuracion_plazos'])) ConfiguracionPlazos::validar($attributes['configuracion_plazos']);
         return DB::transaction(
             fn (): CreditProductVersion => $this->repository->update($id, $attributes)
         );
