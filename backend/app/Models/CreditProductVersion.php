@@ -21,7 +21,7 @@ class CreditProductVersion extends Model
 
     protected function casts(): array
     {
-        return ['product_snapshot' => 'array'];
+        return ['product_snapshot' => 'array', 'configuracion_plazos' => 'array'];
     }
 
     public function product(): BelongsTo

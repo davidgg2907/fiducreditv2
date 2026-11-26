@@ -60,6 +60,7 @@ class CreditProductService
         $config = $attributes['configuration'] ?? [];
         $version = $previous ? $previous->replicate() : new CreditProductVersion();
         $version->fill($config);
+        if ($version->configuracion_plazos !== null) ConfiguracionPlazos::validar($version->configuracion_plazos);
         foreach (['amount', 'term', 'annual_rate', 'dti'] as $range) {
             $min = $version->{'min_'.$range};
             $max = $version->{'max_'.$range};

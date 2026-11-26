@@ -38,7 +38,7 @@ export class SolicitudesCaptureComponent implements OnInit {
  branchId=''; advisorId=''; hasGuarantor=false;
  readonly client=this.fb.group({first_name:['',Validators.required],middle_name:'',last_name:['',Validators.required],second_last_name:'',birth_date:'',rfc:['',Validators.maxLength(13)],curp:['',Validators.maxLength(18)],ine_folio:'',passport_number:'',nss:'',health_provider:'',email:['',Validators.email],phone:['',Validators.maxLength(20)],status:'active'});
  readonly guarantor=this.fb.group({full_name:['',Validators.required],relationship:['',Validators.required],rfc:['',Validators.maxLength(13)],phone:['',Validators.maxLength(20)],monthly_income:''});
- readonly financial=this.fb.group({requested_amount:[0,Validators.required],requested_term:[0,Validators.required]});
+ readonly financial=this.fb.group({requested_amount:[0,Validators.required],requested_term:[0,Validators.required],unidad_plazo:['',Validators.required],frecuencia_pago:['',Validators.required]});
  items:{entry_type:'income'|'expense';concept:string;amount:number|null;frequency:string}[]=[];
  values:Record<string,string>={}; files:Record<string,File[]>={};
  ngOnInit():void {
@@ -47,7 +47,7 @@ export class SolicitudesCaptureComponent implements OnInit {
     const a=result.application;this.applyConfiguration(result);this.branchId=a['branch_id'];this.advisorId=a['advisor_id'];
     this.client.patchValue(a['client']??{});this.client.controls.birth_date.setValue(a['client']?.birth_date?.slice(0,10)??'');
     this.initialRelations={address:a['address_version'],account:a['bank_account']};
-    this.financial.patchValue({requested_amount:Number(a['requested_amount']),requested_term:Number(a['requested_term'])});
+    this.financial.patchValue({requested_amount:Number(a['requested_amount']),requested_term:Number(a['requested_term']),unidad_plazo:a['unidad_plazo']??this.financial.controls.unidad_plazo.value,frecuencia_pago:a['frecuencia_pago']??this.financial.controls.frecuencia_pago.value});
     this.items=(a['credit_application_financial_items']??[]).map((i:any)=>({entry_type:i.entry_type,concept:i.concept,amount:Number(i.amount),frequency:i.frequency}));
     if(!this.items.some(i=>i.entry_type==='income')&&Number(a['declared_income'])>0)this.items.push({entry_type:'income',concept:'Ingreso declarado',amount:Number(a['declared_income']),frequency:'monthly'});
     if(!this.items.some(i=>i.entry_type==='expense')&&Number(a['declared_expenses'])>0)this.items.push({entry_type:'expense',concept:'Egreso declarado',amount:Number(a['declared_expenses']),frequency:'monthly'});
@@ -63,9 +63,11 @@ export class SolicitudesCaptureComponent implements OnInit {
  private applyConfiguration(c:CaptureConfiguration):void {
     this.config=c;this.branchId=c.assignment?.branch_id??'';this.advisorId=c.assignment?.id??'';
     this.financial.controls.requested_amount.setValidators([Validators.required,Validators.min(Number(c.configuration.min_amount)),Validators.max(Number(c.configuration.max_amount))]);
-    this.financial.controls.requested_term.setValidators([Validators.required,Validators.min(Number(c.configuration.min_term)),Validators.max(Number(c.configuration.max_term)),Validators.pattern(/^\d+$/)]);
+    this.financial.controls.requested_term.setValidators([Validators.required,Validators.min(1)]);
+    this.financial.patchValue({unidad_plazo:c.configuration.configuracion_plazos.plazos.length===1?c.configuration.configuracion_plazos.plazos[0].unidad_plazo:'',frecuencia_pago:c.configuration.configuracion_plazos.frecuencia_pago_predeterminada});
     this.financial.controls.requested_amount.updateValueAndValidity();this.financial.controls.requested_term.updateValueAndValidity();
  }
+ get plazosDisponibles():number[]{const p=this.config?.configuration.configuracion_plazos.plazos.find(v=>v.unidad_plazo===this.financial.controls.unidad_plazo.value);if(!p)return [];return Array.from({length:Math.floor((p.plazo_maximo-p.plazo_minimo)/p.incremento)+1},(_,i)=>p.plazo_minimo+i*p.incremento);}
  get advisors(){return this.config?.advisors.filter(a=>a.branch_id===this.branchId)??[];}
  total(kind:string){return this.items.filter(i=>i.entry_type===kind).reduce((s,i)=>s+Number(i.amount||0),0);}
  readonly financialGroups=[{kind:'income' as const,title:'Ingresos',icon:'trending_up'},{kind:'expense' as const,title:'Egresos',icon:'trending_down'}];
@@ -85,7 +87,7 @@ export class SolicitudesCaptureComponent implements OnInit {
    return this.client.valid && !!r?.addresses?.length && !!r?.bank_accounts?.length;
   }
   if(index===1){if(!this.hasGuarantor)return true;this.guarantor.markAllAsTouched();return this.guarantor.valid;}
-  if(index===2){this.financialAttempted=true;this.financial.markAllAsTouched();return this.financial.valid && !this.items.some(i=>!i.concept.trim()||!i.amount||i.amount<=0) && !this.config?.fields.some(f=>f.required&&!this.values[f.custom_field_id]);}
+  if(index===2){this.financialAttempted=true;this.financial.markAllAsTouched();return this.financial.valid && this.plazosDisponibles.includes(this.financial.controls.requested_term.value) && !this.items.some(i=>!i.concept.trim()||!i.amount||i.amount<=0) && !this.config?.fields.some(f=>f.required&&!this.values[f.custom_field_id]);}
   this.documentsAttempted=true;
   return !this.config?.documents.some(d=>d.required&&this.documentCount(d.document_type_id)<d.min_files);
  }

@@ -29,6 +29,8 @@ final class StoreCreditApplicationRequest extends FormRequest
             'bank_account_id' => ['sometimes', 'nullable', 'uuid', 'exists:credit_client_bank_accounts,id'],
             'application_number' => ['required', 'string', 'max:255', Rule::unique('credit_applications', 'application_number')],
             'requested_amount' => ['required', 'numeric'],
+            'unidad_plazo' => ['sometimes','string','in:dia,semana,mes,anio'],
+            'frecuencia_pago' => ['sometimes','string'],
             'requested_term' => ['required', 'integer', 'min:1'],
             'financial_items' => ['sometimes', 'array', 'max:200'],
             'financial_items.*.entry_type' => ['required', 'in:income,expense'],

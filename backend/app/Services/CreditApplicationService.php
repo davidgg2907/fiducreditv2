@@ -66,7 +66,8 @@ class CreditApplicationService
                 $consents,
                 &$files
             ): CreditApplication {
-                $application = $this->applications->create($payload);
+                $version = \App\Models\CreditProductVersion::query()->findOrFail($payload['product_version_id']);
+                $application = $this->applications->create(array_merge($payload, ConfiguracionPlazos::seleccionar($version,$payload)));
 
                 foreach ($financialItems as $item) {
                     $this->financialItems->create([
@@ -154,7 +155,9 @@ class CreditApplicationService
                 ]);
             }
 
-            return $this->applications->update($id, $attributes);
+            $datos = array_merge($application->getAttributes(),$attributes);
+            $version = \App\Models\CreditProductVersion::query()->findOrFail($datos['product_version_id']);
+            return $this->applications->update($id, array_merge($attributes, ConfiguracionPlazos::seleccionar($version,$datos)));
         });
     }
 }

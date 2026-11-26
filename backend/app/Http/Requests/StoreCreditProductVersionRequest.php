@@ -27,6 +27,7 @@ final class StoreCreditProductVersionRequest extends FormRequest
             'max_amount' => ['required', 'numeric'],
             'min_term' => ['required', 'integer'],
             'max_term' => ['required', 'integer'],
+            'configuracion_plazos' => ['sometimes', 'array'],
             'term_unit' => ['sometimes', 'string', 'max:255'],
             'min_annual_rate' => ['required', 'numeric'],
             'max_annual_rate' => ['required', 'numeric'],
