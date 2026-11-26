@@ -11,6 +11,9 @@ class CreditApplicationStatusHistory extends Model
 {
     use HasUuids;
 
+    // El historial conserva su fecha de negocio en changed_at; la tabla no tiene timestamps Laravel.
+    public $timestamps = false;
+
     protected $table = 'credit_application_status_history';
 
     protected $guarded = [
