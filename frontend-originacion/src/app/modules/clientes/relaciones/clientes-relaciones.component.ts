@@ -18,6 +18,8 @@ export class ClientesRelacionesComponent implements OnInit {
   @Input() clientId: string | null = null;
   @Input() staged = false;
   @Input() applicationCapture = false;
+  @Input() applicationEdit = false;
+  @Input() initialRelations?: {address:any;account:any};
   @Input() compact = false;
   @Input() readOnly = false;
   modalEditing = false;
@@ -70,6 +72,17 @@ export class ClientesRelacionesComponent implements OnInit {
   });
 
   ngOnInit(): void {
+    if(this.applicationEdit&&this.initialRelations){
+      const a=this.initialRelations.address;const b=this.initialRelations.account;
+      this.loaded=true;
+      if(a)this.addresses=[{...a,id:a.address_id,address_type:a.address?.address_type??'home',primary:!!a.address?.primary,active:!!a.address?.active}];
+      if(b)this.accounts=[{...b,primary:!!b.primary,active:!!b.active}];
+      if(a){this.editAddress(0);this.addressForm.markAsDirty();}
+      else this.editAddress(-1);
+      if(b){this.editAccount(0);this.accountForm.markAsDirty();}
+      else this.editAccount(-1);
+      return;
+    }
     if (this.staged || !this.compact) this.load();
     if (this.isNewClient) {
       if (this.canWrite('addresses', false)) this.editAddress(-1);
@@ -78,11 +91,11 @@ export class ClientesRelacionesComponent implements OnInit {
   }
 
   canView(kind: 'addresses' | 'bank_accounts'): boolean {
-    if (this.applicationCapture) return this.permissions.can('solicitudes','crear');
+    if (this.applicationCapture) return this.permissions.can('solicitudes',this.applicationEdit?'editar':'crear');
     return this.permissions.can(kind === 'addresses' ? 'domicilios' : 'cuentas_bancarias', 'ver');
   }
   canWrite(kind: 'addresses' | 'bank_accounts', existing: boolean): boolean {
-    if (this.applicationCapture) return !this.readOnly && this.permissions.can('solicitudes','crear');
+    if (this.applicationCapture) return !this.readOnly && this.permissions.can('solicitudes',this.applicationEdit?'editar':'crear');
     return !this.readOnly && this.canView(kind) &&
       this.permissions.can(kind === 'addresses' ? 'domicilios' : 'cuentas_bancarias', existing ? 'editar' : 'crear') &&
       this.permissions.can('clientes', this.clientId ? 'editar' : 'crear');

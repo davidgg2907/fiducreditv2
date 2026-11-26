@@ -117,7 +117,7 @@ export const Full_ROUTES: Routes = [
     path: 'solicitudes/:id/editar',
     canActivate: [originacionPermissionGuard],
     data: { module: 'solicitudes', action: 'editar' },
-    loadComponent: () => import('../../modules/solicitudes/form/solicitudes-form.component').then(m => m.SolicitudesFormComponent)
+    loadComponent: () => import('../../modules/solicitudes/capture/solicitudes-capture.component').then(m => m.SolicitudesCaptureComponent)
   },
   {
     path: 'solicitudes/:id',
